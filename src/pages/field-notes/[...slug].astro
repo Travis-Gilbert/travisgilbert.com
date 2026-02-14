@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DateStamp from '../../components/DateStamp.astro';
+import TagList from '../../components/TagList.astro';
+import RoughLine from '../../components/rough/RoughLine.tsx';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('field-notes');
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+
+const allNotes = (await getCollection('field-notes'))
+  .filter((n) => !n.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const currentIndex = allNotes.findIndex((n) => n.id === note.id);
+const prevNote = currentIndex < allNotes.length - 1 ? allNotes[currentIndex + 1] : null;
+const nextNote = currentIndex > 0 ? allNotes[currentIndex - 1] : null;
+---
+
+<BaseLayout title={`${note.data.title} — Field Notes`} description={note.data.excerpt}>
+  <article class="py-8">
+    <header class="mb-8">
+      <DateStamp date={note.data.date} />
+      <h1 class="font-heading text-3xl md:text-4xl mt-4 mb-4">{note.data.title}</h1>
+      <TagList tags={note.data.tags} />
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <RoughLine client:visible />
+
+    <nav class="flex justify-between items-start gap-4 py-4">
+      <div>
+        {prevNote && (
+          <a href={`/field-notes/${prevNote.id}`} class="font-mono text-sm hover:text-terracotta-hover">
+            &larr; {prevNote.data.title}
+          </a>
+        )}
+      </div>
+      <div class="text-right">
+        {nextNote && (
+          <a href={`/field-notes/${nextNote.id}`} class="font-mono text-sm hover:text-terracotta-hover">
+            {nextNote.data.title} &rarr;
+          </a>
+        )}
+      </div>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 65ch;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-ink);
+  }
+  .prose h2 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; }
+  .prose h3 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .prose p { margin-bottom: 1.25rem; }
+  .prose ul, .prose ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
+  .prose li { margin-bottom: 0.5rem; }
+  .prose strong { font-weight: 700; }
+  .prose a { color: var(--color-terracotta); text-decoration: underline; text-underline-offset: 2px; }
+  .prose a:hover { color: var(--color-terracotta-hover); }
+  .prose blockquote { font-style: italic; border-left: 3px solid var(--color-rough); padding-left: 1rem; margin-left: 0; margin-bottom: 1.25rem; color: var(--color-ink-secondary); }
+</style>

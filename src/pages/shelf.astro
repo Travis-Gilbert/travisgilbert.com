@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RoughUnderline from '../components/rough/RoughUnderline.tsx';
+import ShelfFilter from '../components/ShelfFilter.tsx';
+import { getCollection } from 'astro:content';
+
+const shelfItems = (await getCollection('shelf'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((item) => ({
+    title: item.data.title,
+    creator: item.data.creator,
+    type: item.data.type,
+    annotation: item.data.annotation,
+    url: item.data.url,
+    tags: item.data.tags,
+  }));
+---
+
+<BaseLayout title="Shelf — Travis Gilbert" description="Books, videos, tools, and other things worth recommending.">
+  <section class="py-8">
+    <h1 class="font-display text-3xl md:text-4xl mb-2">
+      <RoughUnderline client:visible type="underline" color="var(--color-terracotta)" strokeWidth={3}>
+        Shelf
+      </RoughUnderline>
+    </h1>
+    <p class="text-ink-secondary mb-8">Things I've read, watched, used, and recommend.</p>
+  </section>
+
+  <ShelfFilter client:load items={shelfItems} />
+</BaseLayout>

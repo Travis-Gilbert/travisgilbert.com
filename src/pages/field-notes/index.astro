@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FieldNoteEntry from '../../components/FieldNoteEntry.astro';
+import RoughUnderline from '../../components/rough/RoughUnderline.tsx';
+import { getCollection } from 'astro:content';
+
+const allNotes = (await getCollection('field-notes'))
+  .filter((n) => !n.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Field Notes — Travis Gilbert" description="Observations, essays, and running notes on design, infrastructure, and the built environment.">
+  <section class="py-8">
+    <h1 class="font-display text-3xl md:text-4xl mb-2">
+      <RoughUnderline client:visible type="underline" color="var(--color-terracotta)" strokeWidth={3}>
+        Field Notes
+      </RoughUnderline>
+    </h1>
+    <p class="text-ink-secondary mb-8">Observations, essays, and running notes.</p>
+  </section>
+
+  <div class="space-y-6">
+    {allNotes.map((note) => (
+      <FieldNoteEntry
+        title={note.data.title}
+        date={note.data.date}
+        excerpt={note.data.excerpt}
+        tags={note.data.tags}
+        href={`/field-notes/${note.id}`}
+      />
+    ))}
+  </div>
+
+  {allNotes.length === 0 && (
+    <p class="text-ink-secondary py-12 text-center">No field notes yet. Check back soon.</p>
+  )}
+</BaseLayout>

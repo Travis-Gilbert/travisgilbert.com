@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RoughUnderline from '../components/rough/RoughUnderline.tsx';
+import RoughBox from '../components/rough/RoughBox.tsx';
+import RoughLine from '../components/rough/RoughLine.tsx';
+---
+
+<BaseLayout title="Connect — Travis Gilbert" description="How to get in touch.">
+  <section class="py-8">
+    <h1 class="font-display text-3xl md:text-4xl mb-2">
+      <RoughUnderline client:visible type="underline" color="var(--color-terracotta)" strokeWidth={3}>
+        Connect
+      </RoughUnderline>
+    </h1>
+    <p class="text-ink-secondary mb-8">
+      I'm always interested in hearing from people who think about the same things — design, infrastructure, systems, and the decisions that shape them.
+    </p>
+  </section>
+
+  <div class="max-w-xl space-y-8">
+    <RoughBox client:visible padding={24}>
+      <h2 class="font-heading text-lg mb-4">Find me</h2>
+      <ul class="space-y-3 list-none p-0 m-0">
+        <li class="flex items-center gap-3">
+          <span class="font-mono text-sm text-ink-secondary w-20">YouTube</span>
+          <a href="#" class="font-mono text-sm hover:text-terracotta-hover">@travisgilbert</a>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="font-mono text-sm text-ink-secondary w-20">GitHub</span>
+          <a href="#" class="font-mono text-sm hover:text-terracotta-hover">@travisgilbert</a>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="font-mono text-sm text-ink-secondary w-20">Email</span>
+          <a href="mailto:hello@travisgilbert.com" class="font-mono text-sm hover:text-terracotta-hover">hello@travisgilbert.com</a>
+        </li>
+      </ul>
+    </RoughBox>
+
+    <RoughLine client:visible />
+
+    <section>
+      <h2 class="font-heading text-lg mb-3">What I want to hear about</h2>
+      <ul class="space-y-2 text-ink-secondary">
+        <li>Design decisions you've noticed that deserve investigation</li>
+        <li>Corrections or additional context for published work</li>
+        <li>Collaboration on research or video projects</li>
+        <li>Interesting reading recommendations</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="font-heading text-lg mb-3">What I don't want to hear about</h2>
+      <ul class="space-y-2 text-ink-secondary">
+        <li>SEO services or link exchanges</li>
+        <li>Unsolicited pitches for products</li>
+        <li>"Exciting partnership opportunities"</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

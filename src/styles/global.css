@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────
+   Design Tokens (CSS Custom Properties)
+   Palette from site spec: warm paper / terracotta
+   ───────────────────────────────────────────────── */
+
+@theme inline {
+  /* Backgrounds */
+  --color-paper: #F5F0E8;
+  --color-card: #FFFDF8;
+  --color-code: #EDE8DC;
+
+  /* Text */
+  --color-ink: #2C2A26;
+  --color-ink-secondary: #6B6560;
+  --color-ink-faint: #A09A90;
+
+  /* Accent */
+  --color-terracotta: #B5543A;
+  --color-terracotta-hover: #934430;
+  --color-gold: #D4A574;
+
+  /* Ink (rough.js strokes) */
+  --color-rough: #3A3632;
+  --color-rough-light: #8A8480;
+
+  /* Utility */
+  --color-border: #D5CFC5;
+  --color-shadow: rgba(44, 42, 38, 0.08);
+
+  /* Font families */
+  --font-heading: 'Courier Prime', 'Courier New', monospace;
+  --font-body: 'Lora', Georgia, serif;
+  --font-display: 'Special Elite', 'Courier Prime', 'Courier New', monospace;
+  --font-mono: 'Courier Prime', 'Courier New', monospace;
+}
+
+/* ─────────────────────────────────────────────────
+   Base Styles
+   ───────────────────────────────────────────────── */
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  background-image: radial-gradient(
+    circle,
+    var(--color-ink-faint) 0.8px,
+    transparent 0.8px
+  );
+  background-size: 20px 20px;
+  line-height: 1.65;
+}
+
+/* ─────────────────────────────────────────────────
+   Typography
+   ───────────────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+h1 {
+  font-size: 2.44rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.95rem;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.56rem;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────
+   Links
+   ───────────────────────────────────────────────── */
+
+a {
+  color: var(--color-terracotta);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-terracotta-hover);
+}
+
+/* ─────────────────────────────────────────────────
+   Code
+   ───────────────────────────────────────────────── */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--color-code);
+  padding: 0.15em 0.35em;
+  border-radius: 3px;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+pre {
+  font-family: var(--font-mono);
+  background-color: var(--color-code);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────
+   Blockquotes
+   ───────────────────────────────────────────────── */
+
+blockquote {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.1rem;
+  border-left: 3px solid var(--color-rough);
+  padding-left: 1rem;
+  margin-left: 0;
+  color: var(--color-ink-secondary);
+}
+
+/* ─────────────────────────────────────────────────
+   Utility: skip to content
+   ───────────────────────────────────────────────── */
+
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 0.5rem 1rem;
+  z-index: 100;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ─────────────────────────────────────────────────
+   Metadata / small text
+   ───────────────────────────────────────────────── */
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-ink-secondary);
+}

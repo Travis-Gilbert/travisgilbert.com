@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DateStamp from '../../components/DateStamp.astro';
+import TagList from '../../components/TagList.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import RoughLine from '../../components/rough/RoughLine.tsx';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const investigations = await getCollection('investigations');
+  return investigations.map((investigation) => ({
+    params: { slug: investigation.id },
+    props: { investigation },
+  }));
+}
+
+const { investigation } = Astro.props;
+const { Content } = await render(investigation);
+---
+
+<BaseLayout title={`${investigation.data.title} — Investigations`} description={investigation.data.summary}>
+  <article class="py-8">
+    <YouTubeEmbed videoId={investigation.data.youtubeId} title={investigation.data.title} />
+
+    <header class="mt-6 mb-8">
+      <DateStamp date={investigation.data.date} />
+      <h1 class="font-heading text-3xl md:text-4xl mt-4 mb-2">{investigation.data.title}</h1>
+      <p class="text-ink-secondary text-lg mb-4">{investigation.data.summary}</p>
+      <TagList tags={investigation.data.tags} />
+    </header>
+
+    <RoughLine client:visible />
+
+    <div class="prose mt-8">
+      <Content />
+    </div>
+
+    {investigation.data.sources.length > 0 && (
+      <>
+        <RoughLine client:visible />
+        <section class="py-6">
+          <h2 class="font-heading text-xl mb-4">Sources & Further Reading</h2>
+          <ul class="list-none p-0 space-y-2">
+            {investigation.data.sources.map((source) => (
+              <li>
+                <a href={source.url} target="_blank" rel="noopener noreferrer" class="font-mono text-sm hover:text-terracotta-hover">
+                  {source.title} <span class="text-xs">&#8599;</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </>
+    )}
+
+    <RoughLine client:visible />
+
+    <nav class="py-4">
+      <a href="/investigations" class="font-mono text-sm hover:text-terracotta-hover">&larr; All investigations</a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 65ch;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-ink);
+  }
+  .prose h2 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; }
+  .prose h3 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .prose p { margin-bottom: 1.25rem; }
+  .prose ul, .prose ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
+  .prose li { margin-bottom: 0.5rem; }
+  .prose strong { font-weight: 700; }
+  .prose a { color: var(--color-terracotta); text-decoration: underline; text-underline-offset: 2px; }
+  .prose a:hover { color: var(--color-terracotta-hover); }
+  .prose blockquote { font-style: italic; border-left: 3px solid var(--color-rough); padding-left: 1rem; margin-left: 0; margin-bottom: 1.25rem; color: var(--color-ink-secondary); }
+</style>

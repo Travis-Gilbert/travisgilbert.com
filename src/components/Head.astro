@@ -1,0 +1,51 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Personal workbench of Travis Gilbert — investigations, field notes, and things worth sharing.' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Preconnect to Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Google Fonts: Courier Prime (400,700), Lora (400,400i,700), Special Elite (400) -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- SEO -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Travis Gilbert" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+
+<!-- RSS Autodiscovery -->
+<link rel="alternate" type="application/rss+xml" title="Travis Gilbert" href="/rss.xml" />
+
+<!-- Global Styles -->
+<style is:global>
+  @import '../styles/global.css';
+</style>

@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RoughUnderline from '../components/rough/RoughUnderline.tsx';
+import RoughLine from '../components/rough/RoughLine.tsx';
+import RoughBox from '../components/rough/RoughBox.tsx';
+---
+
+<BaseLayout title="Colophon — Travis Gilbert" description="About this site: design decisions, tech stack, and philosophy.">
+  <section class="py-8">
+    <h1 class="font-display text-3xl md:text-4xl mb-2">
+      <RoughUnderline client:visible type="underline" color="var(--color-terracotta)" strokeWidth={3}>
+        Colophon
+      </RoughUnderline>
+    </h1>
+    <p class="text-ink-secondary mb-8">About this site and the thinking behind it.</p>
+  </section>
+
+  <div class="space-y-8 max-w-2xl">
+    <section>
+      <h2 class="font-heading text-xl mb-3">Why It Looks This Way</h2>
+      <p class="leading-relaxed">
+        This site is designed to feel like a studio notebook — warm, tactile, and a little rough around the edges. The hand-drawn borders, dot-grid background, and typewriter typography are deliberate choices. They signal that this is a working space, not a showroom.
+      </p>
+      <p class="leading-relaxed">
+        The aesthetic borrows from engineering notebooks, field journals, and the kind of sketchbooks where ideas are still forming. If the site feels like something you'd find on a desk rather than in a boardroom, that's the intention.
+      </p>
+    </section>
+
+    <RoughLine client:visible />
+
+    <section>
+      <h2 class="font-heading text-xl mb-3">Tech Stack</h2>
+      <RoughBox client:visible padding={20}>
+        <ul class="space-y-2 list-none p-0 m-0 font-mono text-sm">
+          <li><strong>Framework:</strong> Astro 5 (static site generation)</li>
+          <li><strong>Styling:</strong> Tailwind CSS v4 + CSS custom properties</li>
+          <li><strong>Hand-drawn elements:</strong> rough.js + rough-notation</li>
+          <li><strong>Interactive islands:</strong> Preact</li>
+          <li><strong>Fonts:</strong> Courier Prime, Lora, Special Elite (Google Fonts)</li>
+          <li><strong>Hosting:</strong> Vercel</li>
+          <li><strong>Content:</strong> Markdown files, no CMS</li>
+        </ul>
+      </RoughBox>
+    </section>
+
+    <RoughLine client:visible />
+
+    <section>
+      <h2 class="font-heading text-xl mb-3">Typography</h2>
+      <p class="leading-relaxed">
+        <strong class="font-heading">Courier Prime</strong> is used for headings and metadata — a refined monospace face that evokes typewritten documents without the roughness of actual typewriter output.
+      </p>
+      <p class="leading-relaxed">
+        <strong>Lora</strong> handles body text. It's a well-balanced serif with enough personality to feel warm but enough restraint to stay readable across long passages.
+      </p>
+      <p class="leading-relaxed font-display text-lg">
+        Special Elite provides the display/accent voice — the closest open-source equivalent to American Typewriter.
+      </p>
+    </section>
+
+    <RoughLine client:visible />
+
+    <section>
+      <h2 class="font-heading text-xl mb-3">Design Philosophy</h2>
+      <p class="leading-relaxed">
+        Every design decision on this site was made with the same question in mind: does this serve the content, or does it serve the ego of the designer? Ornament for its own sake is out. Warmth and texture that invite you to read are in.
+      </p>
+      <p class="leading-relaxed">
+        The rough.js hand-drawn borders are decorative, but they're also a statement. They say: this work is in progress. The ideas are real, but they're still being shaped. Nothing here pretends to be final.
+      </p>
+    </section>
+
+    <RoughLine client:visible />
+
+    <section>
+      <h2 class="font-heading text-xl mb-3">Credits</h2>
+      <p class="leading-relaxed">
+        This site was built with <a href="https://astro.build">Astro</a>, styled with <a href="https://tailwindcss.com">Tailwind CSS</a>, and illustrated with <a href="https://roughjs.com">rough.js</a> by Preet Shihn. Fonts are served via Google Fonts. Hosting by Vercel.
+      </p>
+      <p class="leading-relaxed">
+        The site was largely built with Claude Code — which means an AI wrote most of the markup, but a human made all the design decisions. That distinction matters.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

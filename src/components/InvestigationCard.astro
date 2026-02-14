@@ -1,0 +1,44 @@
+---
+import DateStamp from './DateStamp.astro';
+import TagList from './TagList.astro';
+import RoughBox from './rough/RoughBox.tsx';
+
+interface Props {
+  title: string;
+  summary: string;
+  date: Date;
+  youtubeId: string;
+  tags: string[];
+  href: string;
+}
+
+const { title, summary, date, youtubeId, tags, href } = Astro.props;
+const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
+---
+
+<RoughBox client:visible padding={0}>
+  <a href={href} class="block no-underline text-ink hover:text-ink group">
+    <div class="md:flex">
+      <!-- Thumbnail -->
+      <div class="md:w-64 md:flex-shrink-0">
+        <img
+          src={thumbnailUrl}
+          alt={`Thumbnail for ${title}`}
+          class="w-full h-40 md:h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <!-- Content -->
+      <div class="p-4 flex-1 flex flex-col gap-2">
+        <DateStamp date={date} />
+        <h3 class="text-lg font-heading font-bold group-hover:text-terracotta transition-colors m-0">
+          {title}
+        </h3>
+        <p class="text-sm text-ink-secondary m-0 line-clamp-2">{summary}</p>
+        <div class="mt-auto pt-2">
+          <TagList tags={tags} />
+        </div>
+      </div>
+    </div>
+  </a>
+</RoughBox>

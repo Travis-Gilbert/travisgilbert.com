@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RoughUnderline from '../components/rough/RoughUnderline.tsx';
+import RoughBox from '../components/rough/RoughBox.tsx';
+import RoughLine from '../components/rough/RoughLine.tsx';
+import { getCollection, render } from 'astro:content';
+
+const toolkitItems = (await getCollection('toolkit'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const categories = [
+  { key: 'production', label: 'Production Workflow' },
+  { key: 'tools', label: 'Tools I Use' },
+  { key: 'philosophy', label: 'How I Think About Design' },
+  { key: 'automation', label: 'AI & Automation' },
+];
+---
+
+<BaseLayout title="Toolkit — Travis Gilbert" description="How I work: tools, processes, and philosophy.">
+  <section class="py-8">
+    <h1 class="font-display text-3xl md:text-4xl mb-2">
+      <RoughUnderline client:visible type="underline" color="var(--color-terracotta)" strokeWidth={3}>
+        Toolkit
+      </RoughUnderline>
+    </h1>
+    <p class="text-ink-secondary mb-8">How I work: tools, processes, and philosophy.</p>
+  </section>
+
+  {categories.map(async (cat) => {
+    const items = toolkitItems.filter((item) => item.data.category === cat.key);
+    if (items.length === 0) return null;
+
+    return (
+      <section class="mb-12">
+        <h2 class="font-heading text-2xl mb-6">{cat.label}</h2>
+        {await Promise.all(items.map(async (item) => {
+          const { Content } = await render(item);
+          return (
+            <RoughBox client:visible padding={24}>
+              <div class="prose">
+                <Content />
+              </div>
+            </RoughBox>
+          );
+        }))}
+        <RoughLine client:visible />
+      </section>
+    );
+  })}
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 65ch;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-ink);
+  }
+  .prose h2 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+  .prose h3 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  .prose p { margin-bottom: 1rem; }
+  .prose ul, .prose ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+  .prose li { margin-bottom: 0.4rem; }
+  .prose strong { font-weight: 700; }
+  .prose a { color: var(--color-terracotta); text-decoration: underline; text-underline-offset: 2px; }
+</style>
