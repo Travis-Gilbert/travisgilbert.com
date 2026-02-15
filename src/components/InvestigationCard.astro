@@ -15,8 +15,8 @@ const { title, summary, date, youtubeId, tags, href } = Astro.props;
 const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
 ---
 
-<div class="border border-border rounded-xl bg-surface overflow-hidden transition-shadow hover:shadow-md" style="border-left: 3px solid var(--color-terracotta);">
-  <a href={href} class="block no-underline text-ink hover:text-ink group">
+<div class="border border-border rounded-xl bg-surface overflow-hidden transition-shadow hover:shadow-md group" style="border-left: 3px solid var(--color-terracotta);">
+  <a href={href} class="block no-underline text-ink hover:text-ink">
     <div class="md:flex">
       <!-- Thumbnail -->
       <div class="md:w-64 md:flex-shrink-0">
@@ -34,10 +34,12 @@ const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
           {title}
         </h3>
         <p class="text-sm text-ink-secondary m-0 line-clamp-2">{summary}</p>
-        <div class="mt-auto pt-2">
-          <TagList tags={tags} />
-        </div>
       </div>
     </div>
   </a>
+  {tags.length > 0 && (
+    <div class="px-4 pb-4 md:pl-[calc(16rem+1rem)]">
+      <TagList tags={tags} />
+    </div>
+  )}
 </div>

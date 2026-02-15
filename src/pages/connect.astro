@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ChatCircle from 'phosphor-astro/ChatCircle.astro';
 import RoughLine from '../components/rough/RoughLine.tsx';
 ---
 
 <BaseLayout title="Connect — Travis Gilbert" description="How to get in touch.">
   <section class="py-8">
-    <h1 class="font-title text-3xl md:text-4xl font-bold mb-2">
+    <h1 class="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+      <ChatCircle class="w-8 h-8 text-terracotta" />
       Connect
     </h1>
     <p class="text-ink-secondary mb-8">

@@ -52,9 +52,29 @@ const toolkit = defineCollection({
   }),
 });
 
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/data/projects' }),
+  schema: z.object({
+    title: z.string(),
+    role: z.string(),
+    description: z.string().max(300),
+    year: z.coerce.number(),
+    date: z.coerce.date(),
+    urls: z.array(z.object({
+      label: z.string(),
+      url: z.string().url(),
+    })).default([]),
+    tags: z.array(z.string()).default([]),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+    order: z.number().default(0),
+  }),
+});
+
 export const collections = {
   investigations,
   'field-notes': fieldNotes,
   shelf,
   toolkit,
+  projects,
 };

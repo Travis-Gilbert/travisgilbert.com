@@ -2,8 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import InvestigationCard from '../components/InvestigationCard.astro';
 import FieldNoteEntry from '../components/FieldNoteEntry.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import RoughLine from '../components/rough/RoughLine.tsx';
 import RoughUnderline from '../components/rough/RoughUnderline.tsx';
+import MagnifyingGlass from 'phosphor-astro/MagnifyingGlass.astro';
+import NotePencil from 'phosphor-astro/NotePencil.astro';
+import Briefcase from 'phosphor-astro/Briefcase.astro';
 import { getCollection } from 'astro:content';
 
 const investigations = (await getCollection('investigations'))
@@ -15,6 +19,11 @@ const fieldNotes = (await getCollection('field-notes'))
   .filter((n) => !n.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
+
+const projects = (await getCollection('projects'))
+  .filter(p => !p.data.draft && p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
 ---
 
 <BaseLayout title="Travis Gilbert">
@@ -33,7 +42,10 @@ const fieldNotes = (await getCollection('field-notes'))
   <!-- Latest Investigations -->
   {investigations.length > 0 && (
     <section class="py-8">
-      <h2 class="font-title text-2xl font-bold mb-6">Latest Investigations</h2>
+      <h2 class="font-title text-2xl font-bold mb-6 flex items-center gap-2">
+        <MagnifyingGlass class="w-6 h-6 text-terracotta" />
+        Latest Investigations
+      </h2>
       <div class="space-y-6">
         {investigations.map((investigation) => (
           <InvestigationCard
@@ -59,7 +71,10 @@ const fieldNotes = (await getCollection('field-notes'))
   <!-- Recent Field Notes -->
   {fieldNotes.length > 0 && (
     <section class="py-8">
-      <h2 class="font-title text-2xl font-bold mb-6">Recent Field Notes</h2>
+      <h2 class="font-title text-2xl font-bold mb-6 flex items-center gap-2">
+        <NotePencil class="w-6 h-6 text-terracotta" />
+        Recent Field Notes
+      </h2>
       <div class="space-y-4">
         {fieldNotes.map((note) => (
           <FieldNoteEntry
@@ -77,5 +92,35 @@ const fieldNotes = (await getCollection('field-notes'))
         </a>
       </p>
     </section>
+  )}
+
+  <!-- Projects -->
+  {projects.length > 0 && (
+    <>
+      <RoughLine client:visible />
+      <section class="py-8">
+        <h2 class="font-title text-2xl font-bold mb-6 flex items-center gap-2">
+          <Briefcase class="w-6 h-6 text-terracotta" />
+          Projects
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {projects.map((project) => (
+            <ProjectCard
+              title={project.data.title}
+              role={project.data.role}
+              description={project.data.description}
+              year={project.data.year}
+              urls={project.data.urls}
+              tags={project.data.tags}
+            />
+          ))}
+        </div>
+        <p class="mt-6">
+          <a href="/projects" class="font-mono text-sm hover:text-terracotta-hover">
+            All projects &rarr;
+          </a>
+        </p>
+      </section>
+    </>
   )}
 </BaseLayout>

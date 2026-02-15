@@ -1,13 +1,16 @@
 ---
+import NavIcon from './NavIcon.astro';
+
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { href: '/investigations', label: 'Investigations' },
-  { href: '/field-notes', label: 'Field Notes' },
-  { href: '/toolkit', label: 'Toolkit' },
-  { href: '/shelf', label: 'Shelf' },
-  { href: '/colophon', label: 'Colophon' },
-  { href: '/connect', label: 'Connect' },
+  { href: '/investigations', label: 'Investigations', iconName: 'investigations' },
+  { href: '/field-notes', label: 'Field Notes', iconName: 'field-notes' },
+  { href: '/projects', label: 'Projects', iconName: 'projects' },
+  { href: '/toolkit', label: 'Toolkit', iconName: 'toolkit' },
+  { href: '/shelf', label: 'Shelf', iconName: 'shelf' },
+  { href: '/colophon', label: 'Colophon', iconName: 'colophon' },
+  { href: '/connect', label: 'Connect', iconName: 'connect' },
 ];
 
 function isActive(href: string): boolean {
@@ -30,12 +33,13 @@ function isActive(href: string): boolean {
           <a
             href={link.href}
             class:list={[
-              'font-mono text-xs uppercase tracking-widest no-underline transition-colors',
+              'font-mono text-xs uppercase tracking-widest no-underline transition-colors inline-flex items-center gap-1.5',
               isActive(link.href)
                 ? 'text-terracotta font-bold'
                 : 'text-ink-secondary hover:text-terracotta',
             ]}
           >
+            <NavIcon name={link.iconName} class="w-4 h-4" />
             {link.label}
           </a>
         </li>
@@ -66,12 +70,13 @@ function isActive(href: string): boolean {
           <a
             href={link.href}
             class:list={[
-              'font-mono text-sm uppercase tracking-widest no-underline block py-1',
+              'font-mono text-sm uppercase tracking-widest no-underline py-1 inline-flex items-center gap-2',
               isActive(link.href)
                 ? 'text-terracotta font-bold'
                 : 'text-ink-secondary hover:text-terracotta',
             ]}
           >
+            <NavIcon name={link.iconName} class="w-4 h-4" />
             {link.label}
           </a>
         </li>

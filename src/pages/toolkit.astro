@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Wrench from 'phosphor-astro/Wrench.astro';
 import { getCollection, render } from 'astro:content';
 
 const toolkitItems = (await getCollection('toolkit'))
@@ -15,7 +16,8 @@ const categories = [
 
 <BaseLayout title="Toolkit — Travis Gilbert" description="How I work: tools, processes, and philosophy.">
   <section class="py-8">
-    <h1 class="font-title-alt text-3xl md:text-4xl font-semibold mb-2">
+    <h1 class="font-title-alt text-3xl md:text-4xl font-semibold mb-2 flex items-center gap-3">
+      <Wrench class="w-8 h-8 text-terracotta" />
       Toolkit
     </h1>
     <p class="text-ink-secondary mb-8">How I work: tools, processes, and philosophy.</p>
@@ -46,18 +48,10 @@ const categories = [
 </BaseLayout>
 
 <style>
-  .prose {
-    max-width: 65ch;
-    font-family: var(--font-body-alt);
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--color-ink);
-  }
-  .prose h2 { font-family: var(--font-title-alt); font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-  .prose h3 { font-family: var(--font-title-alt); font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  /* Architect combo: IBM Plex Sans body, Ysabeau headings, tighter spacing */
+  .prose { font-family: var(--font-body-alt); font-size: 1rem; }
+  .prose h2 { font-family: var(--font-title-alt); }
+  .prose h3 { font-family: var(--font-title-alt); }
   .prose p { margin-bottom: 1rem; }
-  .prose ul, .prose ol { margin-bottom: 1rem; padding-left: 1.5rem; }
   .prose li { margin-bottom: 0.4rem; }
-  .prose strong { font-weight: 700; }
-  .prose a { color: var(--color-terracotta); text-decoration: underline; text-underline-offset: 2px; }
 </style>

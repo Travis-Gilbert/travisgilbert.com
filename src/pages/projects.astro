@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Briefcase from 'phosphor-astro/Briefcase.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Projects — Travis Gilbert" description="Professional work: compliance tools, housing development, community organizing, and more.">
+  <section class="py-8">
+    <h1 class="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+      <Briefcase class="w-8 h-8 text-terracotta" />
+      Projects
+    </h1>
+    <p class="text-ink-secondary mb-8">Professional work and community projects.</p>
+  </section>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {projects.map((project) => (
+      <ProjectCard
+        title={project.data.title}
+        role={project.data.role}
+        description={project.data.description}
+        year={project.data.year}
+        urls={project.data.urls}
+        tags={project.data.tags}
+      />
+    ))}
+  </div>
+</BaseLayout>

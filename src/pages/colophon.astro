@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Info from 'phosphor-astro/Info.astro';
 import RoughLine from '../components/rough/RoughLine.tsx';
 import RoughBox from '../components/rough/RoughBox.tsx';
 ---
 
 <BaseLayout title="Colophon — Travis Gilbert" description="About this site: design decisions, tech stack, and philosophy.">
   <section class="py-8">
-    <h1 class="font-title text-3xl md:text-4xl font-bold mb-2">
+    <h1 class="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+      <Info class="w-8 h-8 text-terracotta" />
       Colophon
     </h1>
     <p class="text-ink-secondary mb-8">About this site and the thinking behind it.</p>
