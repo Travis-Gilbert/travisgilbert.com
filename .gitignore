@@ -3,8 +3,10 @@ node_modules/
 
 # Build output
 dist/
+out/
+.next/
 
-# Astro
+# Astro (legacy)
 .astro/
 
 # Vercel

@@ -1,8 +1,10 @@
-// DotGrid.tsx — Interactive dot grid with radial edge vignette
-// Preact island · ~2.5 kB gzipped
-// Usage: <DotGrid client:load />
+'use client';
 
-import { useEffect, useRef, useCallback } from 'preact/hooks';
+// DotGrid.tsx — Interactive dot grid with radial edge vignette
+// React client component · ~2.5 kB gzipped
+// Ported from Preact island (preact/hooks → react)
+
+import { useEffect, useRef, useCallback } from 'react';
 
 interface DotGridProps {
   dotRadius?: number;

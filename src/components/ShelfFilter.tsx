@@ -1,5 +1,7 @@
-import { useState } from 'preact/hooks';
-import { slugifyTag } from '../lib/slugify';
+'use client';
+
+import { useState } from 'react';
+import { slugifyTag } from '@/lib/slugify';
 
 interface ShelfEntry {
   title: string;
@@ -10,7 +12,7 @@ interface ShelfEntry {
   tags: string[];
 }
 
-interface Props {
+interface ShelfFilterProps {
   items: ShelfEntry[];
 }
 
@@ -24,24 +26,25 @@ const typeColors: Record<string, string> = {
   other: 'bg-code text-ink-secondary border-border',
 };
 
-export default function ShelfFilter({ items }: Props) {
+export default function ShelfFilter({ items }: ShelfFilterProps) {
   const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const types = ['all', ...new Set(items.map((item) => item.type))];
 
-  const filtered = activeFilter === 'all'
-    ? items
-    : items.filter((item) => item.type === activeFilter);
+  const filtered =
+    activeFilter === 'all'
+      ? items
+      : items.filter((item) => item.type === activeFilter);
 
   return (
     <div>
       {/* Filter buttons */}
-      <div class="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-8">
         {types.map((type) => (
           <button
             key={type}
             onClick={() => setActiveFilter(type)}
-            class={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+            className={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
               activeFilter === type
                 ? 'bg-terracotta text-paper border-terracotta'
                 : 'bg-transparent text-ink-secondary border-border hover:border-terracotta hover:text-terracotta'
@@ -53,43 +56,53 @@ export default function ShelfFilter({ items }: Props) {
       </div>
 
       {/* Items */}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.map((item) => (
-          <div key={item.title} class="border border-border rounded-xl p-5 bg-surface transition-shadow hover:shadow-md">
-            <div class="flex items-start justify-between gap-2 mb-2">
+          <div
+            key={item.title}
+            className="border border-border rounded-xl p-5 bg-surface transition-shadow hover:shadow-md"
+          >
+            <div className="flex items-start justify-between gap-2 mb-2">
               <div>
-                <h3 class="text-base font-bold m-0" style="font-family: var(--font-title)">
+                <h3
+                  className="text-base font-bold m-0"
+                  style={{ fontFamily: 'var(--font-title)' }}
+                >
                   {item.url ? (
                     <a
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="text-ink hover:text-terracotta"
+                      className="text-ink hover:text-terracotta"
                     >
-                      {item.title} <span class="text-xs">&#8599;</span>
+                      {item.title} <span className="text-xs">&#8599;</span>
                     </a>
                   ) : (
                     item.title
                   )}
                 </h3>
-                <p class="text-sm text-ink-secondary m-0 font-mono">{item.creator}</p>
+                <p className="text-sm text-ink-secondary m-0 font-mono">
+                  {item.creator}
+                </p>
               </div>
               <span
-                class={`inline-block text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border whitespace-nowrap ${
+                className={`inline-block text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border whitespace-nowrap ${
                   typeColors[item.type] || typeColors.other
                 }`}
               >
                 {item.type}
               </span>
             </div>
-            <p class="text-sm text-ink-secondary m-0 mb-2">{item.annotation}</p>
+            <p className="text-sm text-ink-secondary m-0 mb-2">
+              {item.annotation}
+            </p>
             {item.tags.length > 0 && (
-              <div class="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1">
                 {item.tags.map((tag) => (
                   <a
                     key={tag}
                     href={`/tags/${slugifyTag(tag)}`}
-                    class="inline-flex items-center font-mono text-[10px] uppercase tracking-widest px-1.5 py-0.5 border border-border text-ink-faint rounded hover:border-terracotta hover:text-terracotta transition-colors no-underline"
+                    className="inline-flex items-center font-mono text-[10px] uppercase tracking-widest px-1.5 py-0.5 border border-border text-ink-faint rounded hover:border-terracotta hover:text-terracotta transition-colors no-underline"
                   >
                     {tag}
                   </a>
@@ -101,7 +114,9 @@ export default function ShelfFilter({ items }: Props) {
       </div>
 
       {filtered.length === 0 && (
-        <p class="text-ink-secondary text-center py-8">No items in this category yet.</p>
+        <p className="text-ink-secondary text-center py-8">
+          No items in this category yet.
+        </p>
       )}
     </div>
   );

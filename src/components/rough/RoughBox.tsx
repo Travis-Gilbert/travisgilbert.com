@@ -1,8 +1,10 @@
-import { useRef, useEffect, type ComponentChildren } from 'preact/hooks';
+'use client';
+
+import { useRef, useEffect, type ReactNode } from 'react';
 import rough from 'roughjs';
 
-interface Props {
-  children: ComponentChildren;
+interface RoughBoxProps {
+  children: ReactNode;
   padding?: number;
   roughness?: number;
   strokeWidth?: number;
@@ -17,7 +19,7 @@ export default function RoughBox({
   strokeWidth = 1,
   stroke = '#3A3632',
   seed,
-}: Props) {
+}: RoughBoxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -62,13 +64,17 @@ export default function RoughBox({
   }, [roughness, strokeWidth, stroke, seed]);
 
   return (
-    <div ref={containerRef} class="relative" style={{ padding: `${padding}px` }}>
+    <div
+      ref={containerRef}
+      className="relative"
+      style={{ padding: `${padding}px` }}
+    >
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        class="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
       />
-      <div class="relative z-10">{children}</div>
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }

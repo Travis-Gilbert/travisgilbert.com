@@ -53,29 +53,19 @@
   --color-dark-surface: #2A2622;
   --color-dark-border: #3A3632;
 
-  /* Typography — The Documentarian (Primary System) */
-  --font-title: 'Vollkorn', Georgia, serif;
-  --font-title-alt: 'Ysabeau', sans-serif;
-  --font-body: 'Cabin', sans-serif;
-  --font-body-alt: 'IBM Plex Sans', sans-serif;
-  --font-mono: 'Courier Prime', 'Courier New', monospace;
-  --font-mono-alt: 'Space Mono', monospace;
-  --font-name: 'Amarna', serif;
+  /* Typography — The Documentarian (Primary System)
+     Variables set by next/font on <html> → aliased here for design tokens */
+  --font-title: var(--font-vollkorn), Georgia, serif;
+  --font-title-alt: var(--font-ysabeau), sans-serif;
+  --font-body: var(--font-cabin), sans-serif;
+  --font-body-alt: var(--font-ibm-plex), sans-serif;
+  --font-mono: var(--font-courier-prime), 'Courier New', monospace;
+  --font-mono-alt: var(--font-space-mono), monospace;
+  --font-name: var(--font-amarna), serif;
 
   /* Legacy aliases (prevent breaking existing Tailwind classes) */
-  --font-heading: 'Vollkorn', Georgia, serif;
-  --font-display: 'Vollkorn', Georgia, serif;
-}
-
-/* ─────────────────────────────────────────────────
-   Self-hosted Fonts
-   ───────────────────────────────────────────────── */
-
-@font-face {
-  font-family: 'Amarna';
-  src: url('/fonts/Amarna-Variable.ttf') format('truetype');
-  font-weight: 100 700;
-  font-display: swap;
+  --font-heading: var(--font-vollkorn), Georgia, serif;
+  --font-display: var(--font-vollkorn), Georgia, serif;
 }
 
 /* ─────────────────────────────────────────────────
@@ -279,4 +269,149 @@ blockquote {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--color-ink-muted);
+}
+
+/* ─────────────────────────────────────────────────
+   Per-page Prose Variants
+   Replaces Astro scoped <style> overrides
+   ───────────────────────────────────────────────── */
+
+.prose-investigations {
+  font-family: var(--font-body-alt);
+}
+
+.prose-investigations h2,
+.prose-investigations h3 {
+  font-family: var(--font-title);
+}
+
+.prose-toolkit {
+  font-family: var(--font-body);
+}
+
+.prose-toolkit h2,
+.prose-toolkit h3 {
+  font-family: var(--font-title-alt);
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────────
+   Project Timeline
+   Migrated from Astro scoped <style> in ProjectTimeline.astro
+   ───────────────────────────────────────────────── */
+
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.4375rem;
+  top: 0.875rem;
+  bottom: 0.875rem;
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+.timeline-year-group {
+  margin-bottom: 1.5rem;
+}
+.timeline-year-group:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-year-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0 0.5rem;
+  margin-left: -2.5rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2.5rem;
+  width: 0.5625rem;
+  height: 0.5625rem;
+  border-radius: 50%;
+  background-color: var(--color-border);
+  border: 2px solid var(--color-paper);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.timeline-dot--year {
+  position: relative;
+  left: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  background-color: var(--color-terracotta);
+  border: 2px solid var(--color-paper);
+  top: auto;
+  transform: none;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0.25rem 0;
+}
+
+.timeline-item .timeline-dot {
+  top: 0.875rem;
+}
+
+.timeline-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  padding: 0.375rem 0;
+  transition: color 0.15s ease;
+}
+
+.timeline-summary::-webkit-details-marker {
+  display: none;
+}
+
+.timeline-summary:hover {
+  color: var(--color-terracotta);
+}
+
+.timeline-summary:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.timeline-caret {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.timeline-details[open] > .timeline-summary .timeline-caret {
+  transform: rotate(90deg);
+}
+
+.timeline-content {
+  margin-top: 0.375rem;
+  margin-left: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: rgba(250, 246, 241, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-caret {
+    transition: none;
+  }
 }

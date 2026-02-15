@@ -1,8 +1,10 @@
-import { useRef, useEffect, type ComponentChildren } from 'preact/hooks';
+'use client';
+
+import { useRef, useEffect, type ReactNode } from 'react';
 import { annotate } from 'rough-notation';
 
-interface Props {
-  children: ComponentChildren;
+interface RoughUnderlineProps {
+  children: ReactNode;
   type?: 'underline' | 'highlight' | 'circle' | 'box' | 'strike-through';
   color?: string;
   animate?: boolean;
@@ -19,7 +21,7 @@ export default function RoughUnderline({
   animationDuration = 400,
   strokeWidth = 1.5,
   show = true,
-}: Props) {
+}: RoughUnderlineProps) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function RoughUnderline({
   }, [type, color, animate, animationDuration, strokeWidth, show]);
 
   return (
-    <span ref={ref} class="inline">
+    <span ref={ref} className="inline">
       {children}
     </span>
   );

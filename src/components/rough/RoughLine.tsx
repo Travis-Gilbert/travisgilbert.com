@@ -1,12 +1,14 @@
-import { useRef, useEffect } from 'preact/hooks';
+'use client';
+
+import { useRef, useEffect } from 'react';
 import rough from 'roughjs';
 
-interface Props {
+interface RoughLineProps {
   roughness?: number;
   strokeWidth?: number;
   stroke?: string;
   seed?: number;
-  class?: string;
+  className?: string;
 }
 
 export default function RoughLine({
@@ -14,8 +16,8 @@ export default function RoughLine({
   strokeWidth = 1,
   stroke = '#3A3632',
   seed,
-  class: className,
-}: Props) {
+  className,
+}: RoughLineProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -60,8 +62,8 @@ export default function RoughLine({
   }, [roughness, strokeWidth, stroke, seed]);
 
   return (
-    <div ref={wrapperRef} class={`w-full my-4 ${className || ''}`}>
-      <canvas ref={canvasRef} aria-hidden="true" class="block" />
+    <div ref={wrapperRef} className={`w-full my-4 ${className || ''}`}>
+      <canvas ref={canvasRef} aria-hidden="true" className="block" />
     </div>
   );
 }
