@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Wrench } from '@phosphor-icons/react/dist/ssr';
 import { getCollection, renderMarkdown } from '@/lib/content';
 import type { ToolkitEntry } from '@/lib/content';
+import RoughBox from '@/components/rough/RoughBox';
 
 export const metadata: Metadata = {
   title: 'Toolkit',
@@ -53,15 +54,14 @@ export default async function ToolkitPage() {
             </h2>
             <div className="space-y-4">
               {items.map((item) => (
-                <div
-                  key={item.slug}
-                  className="border border-border rounded-xl bg-surface p-6"
-                >
-                  <div
-                    className="prose prose-toolkit"
-                    dangerouslySetInnerHTML={{ __html: item.html }}
-                  />
-                </div>
+                <RoughBox key={item.slug} padding={24}>
+                  <div className="bg-surface">
+                    <div
+                      className="prose prose-toolkit"
+                      dangerouslySetInnerHTML={{ __html: item.html }}
+                    />
+                  </div>
+                </RoughBox>
               ))}
             </div>
           </section>

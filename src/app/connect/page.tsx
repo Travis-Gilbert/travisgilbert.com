@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ChatCircle } from '@phosphor-icons/react/dist/ssr';
 import RoughLine from '@/components/rough/RoughLine';
+import RoughBox from '@/components/rough/RoughBox';
 
 export const metadata: Metadata = {
   title: 'Connect',
@@ -23,44 +24,46 @@ export default function ConnectPage() {
       </section>
 
       <div className="max-w-xl space-y-8">
-        <div className="border border-border rounded-xl bg-surface p-6">
-          <h2 className="font-title text-lg font-bold mb-4">Find me</h2>
-          <ul className="space-y-3 list-none p-0 m-0">
-            <li className="flex items-center gap-3">
-              <span className="font-mono text-xs uppercase tracking-widest text-ink-secondary w-20">
-                YouTube
-              </span>
-              <a
-                href="#"
-                className="font-mono text-sm hover:text-terracotta-hover"
-              >
-                @travisgilbert
-              </a>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="font-mono text-xs uppercase tracking-widest text-ink-secondary w-20">
-                GitHub
-              </span>
-              <a
-                href="#"
-                className="font-mono text-sm hover:text-terracotta-hover"
-              >
-                @travisgilbert
-              </a>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="font-mono text-xs uppercase tracking-widest text-ink-secondary w-20">
-                Email
-              </span>
-              <a
-                href="mailto:hello@travisgilbert.com"
-                className="font-mono text-sm hover:text-terracotta-hover"
-              >
-                hello@travisgilbert.com
-              </a>
-            </li>
-          </ul>
-        </div>
+        <RoughBox padding={24}>
+          <div className="bg-surface">
+            <h2 className="font-title text-lg font-bold mb-4">Find me</h2>
+            <ul className="space-y-3 list-none p-0 m-0">
+              <li className="flex items-center gap-3">
+                <span className="font-mono text-xs uppercase tracking-widest text-ink-secondary w-20">
+                  YouTube
+                </span>
+                <a
+                  href="#"
+                  className="font-mono text-sm hover:text-terracotta-hover"
+                >
+                  @travisgilbert
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="font-mono text-xs uppercase tracking-widest text-ink-secondary w-20">
+                  GitHub
+                </span>
+                <a
+                  href="#"
+                  className="font-mono text-sm hover:text-terracotta-hover"
+                >
+                  @travisgilbert
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="font-mono text-xs uppercase tracking-widest text-ink-secondary w-20">
+                  Email
+                </span>
+                <a
+                  href="mailto:hello@travisgilbert.com"
+                  className="font-mono text-sm hover:text-terracotta-hover"
+                >
+                  hello@travisgilbert.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </RoughBox>
 
         <RoughLine />
 

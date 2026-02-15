@@ -1,5 +1,6 @@
 import { ArrowSquareOut } from '@phosphor-icons/react/dist/ssr';
 import TagList from './TagList';
+import RoughBox from './rough/RoughBox';
 
 interface ProjectUrl {
   label: string;
@@ -24,8 +25,8 @@ export default function ProjectCard({
   tags,
 }: ProjectCardProps) {
   return (
-    <div className="border border-border rounded-xl bg-surface p-5 transition-shadow hover:shadow-md">
-      <div className="flex flex-col gap-2">
+    <RoughBox padding={20}>
+      <div className="bg-surface flex flex-col gap-2">
         <div>
           <h3 className="text-lg font-title font-bold m-0">{title}</h3>
           <p className="text-sm text-ink-secondary m-0 font-mono">
@@ -53,6 +54,6 @@ export default function ProjectCard({
           <TagList tags={tags} />
         </div>
       </div>
-    </div>
+    </RoughBox>
   );
 }

@@ -1,4 +1,5 @@
 import TagList from './TagList';
+import RoughBox from './rough/RoughBox';
 
 interface ShelfItemProps {
   title: string;
@@ -28,8 +29,8 @@ export default function ShelfItem({
   tags,
 }: ShelfItemProps) {
   return (
-    <div className="border border-border rounded-xl bg-surface p-5 transition-shadow hover:shadow-md">
-      <div className="flex flex-col gap-2">
+    <RoughBox padding={20}>
+      <div className="bg-surface flex flex-col gap-2">
         <div className="flex items-start justify-between gap-2">
           <div>
             <h3 className="text-base font-title font-bold m-0">
@@ -59,6 +60,6 @@ export default function ShelfItem({
         <p className="text-sm text-ink-secondary m-0">{annotation}</p>
         <TagList tags={tags} />
       </div>
-    </div>
+    </RoughBox>
   );
 }
