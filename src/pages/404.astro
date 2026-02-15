@@ -6,11 +6,12 @@ import RoughBox from '../components/rough/RoughBox.tsx';
 <BaseLayout title="Case Not Found — Travis Gilbert">
   <div class="py-16 md:py-24 text-center max-w-lg mx-auto">
     <RoughBox client:load padding={32}>
-      <p class="font-mono text-6xl text-terracotta mb-4">404</p>
-      <h1 class="font-display text-2xl mb-4">Case Not Found</h1>
+      <p class="font-mono-alt text-6xl text-terracotta mb-4 font-bold">404</p>
+      <h1 class="font-title text-2xl font-bold mb-4">Case Not Found</h1>
       <p class="text-ink-secondary mb-6">
         The page you're looking for has either been moved, removed, or never existed. These things happen in the field.
       </p>
+      <p class="font-mono-alt text-xs text-ink-faint mb-6">&gt; ERR_CASE_FILE_NOT_FOUND</p>
       <a href="/" class="font-mono text-sm hover:text-terracotta-hover">
         &larr; Return to base
       </a>

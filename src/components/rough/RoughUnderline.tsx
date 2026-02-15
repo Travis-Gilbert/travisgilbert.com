@@ -14,10 +14,10 @@ interface Props {
 export default function RoughUnderline({
   children,
   type = 'underline',
-  color = '#B5543A',
+  color = '#B45A2D',
   animate = true,
   animationDuration = 400,
-  strokeWidth = 2,
+  strokeWidth = 1.5,
   show = true,
 }: Props) {
   const ref = useRef<HTMLSpanElement>(null);

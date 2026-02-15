@@ -30,7 +30,7 @@ function isActive(href: string): boolean {
           <a
             href={link.href}
             class:list={[
-              'font-heading text-sm tracking-wide no-underline transition-colors',
+              'font-mono text-xs uppercase tracking-widest no-underline transition-colors',
               isActive(link.href)
                 ? 'text-terracotta font-bold'
                 : 'text-ink-secondary hover:text-terracotta',
@@ -66,7 +66,7 @@ function isActive(href: string): boolean {
           <a
             href={link.href}
             class:list={[
-              'font-heading text-base no-underline block py-1',
+              'font-mono text-sm uppercase tracking-widest no-underline block py-1',
               isActive(link.href)
                 ? 'text-terracotta font-bold'
                 : 'text-ink-secondary hover:text-terracotta',

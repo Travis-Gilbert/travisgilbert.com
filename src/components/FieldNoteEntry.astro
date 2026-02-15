@@ -1,7 +1,6 @@
 ---
 import DateStamp from './DateStamp.astro';
 import TagList from './TagList.astro';
-import RoughBox from './rough/RoughBox.tsx';
 
 interface Props {
   title: string;
@@ -14,11 +13,11 @@ interface Props {
 const { title, date, excerpt, tags, href } = Astro.props;
 ---
 
-<RoughBox client:visible padding={20}>
+<div class="border border-border rounded-xl bg-surface p-5 transition-shadow hover:shadow-md">
   <a href={href} class="block no-underline text-ink hover:text-ink group">
     <div class="flex flex-col gap-2">
       <DateStamp date={date} />
-      <h3 class="text-lg font-heading font-bold group-hover:text-terracotta transition-colors m-0">
+      <h3 class="text-lg font-title font-bold group-hover:text-terracotta transition-colors m-0">
         {title}
       </h3>
       {excerpt && (
@@ -29,4 +28,4 @@ const { title, date, excerpt, tags, href } = Astro.props;
       </div>
     </div>
   </a>
-</RoughBox>
+</div>

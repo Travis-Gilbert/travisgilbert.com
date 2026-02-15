@@ -13,8 +13,8 @@ interface Props {
 export default function RoughBox({
   children,
   padding = 16,
-  roughness = 1.5,
-  strokeWidth = 1.5,
+  roughness = 1.2,
+  strokeWidth = 1,
   stroke = '#3A3632',
   seed,
 }: Props) {

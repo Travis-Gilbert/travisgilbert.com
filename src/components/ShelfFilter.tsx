@@ -40,7 +40,7 @@ export default function ShelfFilter({ items }: Props) {
           <button
             key={type}
             onClick={() => setActiveFilter(type)}
-            class={`font-mono text-xs px-3 py-1.5 rounded border cursor-pointer transition-colors ${
+            class={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
               activeFilter === type
                 ? 'bg-terracotta text-paper border-terracotta'
                 : 'bg-transparent text-ink-secondary border-border hover:border-terracotta hover:text-terracotta'
@@ -54,10 +54,10 @@ export default function ShelfFilter({ items }: Props) {
       {/* Items */}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.map((item) => (
-          <div key={item.title} class="border border-border rounded p-4 bg-card">
+          <div key={item.title} class="border border-border rounded-xl p-5 bg-surface transition-shadow hover:shadow-md">
             <div class="flex items-start justify-between gap-2 mb-2">
               <div>
-                <h3 class="text-base font-heading font-bold m-0">
+                <h3 class="text-base font-bold m-0" style="font-family: var(--font-title)">
                   {item.url ? (
                     <a
                       href={item.url}
@@ -74,7 +74,7 @@ export default function ShelfFilter({ items }: Props) {
                 <p class="text-sm text-ink-secondary m-0 font-mono">{item.creator}</p>
               </div>
               <span
-                class={`inline-block text-xs font-mono px-2 py-0.5 rounded border whitespace-nowrap ${
+                class={`inline-block text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border whitespace-nowrap ${
                   typeColors[item.type] || typeColors.other
                 }`}
               >

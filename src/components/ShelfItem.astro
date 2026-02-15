@@ -1,6 +1,5 @@
 ---
 import TagList from './TagList.astro';
-import RoughBox from './rough/RoughBox.tsx';
 
 interface Props {
   title: string;
@@ -24,11 +23,11 @@ const typeColors: Record<string, string> = {
 };
 ---
 
-<RoughBox client:visible padding={20}>
+<div class="border border-border rounded-xl bg-surface p-5 transition-shadow hover:shadow-md">
   <div class="flex flex-col gap-2">
     <div class="flex items-start justify-between gap-2">
       <div>
-        <h3 class="text-base font-heading font-bold m-0">
+        <h3 class="text-base font-title font-bold m-0">
           {url ? (
             <a href={url} target="_blank" rel="noopener noreferrer" class="hover:text-terracotta">
               {title} <span class="text-xs">&#8599;</span>
@@ -46,4 +45,4 @@ const typeColors: Record<string, string> = {
     <p class="text-sm text-ink-secondary m-0">{annotation}</p>
     <TagList tags={tags} />
   </div>
-</RoughBox>
+</div>

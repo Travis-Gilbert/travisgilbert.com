@@ -12,6 +12,7 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 
+<!-- Built with curiosity and too much coffee. If you're reading this, we should talk. -->
 <html lang="en">
   <head>
     <Head title={title} description={description} />
@@ -20,9 +21,21 @@ const { title, description } = Astro.props;
     <DotGrid client:load />
     <a href="#main-content" class="skip-to-content">Skip to content</a>
     <Nav />
+    <!-- Content begins. No CMS was harmed in the making of this site. -->
     <main id="main-content" class="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
       <slot />
     </main>
     <Footer />
+    <script is:inline>
+      console.log(
+        '%c\n  ████████╗  ██████╗ \n  ╚══██╔══╝ ██╔════╝ \n     ██║    ██║  ███╗\n     ██║    ██║   ██║\n     ██║    ╚██████╔╝\n     ╚═╝     ╚═════╝ \n',
+        'color: #B45A2D; font-family: monospace; font-size: 10px;'
+      );
+      console.log(
+        '%cYou found the console. Nice.\n%cInvestigating how design decisions shape human outcomes.\nhttps://travisgilbert.com',
+        'color: #B45A2D; font-weight: bold; font-size: 14px;',
+        'color: #6A5E52; font-size: 11px;'
+      );
+    </script>
   </body>
 </html>

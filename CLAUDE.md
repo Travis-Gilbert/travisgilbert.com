@@ -8,12 +8,13 @@ Spec: `~/Downloads/site-spec.md`
 
 ## Tech Stack
 
-Astro 5 (SSG), Tailwind CSS v4, Preact (islands), rough.js, rough-notation, Google Fonts (Courier Prime, Lora, Special Elite)
+Astro 5 (SSG), Tailwind CSS v4, Preact (islands), rough.js, rough-notation, Google Fonts (Courier Prime, Lora, Special Elite), Amarna (self-hosted variable font)
 
 ## Key Directories
 
 | Path | Purpose |
 |------|---------|
+| `public/fonts/` | Self-hosted fonts (Amarna variable font) |
 | `src/data/` | Content collections (Astro 5 glob loader convention) |
 | `src/data/investigations/` | Video case file entries (markdown) |
 | `src/data/field-notes/` | Blog posts (markdown) |
@@ -55,8 +56,19 @@ npm run preview    # Preview production build locally
 
 | Decision | Choice | Why |
 |----------|--------|-----|
+| Dot grid background | Canvas Preact island (`DotGrid.tsx`) with spring physics | CSS radial-gradient can't animate individual dots; canvas gives per-dot control |
+| Canvas stacking | `isolation: isolate` on body, `z-index: -1` on canvas, `background-color` on `html` | Body bg propagates to html per CSS spec; isolation creates stacking context |
+| Name font | Amarna (self-hosted variable font in `public/fonts/`) | Not on Google Fonts; single 63kB variable file for all weights |
+| Vercel deployment | Git integration auto-deploy (push to `main`) | Vercel CLI has peer dep conflicts with Node 25; git integration is reliable |
 | Tailwind version | v4 via `@tailwindcss/vite` | v3 integration is legacy; v4 pairs with CSS custom properties |
 | Content location | `src/data/` | Astro 5 convention with glob loaders |
 | Config file | `src/content.config.ts` | Required by Astro 5 (not legacy `src/content/config.ts`) |
 | Island framework | Preact | 3kB, spec recommends, excellent Astro support |
 | Git repo scope | Project directory only | Was incorrectly at `~` |
+
+## Gotchas
+
+- **Canvas behind page content**: Fixed canvas needs `isolation: isolate` on body + `background-color` on `html` (not body) + `z-index: -1` — otherwise body bg paints over it
+- **Vercel CLI + Node 25**: `npx vercel` fails with ERESOLVE peer dependency conflict — use git push auto-deploy instead
+- **Preact island canvas pattern**: DPR scaling required — multiply canvas dimensions by `devicePixelRatio`, use `ctx.setTransform(dpr, 0, 0, dpr, 0, 0)`, set CSS size to logical pixels
+- **Preact islands use mutable closure vars** (not `useState`) for high-frequency animation state (rAF, mouse coords, typed arrays)

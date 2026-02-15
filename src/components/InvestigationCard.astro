@@ -1,7 +1,6 @@
 ---
 import DateStamp from './DateStamp.astro';
 import TagList from './TagList.astro';
-import RoughBox from './rough/RoughBox.tsx';
 
 interface Props {
   title: string;
@@ -16,7 +15,7 @@ const { title, summary, date, youtubeId, tags, href } = Astro.props;
 const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
 ---
 
-<RoughBox client:visible padding={0}>
+<div class="border border-border rounded-xl bg-surface overflow-hidden transition-shadow hover:shadow-md" style="border-left: 3px solid var(--color-terracotta);">
   <a href={href} class="block no-underline text-ink hover:text-ink group">
     <div class="md:flex">
       <!-- Thumbnail -->
@@ -31,7 +30,7 @@ const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
       <!-- Content -->
       <div class="p-4 flex-1 flex flex-col gap-2">
         <DateStamp date={date} />
-        <h3 class="text-lg font-heading font-bold group-hover:text-terracotta transition-colors m-0">
+        <h3 class="text-lg font-title font-bold group-hover:text-terracotta transition-colors m-0">
           {title}
         </h3>
         <p class="text-sm text-ink-secondary m-0 line-clamp-2">{summary}</p>
@@ -41,4 +40,4 @@ const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
       </div>
     </div>
   </a>
-</RoughBox>
+</div>

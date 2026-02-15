@@ -10,8 +10,8 @@ interface Props {
 }
 
 export default function RoughLine({
-  roughness = 1.5,
-  strokeWidth = 1.5,
+  roughness = 1,
+  strokeWidth = 1,
   stroke = '#3A3632',
   seed,
   class: className,

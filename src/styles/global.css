@@ -1,40 +1,70 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────
-   Design Tokens (CSS Custom Properties)
-   Palette from site spec: warm paper / terracotta
+   Design Tokens — Patent Parchment Palette
+   Brand System v1.0 · Feb 2026
    ───────────────────────────────────────────────── */
 
 @theme inline {
   /* Backgrounds */
-  --color-paper: #F5F0E8;
-  --color-card: #FFFDF8;
-  --color-code: #EDE8DC;
+  --color-paper: #F0EBE4;
+  --color-surface: #FAF6F1;
+  --color-bg-alt: #E8E0D6;
+  --color-card: #FAF6F1;           /* alias → surface */
+  --color-code: #E8E0D6;           /* alias → bg-alt */
 
   /* Text */
-  --color-ink: #2C2A26;
-  --color-ink-secondary: #6B6560;
-  --color-ink-faint: #A09A90;
+  --color-ink: #2A2420;
+  --color-ink-muted: #6A5E52;
+  --color-ink-light: #9A8E82;
+  --color-ink-secondary: #6A5E52;  /* alias → ink-muted */
+  --color-ink-faint: #9A8E82;      /* alias → ink-light */
 
-  /* Accent */
-  --color-terracotta: #B5543A;
-  --color-terracotta-hover: #934430;
-  --color-gold: #D4A574;
+  /* Accent — Terracotta (brand constant across all modes) */
+  --color-terracotta: #B45A2D;
+  --color-terracotta-hover: #9A4A22;
+  --color-terracotta-light: #D4875A;
+
+  /* Secondary — Teal */
+  --color-teal: #2D5F6B;
+  --color-teal-light: #3A7A88;
+
+  /* Highlight — Gold */
+  --color-gold: #C49A4A;
+  --color-gold-light: #D4AA5A;
 
   /* Ink (rough.js strokes) */
   --color-rough: #3A3632;
   --color-rough-light: #8A8480;
 
-  /* Utility */
-  --color-border: #D5CFC5;
-  --color-shadow: rgba(44, 42, 38, 0.08);
+  /* Borders */
+  --color-border: #D4CCC4;
+  --color-border-light: #E8E0D6;
 
-  /* Font families */
-  --font-heading: 'Courier Prime', 'Courier New', monospace;
-  --font-body: 'Lora', Georgia, serif;
-  --font-display: 'Special Elite', 'Courier Prime', 'Courier New', monospace;
+  /* Utility */
+  --color-shadow: rgba(42, 36, 32, 0.08);
+
+  /* Semantic */
+  --color-success: #5A7A4A;
+  --color-error: #A44A3A;
+
+  /* Dark Mode */
+  --color-dark: #1A1816;
+  --color-dark-surface: #2A2622;
+  --color-dark-border: #3A3632;
+
+  /* Typography — The Documentarian (Primary System) */
+  --font-title: 'Vollkorn', Georgia, serif;
+  --font-title-alt: 'Ysabeau', sans-serif;
+  --font-body: 'Cabin', sans-serif;
+  --font-body-alt: 'IBM Plex Sans', sans-serif;
   --font-mono: 'Courier Prime', 'Courier New', monospace;
-  --font-name: 'Amarna', 'Special Elite', serif;
+  --font-mono-alt: 'Space Mono', monospace;
+  --font-name: 'Amarna', serif;
+
+  /* Legacy aliases (prevent breaking existing Tailwind classes) */
+  --font-heading: 'Vollkorn', Georgia, serif;
+  --font-display: 'Vollkorn', Georgia, serif;
 }
 
 /* ─────────────────────────────────────────────────
@@ -62,7 +92,8 @@ html {
 body {
   font-family: var(--font-body);
   color: var(--color-ink);
-  line-height: 1.65;
+  font-size: 1.0625rem; /* 17px per brand spec */
+  line-height: 1.75;
 }
 
 /* ─────────────────────────────────────────────────
@@ -70,7 +101,7 @@ body {
    ───────────────────────────────────────────────── */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+  font-family: var(--font-title);
   line-height: 1.2;
   color: var(--color-ink);
 }
@@ -78,21 +109,38 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-size: 2.44rem;
   font-weight: 700;
+  line-height: 1.08;
 }
 
 h2 {
-  font-size: 1.95rem;
+  font-size: 1.625rem; /* 26px per brand spec */
   font-weight: 700;
 }
 
 h3 {
-  font-size: 1.56rem;
+  font-size: 1.375rem; /* 22px */
   font-weight: 600;
 }
 
 h4 {
-  font-size: 1.25rem;
+  font-size: 1.125rem; /* 18px */
   font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────
+   Labels — Monospace metadata pattern
+   ───────────────────────────────────────────────── */
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-ink-muted);
+}
+
+.label--accent {
+  color: var(--color-terracotta);
 }
 
 /* ─────────────────────────────────────────────────
@@ -116,7 +164,7 @@ a:hover {
 code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background-color: var(--color-code);
+  background-color: var(--color-bg-alt);
   padding: 0.15em 0.35em;
   border-radius: 3px;
 }
@@ -128,7 +176,7 @@ pre code {
 
 pre {
   font-family: var(--font-mono);
-  background-color: var(--color-code);
+  background-color: var(--color-bg-alt);
   padding: 1rem;
   border-radius: 4px;
   overflow-x: auto;
@@ -143,11 +191,13 @@ pre {
 blockquote {
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 1.1rem;
-  border-left: 3px solid var(--color-rough);
-  padding-left: 1rem;
+  font-size: 1.05rem;
+  border-left: 3px solid var(--color-terracotta);
+  background: var(--color-bg-alt);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
   margin-left: 0;
-  color: var(--color-ink-secondary);
+  color: var(--color-ink-muted);
 }
 
 /* ─────────────────────────────────────────────────
@@ -162,7 +212,7 @@ blockquote {
   color: var(--color-paper);
   padding: 0.5rem 1rem;
   z-index: 100;
-  font-family: var(--font-heading);
+  font-family: var(--font-mono);
   font-size: 0.85rem;
 }
 
@@ -177,5 +227,5 @@ blockquote {
 .meta {
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--color-ink-secondary);
+  color: var(--color-ink-muted);
 }
