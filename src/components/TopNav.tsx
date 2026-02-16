@@ -3,27 +3,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import {
-  MagnifyingGlass,
-  NotePencil,
-  Briefcase,
-  Wrench,
-  ChatCircle,
-} from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
+import SketchIcon from '@/components/rough/SketchIcon';
+import type { IconName } from '@/components/rough/SketchIcon';
 
 interface NavLink {
   href: string;
   label: string;
-  icon: Icon;
+  icon: IconName;
 }
 
 const navLinks: NavLink[] = [
-  { href: '/investigations', label: 'On ...', icon: MagnifyingGlass },
-  { href: '/field-notes', label: 'Field Notes', icon: NotePencil },
-  { href: '/projects', label: 'Projects', icon: Briefcase },
-  { href: '/toolkit', label: 'Toolkit', icon: Wrench },
-  { href: '/connect', label: 'Connect', icon: ChatCircle },
+  { href: '/investigations', label: 'On ...', icon: 'magnifying-glass' },
+  { href: '/field-notes', label: 'Field Notes', icon: 'note-pencil' },
+  { href: '/projects', label: 'Projects', icon: 'briefcase' },
+  { href: '/toolkit', label: 'Toolkit', icon: 'wrench' },
+  { href: '/connect', label: 'Connect', icon: 'chat-circle' },
 ];
 
 export default function TopNav() {
@@ -66,7 +60,6 @@ export default function TopNav() {
         {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
           {navLinks.map((link) => {
-            const IconComponent = link.icon;
             const active = isActive(link.href);
             return (
               <li key={link.href}>
@@ -78,7 +71,7 @@ export default function TopNav() {
                       : 'text-ink-secondary hover:text-terracotta'
                   }`}
                 >
-                  <IconComponent size={16} weight="thin" />
+                  <SketchIcon name={link.icon} size={16} />
                   {link.label}
                 </Link>
               </li>
@@ -116,7 +109,6 @@ export default function TopNav() {
         <div className="md:hidden bg-paper border-t border-border">
           <ul className="list-none m-0 p-4 flex flex-col gap-3">
             {navLinks.map((link) => {
-              const IconComponent = link.icon;
               const active = isActive(link.href);
               return (
                 <li key={link.href}>
@@ -129,7 +121,7 @@ export default function TopNav() {
                     }`}
                     onClick={closeMobile}
                   >
-                    <IconComponent size={16} weight="thin" />
+                    <SketchIcon name={link.icon} size={16} />
                     {link.label}
                   </Link>
                 </li>
