@@ -20,7 +20,9 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `src/content/` | Markdown content collections (investigations, field-notes, shelf, toolkit, projects) |
 | `src/lib/content.ts` | Content loading: Zod schemas, `getCollection()`, `getEntry()`, `renderMarkdown()` |
 | `src/lib/slugify.ts` | Tag slug utility |
-| `src/styles/global.css` | Design tokens, prose variants, timeline CSS |
+| `src/components/SectionLabel.tsx` | Monospace colored section headers (terracotta/teal/gold) |
+| `src/styles/global.css` | Design tokens, surface utilities, prose variants, timeline CSS |
+| `docs/plans/` | Design documents and implementation plans |
 | `public/fonts/` | Self-hosted Amarna variable font |
 
 ## Development Commands
@@ -79,7 +81,54 @@ Tailwind → font-title class
 
 ### RoughBox Pattern
 
-`RoughBox` is the primary card container site-wide — hand-drawn canvas borders replacing CSS `border-border rounded-xl`. Used in all content cards (InvestigationCard, FieldNoteEntry, ProjectCard, ShelfItem, ShelfFilter, toolkit boxes, connect box). Each wraps content in `<div className="bg-surface">` for readability against the dot grid.
+`RoughBox` is the primary card container site-wide — hand-drawn canvas borders with transparent brand-color fills. Props:
+
+| Prop | Default | Description |
+|------|---------|-------------|
+| `tint` | `'neutral'` | Brand-color fill wash: `'terracotta'` / `'teal'` / `'gold'` / `'neutral'` |
+| `grid` | `true` | Blueprint grid lines (40px, opacity 0.35) inside card |
+| `elevated` | `true` | Warm brown box-shadow |
+| `hover` | `false` | Lift-on-hover animation (opt-in for linked cards) |
+| `stroke` | derived from `tint` | rough.js border color; auto-matches tint when not set |
+
+**Architecture:** Surface styles (tint, grid, shadow) go on the wrapper `<div>` via CSS classes. The canvas only draws the hand-drawn stroke. Stroke color is derived from `tint` via `tintStroke` map unless explicitly overridden.
+
+**Color mapping:**
+
+| Card Type | tint | stroke | fill opacity |
+|-----------|------|--------|-------------|
+| InvestigationCard | terracotta | `#B45A2D` | 4.5% |
+| FieldNoteEntry | teal | `#2D5F6B` | 4% |
+| ProjectCard / ShelfItem | gold | `#C49A4A` | 5% |
+| Toolkit boxes | terracotta | `#B45A2D` | 4.5% |
+| Connect box | teal | `#2D5F6B` | 4% |
+| Neutral (404, etc) | neutral | `#3A3632` | 2.5% |
+
+### Surface Materiality System
+
+The site uses a layered texture system to create skeuomorphic depth:
+
+1. **Page level**: DotGrid canvas (spring physics) + paper grain (`body::after` SVG feTurbulence at 2.5%)
+2. **Card level**: Transparent tint fill + blueprint grid (`::before` at 35%) + warm shadow + rough.js colored stroke
+3. **Content level**: SectionLabel (monospace colored headers), TagList with tint-matched colors
+
+**Key CSS classes** (in `global.css`):
+- `.surface-elevated` — warm shadow only (no bg-color; tint handles fill)
+- `.surface-tint-{color}` — transparent brand-color wash
+- `.surface-grid` — blueprint grid overlay via `::before`
+- `.surface-hover` — lift animation with shadow transition
+
+### Section Color Language
+
+Each content type has a brand color that flows through labels, icons, tags, card tints, and borders:
+
+| Section | Color | Label Text |
+|---------|-------|-----------|
+| Investigations / Toolkit | Terracotta (`#B45A2D`) | INVESTIGATION FILE / WORKSHOP TOOLS |
+| Field Notes / Connect | Teal (`#2D5F6B`) | FIELD OBSERVATION / OPEN CHANNEL |
+| Projects / Shelf | Gold (`#C49A4A`) | PROJECT ARCHIVE / REFERENCE SHELF |
+
+Components: `SectionLabel` (monospace header), `TagList` (tint prop), page icons
 
 ## Deployment
 
@@ -91,7 +140,20 @@ Vercel with native Next.js builder. Git integration auto-deploys on push to `mai
 |-------|--------|
 | Astro → Next.js 15 migration | Complete |
 | RoughBox site-wide card borders | Complete |
-| Vercel deployment | Needs dashboard Output Directory fix |
+| Surface materiality layer (Phase 1) | Complete |
+| Card tint + colored borders | Complete |
+| Section color system (labels, icons, tags) | Complete |
+| Vercel deployment | Auto-deploys on push to main |
+
+### Next Steps (Phase 2 — Micro-interactions & Radix UI)
+
+Decided during brainstorm: Radix Primitives + fully custom styling (no shadcn/ui). Phase 2 focuses on:
+- Interactive components via Radix UI primitives (accessibility-first)
+- Micro-interactions that reinforce the "physical workbench" metaphor
+- Potential: accordion/collapsible sections, tooltips, dialog modals
+- Evidence callout labels in article blockquotes (monospace "FIELD NOTE — SOURCE DOCUMENT")
+- DateStamp subtle color enhancement (terracotta-light tint)
+- See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for design doc
 
 ## Recent Decisions
 
@@ -106,6 +168,12 @@ Vercel with native Next.js builder. Git integration auto-deploys on push to `mai
 | Card containers | RoughBox everywhere | Hand-drawn borders are the brand signature; replaces plain CSS borders |
 | Dot grid background | Canvas React component with spring physics | Ported from Preact to React hooks |
 | Name font | Amarna (`next/font/local`) | Not on Google Fonts; single 63kB variable file |
+| UI library | Radix Primitives (not shadcn/ui) | Full custom styling over brand; shadcn opinionated defaults fight the aesthetic |
+| Card fills | Transparent brand-color tints, not solid white | White `bg-surface` was jarring against warm parchment; tints let paper show through |
+| Card border colors | Derived from tint (terracotta/teal/gold) | Monochrome dark ink borders made all cards look identical; colored borders create section identity |
+| Blueprint grid placement | Cards only, NOT page background or article prose | Dots (DotGrid) for page bg; grid for card interiors; prose stays clean for reading |
+| Section color system | terracotta=investigations, teal=field-notes, gold=projects | Creates wayfinding language — color tells you where you are on the site |
+| Grid opacity | 0.35 (bumped from 0.15) | Grid was invisible against the card fill at lower opacity |
 
 ## Gotchas
 
