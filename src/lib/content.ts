@@ -59,6 +59,7 @@ export const projectSchema = z.object({
   description: z.string().max(300),
   year: z.coerce.number(),
   date: z.coerce.date(),
+  organization: z.string().optional(),
   urls: z.array(z.object({
     label: z.string(),
     url: z.string().url(),

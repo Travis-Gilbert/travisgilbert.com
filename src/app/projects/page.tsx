@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Briefcase } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
 import type { Project } from '@/lib/content';
-import ProjectTimeline from '@/components/ProjectTimeline';
+import ProjectColumns from '@/components/ProjectColumns';
 import SectionLabel from '@/components/SectionLabel';
 
 export const metadata: Metadata = {
@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   const projects = getCollection<Project>('projects')
-    .filter((p) => !p.data.draft)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+    .filter((p) => !p.data.draft);
 
   return (
     <>
@@ -25,17 +24,18 @@ export default function ProjectsPage() {
           Projects
         </h1>
         <p className="text-ink-secondary mb-8">
-          Professional work and community projects.
+          Professional work and community projects, grouped by role.
         </p>
       </section>
 
-      <ProjectTimeline
+      <ProjectColumns
         projects={projects.map((p) => ({
+          slug: p.slug,
           title: p.data.title,
           role: p.data.role,
+          date: p.data.date.toISOString(),
+          organization: p.data.organization,
           description: p.data.description,
-          year: p.data.year,
-          date: p.data.date,
           urls: p.data.urls,
           tags: p.data.tags,
         }))}
