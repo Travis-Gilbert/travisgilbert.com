@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { slugifyTag } from '@/lib/slugify';
 import RoughBox from './rough/RoughBox';
 
@@ -39,12 +40,20 @@ export default function ShelfFilter({ items }: ShelfFilterProps) {
 
   return (
     <div>
-      {/* Filter buttons */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      {/* Filter buttons (Radix ToggleGroup for keyboard nav + ARIA) */}
+      <ToggleGroup.Root
+        type="single"
+        value={activeFilter}
+        onValueChange={(value) => {
+          if (value) setActiveFilter(value);
+        }}
+        className="flex flex-wrap gap-2 mb-8"
+        aria-label="Filter shelf items by type"
+      >
         {types.map((type) => (
-          <button
+          <ToggleGroup.Item
             key={type}
-            onClick={() => setActiveFilter(type)}
+            value={type}
             className={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
               activeFilter === type
                 ? 'bg-terracotta text-paper border-terracotta'
@@ -52,9 +61,9 @@ export default function ShelfFilter({ items }: ShelfFilterProps) {
             }`}
           >
             {type === 'all' ? 'All' : type}
-          </button>
+          </ToggleGroup.Item>
         ))}
-      </div>
+      </ToggleGroup.Root>
 
       {/* Items */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

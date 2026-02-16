@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { Info } from '@phosphor-icons/react/dist/ssr';
 import RoughLine from '@/components/rough/RoughLine';
 import RoughBox from '@/components/rough/RoughBox';
+import SketchIcon from '@/components/rough/SketchIcon';
 
 export const metadata: Metadata = {
   title: 'Colophon',
@@ -13,7 +13,7 @@ export default function ColophonPage() {
     <>
       <section className="py-8">
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <Info size={32} className="text-terracotta" />
+          <SketchIcon name="info" size={32} color="var(--color-terracotta)" />
           Colophon
         </h1>
         <p className="text-ink-secondary mb-8">
@@ -28,7 +28,7 @@ export default function ColophonPage() {
           </h2>
           <p className="leading-relaxed">
             This site is designed to feel like a patent drawing come to life
-            &mdash; warm parchment, india ink, and the careful precision of
+            : warm parchment, india ink, and the careful precision of
             technical documentation. The dot-grid background, hand-drawn accent,
             and editorial typography are deliberate. They signal that this is a
             working space for someone who reads footnotes and visits primary
@@ -83,17 +83,17 @@ export default function ColophonPage() {
           <p className="leading-relaxed">
             The site uses three typography systems that shift by context.{' '}
             <strong className="font-title">Vollkorn</strong> carries editorial
-            weight in headings &mdash; a sturdy, old-style serif that grounds
+            weight in headings: a sturdy, old-style serif that grounds
             every page title. <strong>Cabin</strong> handles most body text as a
             humanist sans that shows the calligrapher&apos;s hand without
             shouting about it.
           </p>
           <p className="leading-relaxed">
             For investigations and technical pages,{' '}
-            <strong>IBM Plex Sans</strong> steps in as the body face &mdash;
+            <strong>IBM Plex Sans</strong> steps in as the body face,
             more clinical, more precise. Labels and metadata are always set in{' '}
-            <span className="font-mono text-sm">Courier Prime</span> &mdash;
-            uppercase, tracked, monospaced &mdash; evoking typewritten case
+            <span className="font-mono text-sm">Courier Prime</span>:
+            uppercase, tracked, monospaced, evoking typewritten case
             files and document stamps.
           </p>
           <p className="leading-relaxed">
@@ -117,7 +117,7 @@ export default function ColophonPage() {
           </p>
           <p className="leading-relaxed">
             The hand-drawn underline on the homepage is the only rough.js
-            element that&apos;s truly decorative &mdash; and it&apos;s a
+            element that&apos;s truly decorative, and it&apos;s a
             statement. It says: this work is in progress. The ideas are real,
             but they&apos;re still being shaped. Nothing here pretends to be
             final.
@@ -134,7 +134,7 @@ export default function ColophonPage() {
             Fonts self-hosted via next/font. Hosting by Vercel.
           </p>
           <p className="leading-relaxed">
-            The site was largely built with Claude Code &mdash; which means an
+            The site was largely built with Claude Code, which means an
             AI wrote most of the markup, but a human made all the design
             decisions. That distinction matters.
           </p>

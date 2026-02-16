@@ -1,17 +1,15 @@
 import Link from 'next/link';
-import { MagnifyingGlass, ArrowRight, BookOpen } from '@phosphor-icons/react/dist/ssr';
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
-import type { Investigation, FieldNote, Project, ShelfEntry } from '@/lib/content';
-import SectionLabel from '@/components/SectionLabel';
+import type { Investigation, FieldNote, Project } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
-import MarginNote from '@/components/MarginNote';
 import RoughBox from '@/components/rough/RoughBox';
 import RoughLine from '@/components/rough/RoughLine';
-import RoughUnderline from '@/components/rough/RoughUnderline';
 import RoughCallout from '@/components/rough/RoughCallout';
 import RoughPivotCallout from '@/components/rough/RoughPivotCallout';
 import ScrollReveal from '@/components/ScrollReveal';
+import CyclingTagline from '@/components/CyclingTagline';
 
 export default function HomePage() {
   const investigations = getCollection<Investigation>('investigations')
@@ -28,10 +26,6 @@ export default function HomePage() {
     .sort((a, b) => a.data.order - b.data.order)
     .slice(0, 3);
 
-  const shelfItems = getCollection<ShelfEntry>('shelf')
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-    .slice(0, 2);
-
   const featured = investigations[0];
 
   // Callout texts: prefer the `callouts` array, fall back to single `callout`
@@ -39,7 +33,7 @@ export default function HomePage() {
     ? featured.data.callouts ?? (featured.data.callout ? [featured.data.callout] : [])
     : [];
 
-  // Content counts for margin annotation
+  // Content counts for hero counters
   const totalInvestigations = investigations.length;
   const totalFieldNotes = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft).length;
   const totalProjects = getCollection<Project>('projects').filter((p) => !p.data.draft).length;
@@ -47,37 +41,39 @@ export default function HomePage() {
   return (
     <div>
       {/* ═══════════════════════════════════════════════
-          Hero: Name + Tagline (no outer box)
-          Scale and negative space create hierarchy
+          Hero: Compact name + cycling tagline
+          ~15% viewport height, content starts immediately below
           ═══════════════════════════════════════════════ */}
-      <section className="pt-10 md:pt-16 pb-4 md:pb-6">
+      <section className="pt-8 md:pt-12 pb-2 md:pb-4 border-b border-border-light">
         <ScrollReveal>
-          <div className="relative">
-            <SectionLabel color="terracotta">Case File: Open</SectionLabel>
-
+          {/* Row 1: Name (left) + Content counters (right) */}
+          <div className="flex items-baseline justify-between">
             <h1
-              className="text-4xl md:text-5xl mb-3 mt-2"
-              style={{ fontFamily: 'var(--font-name)', fontWeight: 400 }}
+              className="text-[2.5rem] md:text-[2.75rem] m-0"
+              style={{ fontFamily: 'var(--font-name)', fontWeight: 400, lineHeight: 1.0 }}
             >
-              <RoughUnderline
-                type="underline"
-                color="var(--color-terracotta)"
-                strokeWidth={2}
-              >
-                Travis Gilbert
-              </RoughUnderline>
+              Travis Gilbert
             </h1>
 
-            <p className="text-ink-secondary text-lg md:text-xl max-w-2xl leading-relaxed mb-0">
-              Investigating how design decisions shape human outcomes.
-            </p>
-
-            {/* Content counts: workbench inventory */}
-            <div className="mt-3 text-right">
-              <MarginNote>
-                {totalInvestigations} investigation{totalInvestigations !== 1 ? 's' : ''} · {totalFieldNotes} field note{totalFieldNotes !== 1 ? 's' : ''} · {totalProjects} project{totalProjects !== 1 ? 's' : ''}
-              </MarginNote>
+            <div className="hidden md:flex items-baseline gap-6">
+              <div className="flex flex-col items-center">
+                <span className="font-title text-lg font-semibold text-ink">{totalInvestigations}</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink-light">On</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="font-title text-lg font-semibold text-ink">{totalProjects}</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink-light">Projects</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="font-title text-lg font-semibold text-ink">{totalFieldNotes}</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink-light">Notes</span>
+              </div>
             </div>
+          </div>
+
+          {/* Row 2: Cycling tagline */}
+          <div className="mt-1">
+            <CyclingTagline />
           </div>
         </ScrollReveal>
       </section>
@@ -89,7 +85,6 @@ export default function HomePage() {
       {featured && (
         <section className="py-8 md:py-12">
           <ScrollReveal>
-            {/* Slightly wider than standard content via negative margins */}
             <div className="lg:-mx-4 xl:-mx-8 relative">
               <RoughBox
                 padding={0}
@@ -109,14 +104,9 @@ export default function HomePage() {
                     </div>
                   )}
                   <div className="p-6 md:p-8 relative">
-                    <div className="flex items-start gap-3 mb-3">
-                      <MagnifyingGlass
-                        size={18}
-                        weight="bold"
-                        className="text-terracotta mt-0.5 flex-shrink-0"
-                      />
-                      <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-terracotta">
-                        Current Inquiry
+                    <div className="mb-3">
+                      <span className="font-mono text-[9.5px] uppercase tracking-[0.08em] text-paper bg-terracotta px-2 py-0.5 rounded-sm font-bold">
+                        Work in Progress
                       </span>
                     </div>
                     <DateStamp date={featured.data.date} />
@@ -170,12 +160,11 @@ export default function HomePage() {
       )}
 
       {/* ═══════════════════════════════════════════════
-          Investigations: "Pinned to the wall"
-          Skip the featured item (already shown above)
+          On ...: Investigations (skip featured)
           ═══════════════════════════════════════════════ */}
       {investigations.length > 1 && (
         <section className="py-6">
-          <RoughLine label="Investigation File" labelColor="var(--color-terracotta)" />
+          <RoughLine label="On ..." labelColor="var(--color-terracotta)" />
 
           <div className="space-y-5">
             {investigations.slice(1).map((investigation) => {
@@ -236,18 +225,74 @@ export default function HomePage() {
               href="/investigations"
               className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
             >
-              All investigations <ArrowRight size={14} weight="bold" />
+              All entries <ArrowRight size={14} weight="bold" />
             </Link>
           </p>
         </section>
       )}
 
       {/* ═══════════════════════════════════════════════
-          Field Notes: "Scattered notes" (asymmetric grid)
+          Projects: Grid with scroll-reveal stagger
+          (moved UP from below Field Notes)
+          ═══════════════════════════════════════════════ */}
+      {projects.length > 0 && (
+        <section className="py-6">
+          <RoughLine label="Projects" labelColor="var(--color-gold)" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projects.map((project, i) => (
+              <ScrollReveal key={project.slug} delay={i * 80}>
+                <RoughBox padding={20} hover tint="gold">
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <h3 className="text-lg font-title font-bold m-0">{project.data.title}</h3>
+                      <p className="text-sm text-ink-secondary m-0 font-mono">
+                        {project.data.role} &middot; {project.data.year}
+                      </p>
+                    </div>
+                    <p className="text-sm text-ink-secondary m-0">{project.data.description}</p>
+                    {project.data.urls.length > 0 && (
+                      <div className="flex flex-wrap gap-3 mt-1">
+                        {project.data.urls.map((link) => (
+                          <a
+                            key={link.url}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-mono text-xs text-terracotta hover:text-terracotta-hover no-underline"
+                          >
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    <div className="pt-1">
+                      <TagList tags={project.data.tags} tint="gold" />
+                    </div>
+                  </div>
+                </RoughBox>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          <p className="mt-4 text-right">
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-1 font-mono text-sm text-gold hover:text-gold/80 no-underline"
+            >
+              All projects <ArrowRight size={14} weight="bold" />
+            </Link>
+          </p>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════
+          Field Notes: Asymmetric grid
+          (moved DOWN from above Projects)
           ═══════════════════════════════════════════════ */}
       {fieldNotes.length > 0 && (
         <section className="py-6">
-          <RoughLine label="Field Observations" labelColor="var(--color-teal)" />
+          <RoughLine label="Field Notes" labelColor="var(--color-teal)" />
 
           <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-5 items-start">
             {fieldNotes.map((note, i) => (
@@ -299,105 +344,6 @@ export default function HomePage() {
               All field notes <ArrowRight size={14} weight="bold" />
             </Link>
           </p>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════
-          Projects: Grid with scroll-reveal stagger
-          ═══════════════════════════════════════════════ */}
-      {projects.length > 0 && (
-        <section className="py-6">
-          <RoughLine label="Project Archive" labelColor="var(--color-gold)" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {projects.map((project, i) => (
-              <ScrollReveal key={project.slug} delay={i * 80}>
-                <RoughBox padding={20} hover tint="gold">
-                  <div className="flex flex-col gap-2">
-                    <div>
-                      <h3 className="text-lg font-title font-bold m-0">{project.data.title}</h3>
-                      <p className="text-sm text-ink-secondary m-0 font-mono">
-                        {project.data.role} &middot; {project.data.year}
-                      </p>
-                    </div>
-                    <p className="text-sm text-ink-secondary m-0">{project.data.description}</p>
-                    {project.data.urls.length > 0 && (
-                      <div className="flex flex-wrap gap-3 mt-1">
-                        {project.data.urls.map((link) => (
-                          <a
-                            key={link.url}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-mono text-xs text-terracotta hover:text-terracotta-hover no-underline"
-                          >
-                            {link.label}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                    <div className="pt-1">
-                      <TagList tags={project.data.tags} tint="gold" />
-                    </div>
-                  </div>
-                </RoughBox>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          <p className="mt-4 text-right">
-            <Link
-              href="/projects"
-              className="inline-flex items-center gap-1 font-mono text-sm text-gold hover:text-gold/80 no-underline"
-            >
-              All projects <ArrowRight size={14} weight="bold" />
-            </Link>
-          </p>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════
-          Shelf Teaser: "Sticky note" aside
-          ═══════════════════════════════════════════════ */}
-      {shelfItems.length > 0 && (
-        <section className="py-6">
-          <ScrollReveal direction="right">
-            <div className="md:max-w-sm md:ml-auto">
-              <RoughBox padding={16} tint="gold" grid={false} elevated>
-                <SectionLabel color="gold">Recently Shelved</SectionLabel>
-                <div className="space-y-3 mt-2">
-                  {shelfItems.map((item) => (
-                    <div key={item.slug}>
-                      <Link
-                        href="/shelf"
-                        className="block no-underline text-ink hover:text-gold transition-colors"
-                      >
-                        <span className="block font-title font-bold text-sm">
-                          {item.data.title}
-                        </span>
-                        <span className="block font-mono text-[10px] uppercase tracking-widest text-ink-light">
-                          {item.data.creator}
-                        </span>
-                      </Link>
-                      <p className="text-xs text-ink-secondary mt-1 line-clamp-2 italic m-0">
-                        &ldquo;{item.data.annotation.slice(0, 120)}
-                        {item.data.annotation.length > 120 ? '...' : ''}&rdquo;
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-3 mb-0">
-                  <Link
-                    href="/shelf"
-                    className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-gold hover:text-gold/80 no-underline"
-                  >
-                    <BookOpen size={12} weight="bold" />
-                    Full shelf <ArrowRight size={10} weight="bold" />
-                  </Link>
-                </p>
-              </RoughBox>
-            </div>
-          </ScrollReveal>
         </section>
       )}
     </div>

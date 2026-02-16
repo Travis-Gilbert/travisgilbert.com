@@ -7,6 +7,7 @@ import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
 import RoughLine from '@/components/rough/RoughLine';
+import SourcesCollapsible from '@/components/SourcesCollapsible';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -60,26 +61,7 @@ export default async function InvestigationDetailPage({ params }: Props) {
       {entry.data.sources.length > 0 && (
         <>
           <RoughLine />
-          <section className="py-6">
-            <h2 className="font-title text-xl font-bold mb-4">
-              Sources &amp; Further Reading
-            </h2>
-            <ul className="list-none p-0 space-y-2">
-              {entry.data.sources.map((source) => (
-                <li key={source.url}>
-                  <a
-                    href={source.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-sm hover:text-terracotta-hover"
-                  >
-                    {source.title}{' '}
-                    <span className="text-xs">&#8599;</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <SourcesCollapsible sources={entry.data.sources} />
         </>
       )}
 

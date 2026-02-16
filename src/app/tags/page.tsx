@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Tag } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
+import SketchIcon from '@/components/rough/SketchIcon';
 import type { Investigation, FieldNote, ShelfEntry, Project } from '@/lib/content';
 import { slugifyTag } from '@/lib/slugify';
 
@@ -49,7 +49,7 @@ export default function TagsPage() {
     <>
       <section className="py-8">
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <Tag size={32} className="text-terracotta" />
+          <SketchIcon name="tag" size={32} color="var(--color-terracotta)" />
           Tags
         </h1>
         <p className="text-ink-secondary mb-8">Browse content by topic.</p>

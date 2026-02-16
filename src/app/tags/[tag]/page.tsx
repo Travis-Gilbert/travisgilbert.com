@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Tag } from '@phosphor-icons/react/dist/ssr';
 import { notFound } from 'next/navigation';
+import SketchIcon from '@/components/rough/SketchIcon';
 import { getCollection } from '@/lib/content';
 import type {
   Investigation,
@@ -119,7 +119,7 @@ export default async function TagDetailPage({ params }: Props) {
           Tag
         </p>
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <Tag size={32} className="text-terracotta" />
+          <SketchIcon name="tag" size={32} color="var(--color-terracotta)" />
           {displayName}
         </h1>
         <p className="text-ink-secondary">

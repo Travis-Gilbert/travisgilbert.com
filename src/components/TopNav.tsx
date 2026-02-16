@@ -8,8 +8,6 @@ import {
   NotePencil,
   Briefcase,
   Wrench,
-  BookOpen,
-  Info,
   ChatCircle,
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
@@ -21,12 +19,10 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { href: '/investigations', label: 'Investigations', icon: MagnifyingGlass },
+  { href: '/investigations', label: 'On ...', icon: MagnifyingGlass },
   { href: '/field-notes', label: 'Field Notes', icon: NotePencil },
   { href: '/projects', label: 'Projects', icon: Briefcase },
   { href: '/toolkit', label: 'Toolkit', icon: Wrench },
-  { href: '/shelf', label: 'Shelf', icon: BookOpen },
-  { href: '/colophon', label: 'Colophon', icon: Info },
   { href: '/connect', label: 'Connect', icon: ChatCircle },
 ];
 

@@ -64,9 +64,22 @@ Most components are **Server Components** by default. Components needing browser
 | `rough/RoughCallout.tsx` | Canvas straight-line callouts |
 | `rough/RoughPivotCallout.tsx` | Canvas 45° leader-line callouts |
 | `ScrollReveal.tsx` | IntersectionObserver scroll animations |
-| `ProjectTimeline.tsx` | Expandable timeline with `useState` |
+| `ProjectColumns.tsx` | Role-based column layout with expand/collapse cards |
+| `CyclingTagline.tsx` | Typewriter animation via useState/useEffect |
+| `ToolkitAccordion.tsx` | Radix Accordion with expand/collapse state |
+| `SourcesCollapsible.tsx` | Radix Collapsible for investigation sources |
 
 Server Components can import and render Client Components; children pass through as a slot without hydrating.
+
+### SketchIcon System
+
+`SketchIcon` (`src/components/rough/SketchIcon.tsx`) is a Server Component that renders hand-drawn SVG section identity icons. Used on all section page headers, replacing Phosphor icons for brand consistency.
+
+8 icon names: `magnifying-glass`, `note-pencil`, `briefcase`, `wrench`, `book-open`, `chat-circle`, `tag`, `info`.
+
+Props: `name`, `size` (default 32), `color` (default currentColor), `className`. All paths are `fill="none"` with `strokeWidth={1.8}` and round linecap/linejoin for felt-tip pen effect.
+
+**Note:** Phosphor icons are still used for functional UI glyphs (CaretDown, ArrowSquareOut, ArrowRight, List, X) where brand identity isn't needed.
 
 ### Font System
 
@@ -108,7 +121,7 @@ Tailwind > font-title class
 |-----------|------|--------|-------------|
 | InvestigationCard | terracotta | `#B45A2D` | 4.5% |
 | FieldNoteEntry | teal | `#2D5F6B` | 4% |
-| ProjectCard / ShelfItem | gold | `#C49A4A` | 5% |
+| ShelfItem | gold | `#C49A4A` | 5% |
 | Toolkit boxes | terracotta | `#B45A2D` | 4.5% |
 | Connect box | teal | `#2D5F6B` | 4% |
 | Neutral (404, etc) | neutral | `#3A3632` | 2.5% |
@@ -126,6 +139,31 @@ Tailwind > font-title class
 | `pivotDown` | `true` | Diagonal direction |
 
 Used exclusively on the homepage featured investigation card. Two callouts max, staggered on opposite sides.
+
+### ProjectColumns Pattern
+
+`ProjectColumns` is a Client Component that renders projects grouped by role in a responsive column grid. Intentionally does NOT use RoughBox (three-state dynamic rgba tinting is incompatible with RoughBox's fixed CSS classes).
+
+**Role configuration:** Each role has a hex color, rgb string, label, and description. Roles are matched via `slugifyRole()` which does `.toLowerCase().replace(/\s+/g, '-')`. The `&` character is preserved (e.g., "Built & Designed" becomes `"built-&-designed"`).
+
+| Role | Color | Hex |
+|------|-------|-----|
+| Built & Designed | Teal | `#2D5F6B` |
+| Project Managed | Terracotta | `#B45A2D` |
+| Organized | Gold | `#C49A4A` |
+| Created | Green | `#5A7A4A` |
+
+**Card three-state tinting** (rest/hover/expanded) uses inline `rgba(ROLE_RGB, opacity)`:
+
+| State | Background | Border | Shadow |
+|-------|-----------|--------|--------|
+| Rest | 5.5% | 0% (invisible) | 2% |
+| Hover | 9% | 25% | 5% |
+| Expanded | 10% | 35% | 8% |
+
+**Column dividers:** 2px solid dark charcoal (`#3A3632`) at 25% opacity. Uniform color across all columns (not per-role) for visual alignment.
+
+**Content schema:** Projects have an optional `organization` field added to the Zod schema in `content.ts`. The `date` field is serialized to ISO string across the RSC boundary (Server Component passes `.toISOString()`, Client Component receives string).
 
 ### Surface Materiality System
 
@@ -147,11 +185,11 @@ Each content type has a brand color that flows through labels, icons, tags, card
 
 | Section | Color | Label Text |
 |---------|-------|-----------|
-| Investigations / Toolkit | Terracotta (`#B45A2D`) | INVESTIGATION FILE / WORKSHOP TOOLS |
-| Field Notes / Connect | Teal (`#2D5F6B`) | FIELD OBSERVATION / OPEN CHANNEL |
-| Projects / Shelf | Gold (`#C49A4A`) | PROJECT ARCHIVE / REFERENCE SHELF |
+| On ... / Toolkit | Terracotta (`#B45A2D`) | ON ... / WORKSHOP TOOLS |
+| Field Notes / Connect | Teal (`#2D5F6B`) | FIELD NOTES / OPEN CHANNEL |
+| Projects / Shelf | Gold (`#C49A4A`) | PROJECTS / REFERENCE SHELF |
 
-Components: `SectionLabel` (monospace header), `TagList` (tint prop), page icons
+Components: `SectionLabel` (monospace header), `TagList` (tint prop), `SketchIcon` (hand-drawn SVG page icons)
 
 ## Deployment
 
@@ -172,7 +210,7 @@ Vercel with native Next.js builder. Git integration auto-deploys on push to `mai
 | Content pipeline (gray-matter + remark + Zod) | ✅ |
 | Vercel deployment | ✅ Auto-deploys on push to main |
 
-### Phase 2: Micro-interactions + Homepage Redesign 🔄 In Progress
+### Phase 2: Micro-interactions + Page Redesigns 🔄 In Progress
 
 | Item | Status |
 |------|--------|
@@ -182,12 +220,21 @@ Vercel with native Next.js builder. Git integration auto-deploys on push to `mai
 | Caveat handwritten font + `--font-annotation` token | ✅ |
 | RoughPivotCallout 45° leader-line callouts | ✅ |
 | Featured investigation promoted (no outer box, scale hierarchy) | ✅ |
-| Radix UI primitives (accordion, tooltips, dialogs) | Planned |
-| Evidence callout labels in article blockquotes | Planned |
-| DateStamp subtle color enhancement (terracotta-light) | Planned |
+| Projects page: role-based column layout (ProjectColumns) | ✅ |
+| Projects page: past-tense role labels, YouTube "Created" column | ✅ |
+| Homepage hero: compact name + CyclingTagline typewriter | ✅ |
+| Nav restructure: On ... / Field Notes / Projects / Toolkit / Connect | ✅ |
+| Homepage section reorder: On, Projects, Field Notes (shelf removed) | ✅ |
+| "Work in Progress" badge on featured card | ✅ |
+| Radix UI primitives (Accordion, Collapsible, ToggleGroup) | ✅ |
+| Evidence callout labels in article blockquotes | ✅ |
+| DateStamp subtle color enhancement (terracotta-light) | ✅ |
+| Custom skeuomorphic icons (SketchIcon) replacing Phosphor on pages | ✅ |
+| Colophon no-dash rule enforcement | ✅ |
 
 Decided during brainstorm: Radix Primitives + fully custom styling (no shadcn/ui).
-See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for design doc.
+See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for surface materiality design.
+See `docs/plans/2026-02-16-projects-page-redesign.md` for projects column layout design.
 
 ### Phase 3: Content + Polish (Not Started)
 
@@ -202,26 +249,28 @@ See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for design doc.
 | Decision | Choice | Why |
 |----------|--------|-----|
 | Framework migration | Next.js 15 App Router | More powerful than Astro for where the design is heading; React-native state/routing |
-| Navigation style | Horizontal top nav (TopNav.tsx) | Reverted sidebar layout; didn't look good for most content types |
-| Static rendering | No `output: 'export'` | Vercel's native Next.js builder handles SSG automatically; export mode caused dist directory conflicts |
 | Content loading | gray-matter + remark + Zod | MDX is overkill, Contentlayer is deprecated; manual pipeline gives full control |
-| Tailwind integration | `@tailwindcss/postcss` | Replaces `@tailwindcss/vite` from Astro; standard PostCSS plugin for Next.js |
-| Icon library | `@phosphor-icons/react` with `weight` prop | Replaces `phosphor-astro`; SSR imports from `dist/ssr` for Server Components |
-| Card containers | RoughBox everywhere | Hand-drawn borders are the brand signature; replaces plain CSS borders |
-| Dot grid background | Canvas React component with spring physics | Ported from Preact to React hooks |
-| Name font | Amarna (`next/font/local`) | Not on Google Fonts; single 63kB variable file |
+| Card containers | RoughBox everywhere (except ProjectColumns) | Hand-drawn borders are the brand signature; ProjectColumns needs dynamic rgba states |
 | UI library | Radix Primitives (not shadcn/ui) | Full custom styling over brand; shadcn opinionated defaults fight the aesthetic |
 | Card fills | Transparent brand-color tints, not solid white | White `bg-surface` was jarring against warm parchment; tints let paper show through |
-| Card border colors | Derived from tint (terracotta/teal/gold) | Monochrome dark ink borders made all cards look identical; colored borders create section identity |
-| Blueprint grid placement | Cards only, NOT page background or article prose | Dots (DotGrid) for page bg; grid for card interiors; prose stays clean for reading |
 | Section color system | terracotta=investigations, teal=field-notes, gold=projects | Creates wayfinding language; color tells you where you are on the site |
-| Grid opacity | 0.35 (bumped from 0.15) | Grid was invisible against the card fill at lower opacity |
 | No dashes | Colons, periods, parentheses, semicolons | User style preference; applies to all code, comments, and content |
-| Pivot callout geometry | Short 18px diagonal stub, text at pivot | Full diagonal pushed text too far from card; stub keeps it compact |
-| Callout staggering | Opposite sides (right + left) | Same-side callouts overlap; opposite sides create visual balance |
 | Featured card hierarchy | Scale + negative space, no outer box | Double-bordered hero was visually cluttered; subtraction creates emphasis |
 | Font annotation token | `--font-annotation` (Caveat) | Separate from `--font-handwritten` for semantic clarity |
 | Page title separators | Pipe `\|` not em dash | "Title \| Section" in metadata; consistent with no-dash rule |
+| Projects layout | Role-based columns, not timeline | Communicates "types of work I do" rather than chronological history |
+| Projects: no RoughBox | Inline rgba tinting with three states | RoughBox's fixed CSS classes can't handle dynamic rest/hover/expanded opacity |
+| Projects: past-tense roles | "Built & Designed", "Project Managed", "Organized", "Created" | Reads as accomplishments, not job titles; Builder + Designer merged |
+| Projects: no role pills | Removed horizontal pill bar | Column headers already convey the same information; pills were redundant |
+| Projects: column dividers | Dark charcoal (`#3A3632`) at 25% opacity, uniform | Per-role colored dividers looked uneven; single color creates aligned architectural lines |
+| Projects: role slug with `&` | `slugifyRole()` preserves `&` in slugs | "Built & Designed" slugs to `"built-&-designed"`; stricter slugifiers would break lookup |
+| Hero redesign | Compact name + cycling "On..." tagline | Tall static heroes create dead space; cycling tagline shows range and keeps hero alive |
+| Nav restructure | On ... / Field Notes / Projects / Toolkit / Connect | Shelf and Colophon folded into Toolkit; Projects promoted above Field Notes |
+| "Investigations" rename | "On ..." | Less institutional; signals essayistic depth; pattern reinforced by individual titles |
+| "Current Inquiry" rename | "Work in Progress" | Honest about content status; lowers pretension barrier; matches workbench framing |
+| Section icons | SketchIcon (hand-drawn SVG) for pages, Phosphor for UI glyphs | Brand identity icons match rough.js aesthetic; utility icons stay crisp |
+| Radix integration | Accordion + Collapsible + ToggleGroup, fully custom styled | Headless primitives give accessibility for free; no shadcn visual opinions |
+| Evidence callouts | `.prose-investigations blockquote::before` with `:has()` selector | Only investigation articles get "NOTE" labels; semantic CSS, no component changes |
 
 ## Gotchas
 
@@ -236,3 +285,5 @@ See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for design doc.
 - **ScrollReveal + headless testing**: Elements start at `opacity: 0`; IntersectionObserver won't fire in headless browsers. Force visibility for visual testing
 - **Callout overlap**: Two callouts on the same side of a card will overlap if their total heights (canvas + text) exceed the vertical gap between them. Always stagger on opposite sides
 - **Zod schema backward compat**: When adding `callouts` array field, keep the existing singular `callout` field. Page component prefers array, falls back to singular
+- **ProjectColumns role slug with `&`**: `slugifyRole()` only strips whitespace, so `&` stays in slugs. If you ever add a URL-safe slugifier, the ROLE_CONFIG keys will break
+- **Date serialization across RSC boundary**: `projects/page.tsx` passes `.toISOString()` because Date objects can't cross the Server/Client Component boundary

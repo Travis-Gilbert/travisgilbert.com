@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Wrench } from '@phosphor-icons/react/dist/ssr';
 import { getCollection, renderMarkdown } from '@/lib/content';
 import type { ToolkitEntry } from '@/lib/content';
-import RoughBox from '@/components/rough/RoughBox';
 import SectionLabel from '@/components/SectionLabel';
+import ToolkitAccordion from '@/components/ToolkitAccordion';
+import SketchIcon from '@/components/rough/SketchIcon';
 
 export const metadata: Metadata = {
   title: 'Toolkit',
@@ -25,7 +25,9 @@ export default async function ToolkitPage() {
   // Pre-render all markdown content
   const renderedItems = await Promise.all(
     toolkitItems.map(async (item) => ({
-      ...item,
+      slug: item.slug,
+      title: item.data.title,
+      category: item.data.category,
       html: await renderMarkdown(item.body),
     }))
   );
@@ -35,7 +37,7 @@ export default async function ToolkitPage() {
       <section className="py-8">
         <SectionLabel color="terracotta">Workshop Tools</SectionLabel>
         <h1 className="font-title-alt text-3xl md:text-4xl font-semibold mb-2 flex items-center gap-3">
-          <Wrench size={32} className="text-terracotta" />
+          <SketchIcon name="wrench" size={32} color="var(--color-terracotta)" />
           Toolkit
         </h1>
         <p className="text-ink-secondary mb-8">
@@ -45,7 +47,7 @@ export default async function ToolkitPage() {
 
       {categories.map((cat) => {
         const items = renderedItems.filter(
-          (item) => item.data.category === cat.key
+          (item) => item.category === cat.key
         );
         if (items.length === 0) return null;
 
@@ -54,18 +56,7 @@ export default async function ToolkitPage() {
             <h2 className="font-title-alt text-2xl font-semibold mb-6">
               {cat.label}
             </h2>
-            <div className="space-y-4">
-              {items.map((item) => (
-                <RoughBox key={item.slug} padding={24} tint="terracotta">
-                  <div>
-                    <div
-                      className="prose prose-toolkit"
-                      dangerouslySetInnerHTML={{ __html: item.html }}
-                    />
-                  </div>
-                </RoughBox>
-              ))}
-            </div>
+            <ToolkitAccordion items={items} />
           </section>
         );
       })}

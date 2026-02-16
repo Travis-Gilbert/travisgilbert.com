@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { ChatCircle } from '@phosphor-icons/react/dist/ssr';
 import RoughLine from '@/components/rough/RoughLine';
 import RoughBox from '@/components/rough/RoughBox';
 import SectionLabel from '@/components/SectionLabel';
+import SketchIcon from '@/components/rough/SketchIcon';
 
 export const metadata: Metadata = {
   title: 'Connect',
@@ -15,12 +15,12 @@ export default function ConnectPage() {
       <section className="py-8">
         <SectionLabel color="teal">Open Channel</SectionLabel>
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <ChatCircle size={32} className="text-teal" />
+          <SketchIcon name="chat-circle" size={32} color="var(--color-teal)" />
           Connect
         </h1>
         <p className="text-ink-secondary mb-8">
           I&apos;m always interested in hearing from people who think about the
-          same things &mdash; design, infrastructure, systems, and the decisions
+          same things: design, infrastructure, systems, and the decisions
           that shape them.
         </p>
       </section>
