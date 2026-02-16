@@ -246,8 +246,8 @@ function RoleColumn({
   return (
     <div className="min-w-0">
       {/* Role header */}
-      <div className="mb-6 pb-4" style={{ borderBottom: `2px solid rgba(${role.rgb}, 0.3)` }}>
-        <div className="flex items-center gap-3 mb-2">
+      <div className="mb-6 pb-4" style={{ borderBottom: '2px solid #3A3632' }}>
+        <div className="flex items-center gap-2.5 mb-1.5">
           <span
             className="block flex-shrink-0 rounded-full"
             style={{
@@ -261,7 +261,7 @@ function RoleColumn({
           </span>
         </div>
         {role.description && (
-          <p className="font-body text-sm md:text-base text-ink-secondary m-0 ml-[22px]">
+          <p className="font-body text-sm md:text-base text-ink-secondary m-0 pl-[22px] whitespace-nowrap">
             {role.description}
           </p>
         )}

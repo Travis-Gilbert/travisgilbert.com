@@ -24,7 +24,7 @@ export default function ProjectsPage() {
           Projects
         </h1>
         <p className="text-ink-secondary mb-5">
-          Professional work and community projects, grouped by role.
+          Professional work and community projects.
         </p>
       </section>
 
