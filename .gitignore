@@ -28,3 +28,18 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Tooling
+.claude/
+.serena/
+.playwright-mcp/
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Debug logs
+firebase-debug.log
+
+# Screenshots (dev artifacts)
+*.png
+!public/**/*.png
