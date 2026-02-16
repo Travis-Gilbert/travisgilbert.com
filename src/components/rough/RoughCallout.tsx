@@ -101,7 +101,7 @@ export default function RoughCallout({
             <div
               className="max-w-[180px] pl-1 text-[15px] leading-snug select-none"
               style={{
-                fontFamily: 'var(--font-handwritten)',
+                fontFamily: 'var(--font-annotation)',
                 color,
               }}
             >
@@ -113,7 +113,7 @@ export default function RoughCallout({
             <div
               className="max-w-[180px] pr-1 text-right text-[15px] leading-snug select-none"
               style={{
-                fontFamily: 'var(--font-handwritten)',
+                fontFamily: 'var(--font-annotation)',
                 color,
               }}
             >

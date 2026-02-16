@@ -12,6 +12,9 @@ sources:
 related: []
 draft: false
 callout: "The one that started everything — 3 inches changed the world"
+callouts:
+  - "The one that started everything — 3 inches changed the world"
+  - "Designing for the margins improves conditions at the center"
 ---
 
 In 1945, a group of disabled veterans returned to Kalamazoo, Michigan to find a city built to exclude them. Every curb was a wall. Every intersection was a dead end. What they did next would reshape the physical landscape of every American city.

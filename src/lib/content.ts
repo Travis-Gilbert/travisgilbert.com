@@ -24,6 +24,8 @@ export const investigationSchema = z.object({
   related: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
   callout: z.string().optional(),
+  /** Array of callouts for featured cards (pivoted leader-line treatment) */
+  callouts: z.array(z.string()).optional(),
 });
 
 export const fieldNoteSchema = z.object({

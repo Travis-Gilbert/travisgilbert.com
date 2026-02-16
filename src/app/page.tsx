@@ -10,6 +10,7 @@ import RoughBox from '@/components/rough/RoughBox';
 import RoughLine from '@/components/rough/RoughLine';
 import RoughUnderline from '@/components/rough/RoughUnderline';
 import RoughCallout from '@/components/rough/RoughCallout';
+import RoughPivotCallout from '@/components/rough/RoughPivotCallout';
 import ScrollReveal from '@/components/ScrollReveal';
 
 export default function HomePage() {
@@ -33,6 +34,11 @@ export default function HomePage() {
 
   const featured = investigations[0];
 
+  // Callout texts: prefer the `callouts` array, fall back to single `callout`
+  const featuredCallouts: string[] = featured
+    ? featured.data.callouts ?? (featured.data.callout ? [featured.data.callout] : [])
+    : [];
+
   // Content counts for margin annotation
   const totalInvestigations = investigations.length;
   const totalFieldNotes = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft).length;
@@ -41,89 +47,146 @@ export default function HomePage() {
   return (
     <div>
       {/* ═══════════════════════════════════════════════
-          Hero — "Case File: Open"
+          Hero — Name + Tagline (no outer box)
+          Scale and negative space create hierarchy
           ═══════════════════════════════════════════════ */}
-      <section className="py-8 md:py-12">
+      <section className="pt-10 md:pt-16 pb-4 md:pb-6">
         <ScrollReveal>
-          <RoughBox padding={24} tint="neutral" grid elevated>
-            <div className="relative">
-              <SectionLabel color="terracotta">Case File — Open</SectionLabel>
+          <div className="relative">
+            <SectionLabel color="terracotta">Case File — Open</SectionLabel>
 
-              <h1
-                className="text-4xl md:text-5xl mb-3 mt-2"
-                style={{ fontFamily: 'var(--font-name)', fontWeight: 400 }}
+            <h1
+              className="text-4xl md:text-5xl mb-3 mt-2"
+              style={{ fontFamily: 'var(--font-name)', fontWeight: 400 }}
+            >
+              <RoughUnderline
+                type="underline"
+                color="var(--color-terracotta)"
+                strokeWidth={2}
               >
-                <RoughUnderline
-                  type="underline"
-                  color="var(--color-terracotta)"
-                  strokeWidth={2}
-                >
-                  Travis Gilbert
-                </RoughUnderline>
-              </h1>
+                Travis Gilbert
+              </RoughUnderline>
+            </h1>
 
-              <p className="text-ink-secondary text-lg md:text-xl max-w-2xl leading-relaxed mb-6">
-                Investigating how design decisions shape human outcomes.
-              </p>
+            <p className="text-ink-secondary text-lg md:text-xl max-w-2xl leading-relaxed mb-0">
+              Investigating how design decisions shape human outcomes.
+            </p>
 
-              {/* Featured investigation — nested card */}
-              {featured && (
-                <Link
-                  href={`/investigations/${featured.slug}`}
-                  className="block no-underline text-ink hover:text-ink group"
-                >
-                  <RoughBox padding={16} tint="terracotta" grid={false} elevated={false} hover>
-                    <div className="flex items-start gap-3">
+            {/* Content counts — workbench inventory */}
+            <div className="mt-3 text-right">
+              <MarginNote>
+                {totalInvestigations} investigation{totalInvestigations !== 1 ? 's' : ''} · {totalFieldNotes} field note{totalFieldNotes !== 1 ? 's' : ''} · {totalProjects} project{totalProjects !== 1 ? 's' : ''}
+              </MarginNote>
+            </div>
+          </div>
+        </ScrollReveal>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          Featured Investigation — Primary visual anchor
+          Wider card, generous margins, pivoted callouts
+          ═══════════════════════════════════════════════ */}
+      {featured && (
+        <section className="py-8 md:py-12">
+          <ScrollReveal>
+            {/* Slightly wider than standard content via negative margins */}
+            <div className="lg:-mx-4 xl:-mx-8 relative">
+              <RoughBox
+                padding={0}
+                hover
+                tint="terracotta"
+                elevated
+              >
+                <div className="group">
+                  {Boolean(featured.data.youtubeId) && (
+                    <div className="w-full h-48 md:h-72 overflow-hidden">
+                      <img
+                        src={`https://img.youtube.com/vi/${featured.data.youtubeId}/maxresdefault.jpg`}
+                        alt={`Thumbnail for ${featured.data.title}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6 md:p-8 relative">
+                    <div className="flex items-start gap-3 mb-3">
                       <MagnifyingGlass
                         size={18}
                         weight="bold"
                         className="text-terracotta mt-0.5 flex-shrink-0"
                       />
-                      <div>
-                        <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-terracotta mb-1">
-                          Current Inquiry
-                        </span>
-                        <span className="block font-title text-base font-bold group-hover:text-terracotta transition-colors">
-                          {featured.data.title}
-                        </span>
-                        <span className="block text-sm text-ink-secondary mt-1">
-                          {featured.data.summary}
-                        </span>
-                      </div>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-terracotta">
+                        Current Inquiry
+                      </span>
                     </div>
-                  </RoughBox>
-                </Link>
-              )}
+                    <DateStamp date={featured.data.date} />
+                    <h2 className="font-title text-2xl md:text-3xl font-bold mt-2 mb-3 group-hover:text-terracotta transition-colors">
+                      <Link
+                        href={`/investigations/${featured.slug}`}
+                        className="no-underline text-ink hover:text-ink after:absolute after:inset-0 after:z-0"
+                      >
+                        {featured.data.title}
+                      </Link>
+                    </h2>
+                    <p className="text-ink-secondary text-base md:text-lg mb-4 max-w-prose leading-relaxed">
+                      {featured.data.summary}
+                    </p>
+                    <div className="relative z-10">
+                      <TagList tags={featured.data.tags} tint="terracotta" />
+                    </div>
+                  </div>
 
-              {/* Content counts — workbench inventory */}
-              <div className="mt-4 text-right">
-                <MarginNote>
-                  {totalInvestigations} investigation{totalInvestigations !== 1 ? 's' : ''} · {totalFieldNotes} field note{totalFieldNotes !== 1 ? 's' : ''} · {totalProjects} project{totalProjects !== 1 ? 's' : ''}
-                </MarginNote>
-              </div>
+                  {/* Pivoted leader-line callouts — exactly 2 for featured,
+                      staggered on opposite sides for visual balance */}
+                  {featuredCallouts[0] && (
+                    <RoughPivotCallout
+                      side="right"
+                      tint="terracotta"
+                      offsetY={20}
+                      totalLength={196}
+                      seed={42}
+                      pivotDown
+                    >
+                      {featuredCallouts[0]}
+                    </RoughPivotCallout>
+                  )}
+                  {featuredCallouts[1] && (
+                    <RoughPivotCallout
+                      side="left"
+                      tint="terracotta"
+                      offsetY={100}
+                      totalLength={170}
+                      seed={88}
+                      pivotDown
+                    >
+                      {featuredCallouts[1]}
+                    </RoughPivotCallout>
+                  )}
+                </div>
+              </RoughBox>
             </div>
-          </RoughBox>
-        </ScrollReveal>
-      </section>
+          </ScrollReveal>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════════
           Investigations — "Pinned to the wall"
+          Skip the featured item (already shown above)
           ═══════════════════════════════════════════════ */}
-      {investigations.length > 0 && (
+      {investigations.length > 1 && (
         <section className="py-6">
           <RoughLine label="Investigation File" labelColor="var(--color-terracotta)" />
 
-          <ScrollReveal>
-            <div className="md:rotate-[-0.3deg]">
-              {investigations.slice(0, 1).map((investigation) => {
-                const hasThumbnail = Boolean(investigation.data.youtubeId);
-                const thumbnailUrl = hasThumbnail
-                  ? `https://img.youtube.com/vi/${investigation.data.youtubeId}/maxresdefault.jpg`
-                  : '';
+          <div className="space-y-5">
+            {investigations.slice(1).map((investigation) => {
+              const hasThumbnail = Boolean(investigation.data.youtubeId);
+              const thumbnailUrl = hasThumbnail
+                ? `https://img.youtube.com/vi/${investigation.data.youtubeId}/maxresdefault.jpg`
+                : '';
 
-                return (
+              return (
+                <ScrollReveal key={investigation.slug}>
                   <RoughBox
-                    key={investigation.slug}
                     padding={0}
                     hover
                     tint="terracotta"
@@ -163,21 +226,19 @@ export default function HomePage() {
                       </div>
                     </div>
                   </RoughBox>
-                );
-              })}
-            </div>
-          </ScrollReveal>
+                </ScrollReveal>
+              );
+            })}
+          </div>
 
-          {investigations.length > 1 && (
-            <p className="mt-4 text-right">
-              <Link
-                href="/investigations"
-                className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
-              >
-                All investigations <ArrowRight size={14} weight="bold" />
-              </Link>
-            </p>
-          )}
+          <p className="mt-4 text-right">
+            <Link
+              href="/investigations"
+              className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
+            >
+              All investigations <ArrowRight size={14} weight="bold" />
+            </Link>
+          </p>
         </section>
       )}
 
