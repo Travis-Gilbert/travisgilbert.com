@@ -12,6 +12,14 @@ const tintClass: Record<CardTint, string> = {
   neutral: 'surface-tint-neutral',
 };
 
+/** Solid border colors derived from the brand palette per tint */
+const tintStroke: Record<CardTint, string> = {
+  terracotta: '#B45A2D',
+  teal: '#2D5F6B',
+  gold: '#C49A4A',
+  neutral: '#3A3632',
+};
+
 interface RoughBoxProps {
   children: ReactNode;
   padding?: number;
@@ -34,13 +42,16 @@ export default function RoughBox({
   padding = 16,
   roughness = 1.2,
   strokeWidth = 1,
-  stroke = '#3A3632',
+  stroke,
   seed,
   grid = true,
   elevated = true,
   hover = false,
   tint = 'neutral',
 }: RoughBoxProps) {
+  // Derive stroke from tint when not explicitly provided
+  const resolvedStroke = stroke ?? tintStroke[tint];
+
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -70,7 +81,7 @@ export default function RoughBox({
       rc.rectangle(2, 2, w - 4, h - 4, {
         roughness,
         strokeWidth,
-        stroke,
+        stroke: resolvedStroke,
         bowing: 1,
         seed,
       });
@@ -82,7 +93,7 @@ export default function RoughBox({
     observer.observe(container);
 
     return () => observer.disconnect();
-  }, [roughness, strokeWidth, stroke, seed]);
+  }, [roughness, strokeWidth, resolvedStroke, seed]);
 
   // Build className string from props
   const classes = [
