@@ -1,6 +1,6 @@
 ---
 title: "The Gatehouse Branding"
-role: "Designer"
+role: "Built & Designed"
 description: "Created the visual identity and branding materials for The Gatehouse project, including signage, print collateral, and digital assets."
 year: 2025
 date: 2025-06-01

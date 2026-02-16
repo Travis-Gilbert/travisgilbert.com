@@ -1,6 +1,6 @@
 ---
 title: "Compliance Portal"
-role: "Builder"
+role: "Built & Designed"
 description: "Designed and built an internal compliance tracking portal for the Genesee County Land Bank Authority, streamlining regulatory workflows and reporting."
 year: 2025
 date: 2025-06-01

@@ -1,6 +1,6 @@
 ---
 title: "2024 Annual Review"
-role: "Builder"
+role: "Built & Designed"
 description: "Designed the Land Bank's 2024 annual review publication, covering the year's demolition, renovation, and community development outcomes."
 year: 2024
 date: 2024-12-15

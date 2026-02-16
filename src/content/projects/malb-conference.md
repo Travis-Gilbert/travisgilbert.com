@@ -1,6 +1,6 @@
 ---
 title: "MALB Conference"
-role: "Organizer"
+role: "Organized"
 description: "Organized and coordinated the Michigan Association of Land Banks conference, bringing together land bank professionals from across the state."
 year: 2025
 date: 2025-03-15

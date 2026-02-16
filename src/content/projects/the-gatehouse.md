@@ -1,6 +1,6 @@
 ---
 title: "The Gatehouse"
-role: "Project Manager"
+role: "Project Managed"
 description: "Managed the development of mixed-income condominiums in Flint, Michigan, from planning through grand opening."
 year: 2025
 date: 2025-07-15

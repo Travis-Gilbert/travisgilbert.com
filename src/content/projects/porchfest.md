@@ -1,6 +1,6 @@
 ---
 title: "Porchfest"
-role: "Organizer"
+role: "Organized"
 description: "Organized the 6th annual Porchfest in Flint's Carriage Town neighborhood, a community music and arts festival celebrating local talent and public space."
 year: 2025
 date: 2025-09-01

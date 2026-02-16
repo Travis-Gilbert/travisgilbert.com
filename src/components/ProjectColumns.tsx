@@ -35,29 +35,29 @@ interface ProjectColumnsProps {
 // ─────────────────────────────────────────────────
 
 const ROLE_CONFIG: Record<string, RoleConfig> = {
-  builder: {
-    label: 'Builder',
+  'built-&-designed': {
+    label: 'Built & Designed',
     hex: '#2D5F6B',
     rgb: '45, 95, 107',
-    description: 'Software, tools, and technical builds',
+    description: 'Streamlining operations with technology',
   },
-  'project-manager': {
-    label: 'Project Manager',
+  'project-managed': {
+    label: 'Project Managed',
     hex: '#B45A2D',
     rgb: '180, 90, 45',
     description: 'Multi-stakeholder coordination',
   },
-  organizer: {
-    label: 'Organizer',
+  organized: {
+    label: 'Organized',
     hex: '#C49A4A',
     rgb: '196, 154, 74',
     description: 'Events, conferences, community',
   },
-  designer: {
-    label: 'Designer',
+  created: {
+    label: 'Created',
     hex: '#5A7A4A',
     rgb: '90, 122, 74',
-    description: 'Visual design, print, branding',
+    description: 'Original content and media',
   },
 };
 
@@ -328,10 +328,8 @@ function RolePill({
   const role = getRoleConfig(roleSlug);
 
   return (
-    <div
-      className="flex items-center gap-2 py-1.5 px-3.5 border border-border rounded-full"
-      style={{ background: `rgba(${role.rgb}, 0.06)` }}
-    >
+    <div className="flex items-center gap-2 py-1.5 px-3.5 border border-border rounded-full">
+
       <span
         className="block rounded-full flex-shrink-0"
         style={{
