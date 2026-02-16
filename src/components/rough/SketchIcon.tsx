@@ -18,6 +18,7 @@ interface SketchIconProps {
 type IconName =
   | 'magnifying-glass'
   | 'file-text'
+  | 'gears'
   | 'note-pencil'
   | 'briefcase'
   | 'wrench'
@@ -33,6 +34,9 @@ const ICON_PATHS: Record<IconName, string> = {
   // File with text lines: document page with slightly uneven lines
   'file-text':
     'M7.5 4.5h11.5l5.5 5.5v16.5c0 0.8-0.7 1.5-1.5 1.5H7.5c-0.8 0-1.5-0.7-1.5-1.5V6c0-0.8 0.7-1.5 1.5-1.5zM19 4.5v5.5h5.5M10.5 15h11m-11 4h8.5m-8.5 4h10',
+  // Gears: two interlocking cog wheels
+  'gears':
+    'M13.5 7.5a5 5 0 1 1-0.1 10 5 5 0 0 1 0.1-10zm0 3a2 2 0 1 0 0.1 4 2 2 0 0 0-0.1-4zM13.5 4.5v2m0 12v2m-5.5-11.5l1.5 1.3m7.5 6.5l1.5 1.2m-10.5 0l1.5-1.2m7.5-6.5l1.5-1.3M22 18a4 4 0 1 1-0.1 8 4 4 0 0 1 0.1-8zm0 2.2a1.8 1.8 0 1 0 0.1 3.6 1.8 1.8 0 0 0-0.1-3.6zM22 15.8v1.5m0 9.5v1.5m-4.3-9l1.2 1m6 5.2l1.2 1m-8.4 0l1.2-1m6-5.2l1.2-1',
   // Pencil on paper: folded corner + pencil line
   'note-pencil':
     'M6 4.5h15.5c1 0 1.8 0.8 1.8 1.8v19.2c0 1-0.8 1.8-1.8 1.8H8.5c-1 0-1.8-0.8-1.8-1.8V6.2c-0.1-0.9 0.7-1.7 1.7-1.7zm3 9.5h10m-10 4.5h7m7-14l-4.5 4.5',

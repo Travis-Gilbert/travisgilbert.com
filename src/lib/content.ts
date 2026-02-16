@@ -53,6 +53,15 @@ export const toolkitSchema = z.object({
   order: z.number().default(0),
 });
 
+export const workingIdeaSchema = z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  status: z.enum(['seed', 'growing', 'pruning']).default('seed'),
+  summary: z.string().max(300).optional(),
+  tags: z.array(z.string()).default([]),
+  draft: z.boolean().default(false),
+});
+
 export const projectSchema = z.object({
   title: z.string(),
   role: z.string(),
@@ -78,17 +87,19 @@ export type Investigation = z.infer<typeof investigationSchema>;
 export type FieldNote = z.infer<typeof fieldNoteSchema>;
 export type ShelfEntry = z.infer<typeof shelfSchema>;
 export type ToolkitEntry = z.infer<typeof toolkitSchema>;
+export type WorkingIdea = z.infer<typeof workingIdeaSchema>;
 export type Project = z.infer<typeof projectSchema>;
 
 // ─────────────────────────────────────────────────
 // Content loading
 // ─────────────────────────────────────────────────
 
-type CollectionName = 'investigations' | 'field-notes' | 'projects' | 'shelf' | 'toolkit';
+type CollectionName = 'investigations' | 'field-notes' | 'working-ideas' | 'projects' | 'shelf' | 'toolkit';
 
 const schemaMap: Record<CollectionName, z.ZodSchema> = {
   investigations: investigationSchema,
   'field-notes': fieldNoteSchema,
+  'working-ideas': workingIdeaSchema,
   projects: projectSchema,
   shelf: shelfSchema,
   toolkit: toolkitSchema,
