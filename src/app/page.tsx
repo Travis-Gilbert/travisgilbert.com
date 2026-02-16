@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     'A creative workbench exploring how design decisions shape human outcomes. Research, field notes, and projects on infrastructure, policy, and the built environment.',
 };
-import type { Investigation, FieldNote, Project } from '@/lib/content';
+import type { Investigation, FieldNote, Project, WorkingIdea } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import RoughBox from '@/components/rough/RoughBox';
@@ -27,6 +27,13 @@ export default function HomePage() {
     .filter((n) => !n.data.draft)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
     .slice(0, 4);
+
+  const workingIdeas = getCollection<WorkingIdea>('working-ideas')
+    .filter((i) => !i.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  const featuredIdea = workingIdeas.find((i) => i.data.featured) ?? workingIdeas[0];
+  const featuredIdeaCallouts: string[] = featuredIdea?.data.callouts ?? [];
 
   const projects = getCollection<Project>('projects')
     .filter((p) => !p.data.draft && p.data.featured)
@@ -235,6 +242,92 @@ export default function HomePage() {
               All entries <ArrowRight size={14} weight="bold" />
             </Link>
           </p>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════
+          Working Ideas: Featured draft essay with callouts
+          Mirrors the investigation card pattern at smaller scale
+          ═══════════════════════════════════════════════ */}
+      {featuredIdea && (
+        <section className="py-6">
+          <RoughLine label="Working Ideas" labelColor="var(--color-terracotta)" />
+
+          <ScrollReveal>
+            <div className="relative">
+              <RoughBox
+                padding={0}
+                hover
+                tint="terracotta"
+                elevated
+              >
+                <div className="group">
+                  <div className="p-5 md:p-6 relative">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-mono text-[9.5px] uppercase tracking-[0.08em] text-paper bg-terracotta px-2 py-0.5 rounded-sm font-bold">
+                        {featuredIdea.data.status === 'growing' ? 'Growing' : featuredIdea.data.status === 'pruning' ? 'Pruning' : 'Seed'}
+                      </span>
+                      <span className="text-ink-faint">·</span>
+                      <DateStamp date={featuredIdea.data.date} />
+                    </div>
+                    <h2 className="font-title text-xl md:text-2xl font-bold mt-2 mb-2 group-hover:text-terracotta transition-colors">
+                      <Link
+                        href={`/working-ideas/${featuredIdea.slug}`}
+                        className="no-underline text-ink hover:text-ink after:absolute after:inset-0 after:z-0"
+                      >
+                        {featuredIdea.data.title}
+                      </Link>
+                    </h2>
+                    {featuredIdea.data.summary && (
+                      <p className="text-ink-secondary text-base mb-3 max-w-prose leading-relaxed">
+                        {featuredIdea.data.summary}
+                      </p>
+                    )}
+                    <div className="relative z-10">
+                      <TagList tags={featuredIdea.data.tags} tint="terracotta" />
+                    </div>
+                  </div>
+
+                  {/* Pivoted leader-line callouts: staggered on opposite sides */}
+                  {featuredIdeaCallouts[0] && (
+                    <RoughPivotCallout
+                      side="right"
+                      tint="terracotta"
+                      offsetY={16}
+                      totalLength={180}
+                      seed={55}
+                      pivotDown
+                    >
+                      {featuredIdeaCallouts[0]}
+                    </RoughPivotCallout>
+                  )}
+                  {featuredIdeaCallouts[1] && (
+                    <RoughPivotCallout
+                      side="left"
+                      tint="terracotta"
+                      offsetY={72}
+                      totalLength={160}
+                      seed={77}
+                      pivotDown
+                    >
+                      {featuredIdeaCallouts[1]}
+                    </RoughPivotCallout>
+                  )}
+                </div>
+              </RoughBox>
+            </div>
+          </ScrollReveal>
+
+          {workingIdeas.length > 1 && (
+            <p className="mt-4 text-right">
+              <Link
+                href="/working-ideas"
+                className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
+              >
+                All working ideas <ArrowRight size={14} weight="bold" />
+              </Link>
+            </p>
+          )}
         </section>
       )}
 

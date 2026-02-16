@@ -5,6 +5,10 @@ status: growing
 summary: "What if the push to make every public space 'readable' is actually erasing the complexity that makes cities worth living in?"
 tags: ["urban design", "legibility", "complexity"]
 draft: false
+featured: true
+callouts:
+  - "readable ≠ navigable"
+  - "riffing on James Scott"
 ---
 
 I keep coming back to James Scott's concept of legibility: the state's desire to make society readable, countable, controllable. He wrote about it in the context of forestry and agriculture, but the same logic is everywhere in urban design.

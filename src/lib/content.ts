@@ -60,6 +60,8 @@ export const workingIdeaSchema = z.object({
   summary: z.string().max(300).optional(),
   tags: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
+  featured: z.boolean().default(false),
+  callouts: z.array(z.string()).optional(),
 });
 
 export const projectSchema = z.object({
