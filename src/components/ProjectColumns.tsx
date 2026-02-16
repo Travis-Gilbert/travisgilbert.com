@@ -246,22 +246,22 @@ function RoleColumn({
   return (
     <div className="min-w-0">
       {/* Role header */}
-      <div className="mb-5 pb-3.5 border-b border-border-light">
-        <div className="flex items-center gap-2.5 mb-1.5">
+      <div className="mb-6 pb-4" style={{ borderBottom: `2px solid rgba(${role.rgb}, 0.3)` }}>
+        <div className="flex items-center gap-3 mb-2">
           <span
             className="block flex-shrink-0 rounded-full"
             style={{
-              width: 8,
-              height: 8,
+              width: 10,
+              height: 10,
               backgroundColor: role.hex,
             }}
           />
-          <span className="font-mono text-xs font-bold uppercase tracking-[0.1em] text-ink">
+          <span className="font-mono text-base md:text-lg font-bold uppercase tracking-[0.08em] text-ink">
             {role.label}
           </span>
         </div>
         {role.description && (
-          <p className="font-body text-xs text-ink-light m-0 ml-[18px]">
+          <p className="font-body text-sm md:text-base text-ink-secondary m-0 ml-[22px]">
             {role.description}
           </p>
         )}
@@ -315,40 +315,6 @@ function RoleColumn({
 }
 
 // ─────────────────────────────────────────────────
-// RolePill
-// ─────────────────────────────────────────────────
-
-function RolePill({
-  roleSlug,
-  count,
-}: {
-  roleSlug: string;
-  count: number;
-}) {
-  const role = getRoleConfig(roleSlug);
-
-  return (
-    <div className="flex items-center gap-2 py-1.5 px-3.5 border border-border rounded-full">
-
-      <span
-        className="block rounded-full flex-shrink-0"
-        style={{
-          width: 6,
-          height: 6,
-          backgroundColor: role.hex,
-        }}
-      />
-      <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-ink-secondary">
-        {role.label}
-      </span>
-      <span className="font-mono text-[9px] text-ink-light">
-        {count}
-      </span>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────
 // Main component
 // ─────────────────────────────────────────────────
 
@@ -391,17 +357,6 @@ export default function ProjectColumns({ projects }: ProjectColumnsProps) {
 
   return (
     <div>
-      {/* Role filter pills */}
-      <div className="flex flex-wrap gap-2.5 mb-9">
-        {columnOrder.map((roleKey) => (
-          <RolePill
-            key={roleKey}
-            roleSlug={roleKey}
-            count={grouped[roleKey].length}
-          />
-        ))}
-      </div>
-
       {/* Column grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
         {columnOrder.map((roleKey, i) => (

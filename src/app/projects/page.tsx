@@ -23,7 +23,7 @@ export default function ProjectsPage() {
           <Briefcase size={32} className="text-gold" />
           Projects
         </h1>
-        <p className="text-ink-secondary mb-8">
+        <p className="text-ink-secondary mb-5">
           Professional work and community projects, grouped by role.
         </p>
       </section>
