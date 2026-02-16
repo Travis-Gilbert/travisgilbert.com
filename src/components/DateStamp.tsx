@@ -11,7 +11,7 @@ export default function DateStamp({ date }: DateStampProps) {
   return (
     <time
       dateTime={d.toISOString()}
-      className="inline-block font-mono text-[11px] uppercase tracking-widest text-terracotta select-none"
+      className="inline-block font-mono text-[11px] uppercase tracking-widest text-terracotta bg-terracotta/[0.06] px-2 py-0.5 rounded select-none"
     >
       {month} {day}, {year}
     </time>

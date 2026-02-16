@@ -9,6 +9,10 @@ interface RoughLineProps {
   stroke?: string;
   seed?: number;
   className?: string;
+  /** Architectural label centered on the line */
+  label?: string;
+  /** Color for the label text (CSS value) */
+  labelColor?: string;
 }
 
 export default function RoughLine({
@@ -17,6 +21,8 @@ export default function RoughLine({
   stroke = '#3A3632',
   seed,
   className,
+  label,
+  labelColor,
 }: RoughLineProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -60,6 +66,31 @@ export default function RoughLine({
 
     return () => observer.disconnect();
   }, [roughness, strokeWidth, stroke, seed]);
+
+  if (label) {
+    return (
+      <div className={`w-full my-8 ${className || ''}`}>
+        <div className="relative flex items-center">
+          {/* Left line segment */}
+          <div ref={wrapperRef} className="flex-1">
+            <canvas ref={canvasRef} aria-hidden="true" className="block" />
+          </div>
+          {/* Center label */}
+          <span
+            className="px-3 font-mono text-[10px] uppercase tracking-[0.12em] whitespace-nowrap select-none"
+            style={{ color: labelColor || 'var(--color-ink-light)' }}
+          >
+            {label}
+          </span>
+          {/* Right line segment — visual only, the canvas stretches via flex */}
+          <div
+            className="flex-1 h-[1px]"
+            style={{ backgroundColor: stroke, opacity: 0.3 }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={wrapperRef} className={`w-full my-4 ${className || ''}`}>
