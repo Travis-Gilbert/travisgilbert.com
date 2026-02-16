@@ -8,7 +8,7 @@ Every investigation starts as a question. Something I noticed that didn't make s
 
 ## Research
 
-I start by reading everything I can find. Academic papers, local news archives, planning commission minutes, patent filings. The goal is to understand the full decision chain — who decided what, when, and with what information.
+I start by reading everything I can find. Academic papers, local news archives, planning commission minutes, patent filings. The goal is to understand the full decision chain: who decided what, when, and with what information.
 
 ## Scripting
 
@@ -16,11 +16,11 @@ Scripts go through multiple drafts. The first draft is usually too long and too 
 
 ## Production
 
-I shoot with a minimal kit — one camera, a good microphone, and whatever natural light is available. I'm more interested in showing real places than creating polished studio content. The roughness is part of the point.
+I shoot with a minimal kit: one camera, a good microphone, and whatever natural light is available. I'm more interested in showing real places than creating polished studio content. The roughness is part of the point.
 
 ## Editing
 
-Final Cut Pro for video editing, Logic Pro for audio cleanup. I color grade lightly — the goal is honest representation of places, not cinematic polish.
+Final Cut Pro for video editing, Logic Pro for audio cleanup. I color grade lightly. The goal is honest representation of places, not cinematic polish.
 
 ## Publishing
 

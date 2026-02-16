@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = getEntry<Investigation>('investigations', slug);
   if (!entry) return {};
   return {
-    title: `${entry.data.title} — Investigations`,
+    title: `${entry.data.title} | Investigations`,
     description: entry.data.summary,
   };
 }

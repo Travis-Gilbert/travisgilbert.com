@@ -7,7 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────
-// Zod Schemas — ported verbatim from content.config.ts
+// Zod Schemas: ported verbatim from content.config.ts
 // ─────────────────────────────────────────────────
 
 export const investigationSchema = z.object({

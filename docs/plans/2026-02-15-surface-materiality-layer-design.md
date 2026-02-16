@@ -1,4 +1,4 @@
-# Surface Materiality Layer — Design Document
+# Surface Materiality Layer: Design Document
 
 > **Date**: 2026-02-15
 > **Status**: Approved
@@ -10,22 +10,22 @@
 
 The site feels empty and flat despite having strong brand foundations (warm palette, rough.js borders, interactive dot grid, good typography). The root cause: **surfaces lack physical materiality**.
 
-- RoughBox draws a hand-drawn border around transparent space — no fill, no texture, no shadow
+- RoughBox draws a hand-drawn border around transparent space: no fill, no texture, no shadow
 - Cards don't feel like objects sitting on a surface; they feel like regions marked by a line
 - Zero skeuomorphic depth despite the brand guide specifying: paper grain, blueprint grids, vellum layers, warm shadows
-- Interactions are static — no hover feedback suggesting physical objects
-- Color palette is underused — almost everything is terracotta or neutral; teal, gold, and secondary colors barely appear
+- Interactions are static: no hover feedback suggesting physical objects
+- Color palette is underused: almost everything is terracotta or neutral; teal, gold, and secondary colors barely appear
 - Site reads as "too polished / too clean" rather than "creative workbench"
 
 ## Solution
 
-A **surface materiality layer** applied globally through CSS and component upgrades. No new pages, no restructuring — purely adding texture, depth, and color richness to what exists.
+A **surface materiality layer** applied globally through CSS and component upgrades. No new pages, no restructuring: purely adding texture, depth, and color richness to what exists.
 
 ---
 
 ## Part 1: Surface Texture System
 
-### A. RoughBox Upgrade — Border to Full Surface
+### A. RoughBox Upgrade: Border to Full Surface
 
 RoughBox gains new props (all defaulting ON):
 
@@ -40,13 +40,13 @@ RoughBox gains new props (all defaulting ON):
 ```
 [hand-drawn rough.js border]
   └─ [opaque bg-surface (#FAF6F1)]
-       └─ [blueprint grid ::before — opacity 0.15]
-            └─ [paper grain ::after — opacity 0.03]
+       └─ [blueprint grid ::before: opacity 0.15]
+            └─ [paper grain ::after: opacity 0.03]
                  └─ [warm brown box-shadow]
                       └─ [content]
 ```
 
-**Architecture:** Surface styles go on the wrapper `<div>`, NOT on the canvas. RoughBox canvas stays responsible only for the hand-drawn stroke. This keeps concerns separated — textured surface without rough borders (or vice versa) remains possible.
+**Architecture:** Surface styles go on the wrapper `<div>`, NOT on the canvas. RoughBox canvas stays responsible only for the hand-drawn stroke. This keeps concerns separated: textured surface without rough borders (or vice versa) remains possible.
 
 **Blueprint grid CSS (::before pseudo-element):**
 ```css
@@ -74,7 +74,7 @@ opacity: 0.03;
 - Blockquote/callout cards within articles
 
 **Where grid does NOT appear:**
-- Full article prose (long-form text — grid distracts from reading)
+- Full article prose (long-form text: grid distracts from reading)
 - Page background (DotGrid canvas handles this)
 - Navigation / footer
 
@@ -85,7 +85,7 @@ A CSS `::after` pseudo-element on `body`:
 - `opacity: 0.025`
 - `position: fixed; inset: 0; pointer-events: none; z-index: 9999`
 - Makes the parchment background (#F0EBE4) feel like actual paper
-- One-time global CSS — zero per-component cost
+- One-time global CSS: zero per-component cost
 
 ### C. Warm Shadow Design Tokens
 
@@ -129,7 +129,7 @@ Each content section gets a monospace label above the heading, in a **section-sp
 
 Format: Courier Prime, 11px, uppercase, letter-spacing 0.1em.
 
-### Tag Chips — Content-Type Tinting
+### Tag Chips: Content-Type Tinting
 
 Tags get a faint background tint based on content type:
 
@@ -144,7 +144,7 @@ Tags get a faint background tint based on content type:
 
 Blockquotes within articles gain a monospace label:
 ```
-FIELD NOTE — SOURCE DOCUMENT
+FIELD NOTE: SOURCE DOCUMENT
 ```
 - Courier Prime, 10px, uppercase, terracotta
 - Sits above the quote text inside the callout box
@@ -180,10 +180,10 @@ DateStamp component gets a subtle color upgrade:
 
 ## Files NOT Modified
 
-- `DotGrid.tsx` — untouched, dot grid stays as page background
-- `TopNav.tsx` — no changes needed
-- `Footer.tsx` — no changes needed
-- Article prose pages — no grid on reading surfaces
+- `DotGrid.tsx`: untouched, dot grid stays as page background
+- `TopNav.tsx`: no changes needed
+- `Footer.tsx`: no changes needed
+- Article prose pages: no grid on reading surfaces
 
 ---
 
@@ -195,6 +195,6 @@ From the brand guide CLAUDE.md:
 2. Blueprint grids as subtle card-level patterns (NOT page background)
 3. Warm shadows, not gray
 4. Cards should feel like layered documents
-5. Never flat/sterile — always some texture, depth, or material quality
+5. Never flat/sterile: always some texture, depth, or material quality
 6. Monospace labels for metadata in Courier Prime uppercase
 7. Broader use of teal (#2D5F6B), gold (#C49A4A), and accent variants

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────
-   Design Tokens — Patent Parchment Palette
+   Design Tokens:Patent Parchment Palette
    Brand System v1.0 · Feb 2026
    ───────────────────────────────────────────────── */
 
@@ -20,16 +20,16 @@
   --color-ink-secondary: #6A5E52;  /* alias → ink-muted */
   --color-ink-faint: #9A8E82;      /* alias → ink-light */
 
-  /* Accent — Terracotta (brand constant across all modes) */
+  /* Accent:Terracotta (brand constant across all modes) */
   --color-terracotta: #B45A2D;
   --color-terracotta-hover: #9A4A22;
   --color-terracotta-light: #D4875A;
 
-  /* Secondary — Teal */
+  /* Secondary:Teal */
   --color-teal: #2D5F6B;
   --color-teal-light: #3A7A88;
 
-  /* Highlight — Gold */
+  /* Highlight:Gold */
   --color-gold: #C49A4A;
   --color-gold-light: #D4AA5A;
 
@@ -44,7 +44,7 @@
   /* Utility */
   --color-shadow: rgba(42, 36, 32, 0.08);
 
-  /* Warm Shadows — brown-tinted, not gray */
+  /* Warm Shadows:brown-tinted, not gray */
   --shadow-warm-sm:  0 1px 2px rgba(42, 36, 32, 0.05);
   --shadow-warm:     0 2px 8px rgba(42, 36, 32, 0.07), 0 1px 3px rgba(42, 36, 32, 0.04);
   --shadow-warm-lg:  0 4px 16px rgba(42, 36, 32, 0.10), 0 2px 6px rgba(42, 36, 32, 0.05);
@@ -58,7 +58,7 @@
   --color-dark-surface: #2A2622;
   --color-dark-border: #3A3632;
 
-  /* Typography — The Documentarian (Primary System)
+  /* Typography:The Documentarian (Primary System)
      Variables set by next/font on <html> → aliased here for design tokens */
   --font-title: var(--font-vollkorn), Georgia, serif;
   --font-title-alt: var(--font-ysabeau), sans-serif;
@@ -94,9 +94,9 @@ body {
 }
 
 /* ─────────────────────────────────────────────────
-   Global Paper Grain — Subtle noise for materiality
+   Global Paper Grain:Subtle noise for materiality
    SVG feTurbulence applied as a fixed overlay.
-   Opacity 0.025 — barely visible but registers subconsciously.
+   Opacity 0.025:barely visible but registers subconsciously.
    ───────────────────────────────────────────────── */
 
 body::after {
@@ -111,21 +111,21 @@ body::after {
 }
 
 /* ─────────────────────────────────────────────────
-   Surface Utilities — Textured card surfaces
+   Surface Utilities:Textured card surfaces
    ───────────────────────────────────────────────── */
 
-/* Elevated surface with warm shadow — tint classes handle fill color */
+/* Elevated surface with warm shadow:tint classes handle fill color */
 .surface-elevated {
   box-shadow: var(--shadow-warm-sm);
 }
 
-/* Card tint washes — transparent brand-color fills */
+/* Card tint washes:transparent brand-color fills */
 .surface-tint-terracotta { background-color: rgba(180, 90, 45, 0.045); }
 .surface-tint-teal       { background-color: rgba(45, 95, 107, 0.04); }
 .surface-tint-gold       { background-color: rgba(196, 154, 74, 0.05); }
 .surface-tint-neutral    { background-color: rgba(42, 36, 32, 0.025); }
 
-/* Blueprint grid overlay — for cards, not full pages */
+/* Blueprint grid overlay:for cards, not full pages */
 .surface-grid {
   position: relative;
 }
@@ -143,7 +143,7 @@ body::after {
   border-radius: inherit;
 }
 
-/* Card hover lift — shadow deepens, subtle Y translate */
+/* Card hover lift:shadow deepens, subtle Y translate */
 .surface-hover {
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -173,7 +173,7 @@ body::after {
   to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Torn-edge clip-path — subtle paper-tear effect */
+/* Torn-edge clip-path:subtle paper-tear effect */
 .torn-edge-bottom {
   clip-path: polygon(
     0% 0%, 100% 0%, 100% calc(100% - 4px),
@@ -219,7 +219,7 @@ h4 {
 }
 
 /* ─────────────────────────────────────────────────
-   Labels — Monospace metadata pattern
+   Labels:Monospace metadata pattern
    ───────────────────────────────────────────────── */
 
 .label {
@@ -312,7 +312,7 @@ blockquote {
 }
 
 /* ─────────────────────────────────────────────────
-   Prose — Article Content
+   Prose:Article Content
    Shared base; per-page font overrides via scoped styles
    ───────────────────────────────────────────────── */
 
@@ -397,7 +397,7 @@ blockquote {
 }
 
 /* ─────────────────────────────────────────────────
-   Project Timeline — Evidence Organizer Style
+   Project Timeline:Evidence Organizer Style
    Three-column layout: gutter | dot+line | content
    ───────────────────────────────────────────────── */
 
@@ -432,7 +432,7 @@ blockquote {
   padding-right: 0.75rem;
 }
 
-/* Dot column — no per-column line; the continuous line is on .ptl */
+/* Dot column:no per-column line; the continuous line is on .ptl */
 .ptl-dot-col {
   width: 2rem;
   flex-shrink: 0;
@@ -441,7 +441,7 @@ blockquote {
   position: relative;
 }
 
-/* Continuous vertical timeline line — runs through the full .ptl container
+/* Continuous vertical timeline line:runs through the full .ptl container
    so there are no gaps between entries (the date-header divs used to break it). */
 .ptl::before {
   content: '';
@@ -455,7 +455,7 @@ blockquote {
   background-color: var(--color-border);
 }
 
-/* The dot itself — larger and bolder for better role-color visibility */
+/* The dot itself:larger and bolder for better role-color visibility */
 .ptl-dot {
   width: 0.75rem;
   height: 0.75rem;
@@ -495,7 +495,7 @@ blockquote {
   border-radius: 4px;
 }
 
-/* Expanded detail area — subtle divider, no card */
+/* Expanded detail area:subtle divider, no card */
 .ptl-detail {
   margin-top: 0.75rem;
   padding-top: 0.75rem;

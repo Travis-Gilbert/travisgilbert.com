@@ -4,7 +4,7 @@ import { useRef, useEffect, useState, type ReactNode } from 'react';
 
 interface ScrollRevealProps {
   children: ReactNode;
-  /** IntersectionObserver threshold (0–1). Default 0.1 */
+  /** IntersectionObserver threshold (0 to 1). Default 0.1 */
   threshold?: number;
   /** Delay before animation starts (ms). Use for stagger: index * 80 */
   delay?: number;
@@ -28,7 +28,7 @@ export default function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
-    // Respect reduced-motion preference — show immediately
+    // Respect reduced-motion preference: show immediately
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) {
       setVisible(true);

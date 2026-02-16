@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = getEntry<FieldNote>('field-notes', slug);
   if (!entry) return {};
   return {
-    title: `${entry.data.title} — Field Notes`,
+    title: `${entry.data.title} | Field Notes`,
     description: entry.data.excerpt,
   };
 }

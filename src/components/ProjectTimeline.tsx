@@ -38,7 +38,7 @@ function formatDateFull(date: Date): string {
   return `${day}, ${month} ${date.getDate()}, ${date.getFullYear()}`.toUpperCase();
 }
 
-/** Map roles to dot colors — chosen for contrast at small sizes against
+/** Map roles to dot colors: chosen for contrast at small sizes against
  *  the warm paper background. Gold replaces success-green for organizer
  *  so all three dots are visually distinct even at 12px. */
 const roleDotColor: Record<string, string> = {

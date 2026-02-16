@@ -7,9 +7,9 @@ callout: "Helvetica = danger? Need to dig deeper on this"
 draft: false
 ---
 
-Noticed something walking through the airport today. The signs that warn you — wet floor, do not enter, emergency exit — almost universally use sans-serif type. Usually bold. Usually uppercase. Helvetica, or something close to it.
+Noticed something walking through the airport today. The signs that warn you (wet floor, do not enter, emergency exit) almost universally use sans-serif type. Usually bold. Usually uppercase. Helvetica, or something close to it.
 
-But the signs that inform you — gate numbers, baggage claim, ground transportation — are often set in a lighter weight. Sometimes with serifs. Sometimes mixed case.
+But the signs that inform you (gate numbers, baggage claim, ground transportation) are often set in a lighter weight. Sometimes with serifs. Sometimes mixed case.
 
 We've collectively decided that danger sounds like a shout and information sounds like a conversation. That's a design decision embedded so deeply in our built environment that we don't even notice it anymore.
 

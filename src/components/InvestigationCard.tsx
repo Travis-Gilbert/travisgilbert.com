@@ -30,7 +30,7 @@ export default function InvestigationCard({
       <div className="overflow-hidden group">
         <Link href={href} className="block no-underline text-ink hover:text-ink">
           <div className="md:flex">
-            {/* Thumbnail — only render when a video exists */}
+            {/* Thumbnail: only render when a video exists */}
             {hasThumbnail && (
               <div className="md:w-64 md:flex-shrink-0">
                 <img

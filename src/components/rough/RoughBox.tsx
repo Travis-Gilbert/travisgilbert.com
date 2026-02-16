@@ -31,7 +31,7 @@ interface RoughBoxProps {
   grid?: boolean;
   /** Show warm shadow (default: true) */
   elevated?: boolean;
-  /** Enable hover lift animation (default: false — opt-in for linked cards) */
+  /** Enable hover lift animation (default: false, opt-in for linked cards) */
   hover?: boolean;
   /** Transparent brand-color wash (default: 'neutral') */
   tint?: CardTint;

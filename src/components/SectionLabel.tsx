@@ -1,5 +1,5 @@
 /**
- * SectionLabel — Monospace section identifier
+ * SectionLabel: Monospace section identifier
  *
  * Adds the "INVESTIGATION FILE" / "FIELD OBSERVATION" / "PROJECT ARCHIVE"
  * monospace label above section headings, in a section-specific color

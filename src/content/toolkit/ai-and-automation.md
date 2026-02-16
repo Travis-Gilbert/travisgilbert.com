@@ -8,7 +8,7 @@ I use AI tools as thinking partners and production accelerators, not as replacem
 
 ## Claude and Claude Code
 
-Claude helps me research, organize source material, and think through arguments. Claude Code built this website. I treat these tools the way I'd treat a capable research assistant — I give direction, review output, and make the final calls.
+Claude helps me research, organize source material, and think through arguments. Claude Code built this website. I treat these tools the way I'd treat a capable research assistant: I give direction, review output, and make the final calls.
 
 ## What AI is good for
 
@@ -20,7 +20,7 @@ Claude helps me research, organize source material, and think through arguments.
 ## What AI is not good for
 
 - **Original observation:** You have to be in the place, looking at the thing. No model can substitute for that.
-- **Aesthetic judgment:** The hand-drawn feel of this site, the pacing of a video edit, the choice of what to include — these require human taste.
+- **Aesthetic judgment:** The hand-drawn feel of this site, the pacing of a video edit, the choice of what to include... these require human taste.
 - **Ethical reasoning:** Design investigations involve questions of power and equity. AI can surface information, but the moral framework has to be mine.
 
 The best use of these tools is to handle the 80% of work that is mechanical so I can spend more time on the 20% that requires genuine thought.

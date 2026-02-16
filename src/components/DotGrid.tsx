@@ -1,6 +1,6 @@
 'use client';
 
-// DotGrid.tsx — Interactive dot grid with radial edge vignette
+// DotGrid.tsx: Interactive dot grid with radial edge vignette
 // React client component · ~2.5 kB gzipped
 // Ported from Preact island (preact/hooks → react)
 

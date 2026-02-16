@@ -21,7 +21,7 @@ interface RoughPivotCalloutProps {
   tint?: CalloutTint;
   /** Vertical offset from the top of the positioned parent (px) */
   offsetY?: number;
-  /** Total length of the leader line — horizontal + diagonal combined (px) */
+  /** Total length of the leader line: horizontal + diagonal combined (px) */
   totalLength?: number;
   /** rough.js seed for deterministic hand-drawn look */
   seed?: number;
@@ -147,7 +147,7 @@ export default function RoughPivotCallout({
           aria-hidden="true"
           className="block"
         />
-        {/* Annotation text — starts right after the pivot point */}
+        {/* Annotation text: starts right after the pivot point */}
         <div
           className="max-w-[190px] text-[17px] leading-snug select-none"
           style={{

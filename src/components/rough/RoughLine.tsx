@@ -82,7 +82,7 @@ export default function RoughLine({
           >
             {label}
           </span>
-          {/* Right line segment — visual only, the canvas stretches via flex */}
+          {/* Right line segment: visual only, the canvas stretches via flex */}
           <div
             className="flex-1 h-[1px]"
             style={{ backgroundColor: stroke, opacity: 0.3 }}

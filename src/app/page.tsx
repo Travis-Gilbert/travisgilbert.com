@@ -47,13 +47,13 @@ export default function HomePage() {
   return (
     <div>
       {/* ═══════════════════════════════════════════════
-          Hero — Name + Tagline (no outer box)
+          Hero: Name + Tagline (no outer box)
           Scale and negative space create hierarchy
           ═══════════════════════════════════════════════ */}
       <section className="pt-10 md:pt-16 pb-4 md:pb-6">
         <ScrollReveal>
           <div className="relative">
-            <SectionLabel color="terracotta">Case File — Open</SectionLabel>
+            <SectionLabel color="terracotta">Case File: Open</SectionLabel>
 
             <h1
               className="text-4xl md:text-5xl mb-3 mt-2"
@@ -72,7 +72,7 @@ export default function HomePage() {
               Investigating how design decisions shape human outcomes.
             </p>
 
-            {/* Content counts — workbench inventory */}
+            {/* Content counts: workbench inventory */}
             <div className="mt-3 text-right">
               <MarginNote>
                 {totalInvestigations} investigation{totalInvestigations !== 1 ? 's' : ''} · {totalFieldNotes} field note{totalFieldNotes !== 1 ? 's' : ''} · {totalProjects} project{totalProjects !== 1 ? 's' : ''}
@@ -83,7 +83,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          Featured Investigation — Primary visual anchor
+          Featured Investigation: Primary visual anchor
           Wider card, generous margins, pivoted callouts
           ═══════════════════════════════════════════════ */}
       {featured && (
@@ -136,7 +136,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Pivoted leader-line callouts — exactly 2 for featured,
+                  {/* Pivoted leader-line callouts: exactly 2 for featured,
                       staggered on opposite sides for visual balance */}
                   {featuredCallouts[0] && (
                     <RoughPivotCallout
@@ -170,7 +170,7 @@ export default function HomePage() {
       )}
 
       {/* ═══════════════════════════════════════════════
-          Investigations — "Pinned to the wall"
+          Investigations: "Pinned to the wall"
           Skip the featured item (already shown above)
           ═══════════════════════════════════════════════ */}
       {investigations.length > 1 && (
@@ -243,7 +243,7 @@ export default function HomePage() {
       )}
 
       {/* ═══════════════════════════════════════════════
-          Field Notes — "Scattered notes" (asymmetric grid)
+          Field Notes: "Scattered notes" (asymmetric grid)
           ═══════════════════════════════════════════════ */}
       {fieldNotes.length > 0 && (
         <section className="py-6">
@@ -303,7 +303,7 @@ export default function HomePage() {
       )}
 
       {/* ═══════════════════════════════════════════════
-          Projects — Grid with scroll-reveal stagger
+          Projects: Grid with scroll-reveal stagger
           ═══════════════════════════════════════════════ */}
       {projects.length > 0 && (
         <section className="py-6">
@@ -357,7 +357,7 @@ export default function HomePage() {
       )}
 
       {/* ═══════════════════════════════════════════════
-          Shelf Teaser — "Sticky note" aside
+          Shelf Teaser: "Sticky note" aside
           ═══════════════════════════════════════════════ */}
       {shelfItems.length > 0 && (
         <section className="py-6">
