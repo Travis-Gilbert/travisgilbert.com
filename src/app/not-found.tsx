@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="py-16 md:py-24 text-center max-w-lg mx-auto">
-      <RoughBox padding={32}>
+      <RoughBox padding={32} tint="terracotta">
         <p className="font-mono-alt text-6xl text-terracotta mb-4 font-bold">
           404
         </p>

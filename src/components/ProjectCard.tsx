@@ -25,7 +25,7 @@ export default function ProjectCard({
   tags,
 }: ProjectCardProps) {
   return (
-    <RoughBox padding={20} hover>
+    <RoughBox padding={20} hover tint="gold">
       <div className="flex flex-col gap-2">
         <div>
           <h3 className="text-lg font-title font-bold m-0">{title}</h3>

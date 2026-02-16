@@ -26,7 +26,7 @@ export default function ConnectPage() {
       </section>
 
       <div className="max-w-xl space-y-8">
-        <RoughBox padding={24}>
+        <RoughBox padding={24} tint="teal">
           <div>
             <h2 className="font-title text-lg font-bold mb-4">Find me</h2>
             <ul className="space-y-3 list-none p-0 m-0">

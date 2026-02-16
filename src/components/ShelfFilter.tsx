@@ -59,7 +59,7 @@ export default function ShelfFilter({ items }: ShelfFilterProps) {
       {/* Items */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.map((item) => (
-          <RoughBox key={item.title} padding={20} hover>
+          <RoughBox key={item.title} padding={20} hover tint="gold">
             <div>
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>

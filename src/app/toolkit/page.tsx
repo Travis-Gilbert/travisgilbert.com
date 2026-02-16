@@ -56,7 +56,7 @@ export default async function ToolkitPage() {
             </h2>
             <div className="space-y-4">
               {items.map((item) => (
-                <RoughBox key={item.slug} padding={24}>
+                <RoughBox key={item.slug} padding={24} tint="terracotta">
                   <div>
                     <div
                       className="prose prose-toolkit"

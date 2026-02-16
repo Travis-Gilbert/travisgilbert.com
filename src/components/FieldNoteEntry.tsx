@@ -19,7 +19,7 @@ export default function FieldNoteEntry({
   href,
 }: FieldNoteEntryProps) {
   return (
-    <RoughBox padding={20} hover>
+    <RoughBox padding={20} hover tint="teal">
       <div className="group">
         <Link href={href} className="block no-underline text-ink hover:text-ink">
           <div className="flex flex-col gap-2">

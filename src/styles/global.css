@@ -8,9 +8,9 @@
 @theme inline {
   /* Backgrounds */
   --color-paper: #F0EBE4;
-  --color-surface: #FAF6F1;
+  --color-surface: #F4EFE8;
   --color-bg-alt: #E8E0D6;
-  --color-card: #FAF6F1;           /* alias → surface */
+  --color-card: #F4EFE8;           /* alias → surface */
   --color-code: #E8E0D6;           /* alias → bg-alt */
 
   /* Text */
@@ -112,11 +112,16 @@ body::after {
    Surface Utilities — Textured card surfaces
    ───────────────────────────────────────────────── */
 
-/* Elevated surface with warm shadow */
+/* Elevated surface with warm shadow — tint classes handle fill color */
 .surface-elevated {
-  background-color: var(--color-surface);
   box-shadow: var(--shadow-warm-sm);
 }
+
+/* Card tint washes — transparent brand-color fills */
+.surface-tint-terracotta { background-color: rgba(180, 90, 45, 0.045); }
+.surface-tint-teal       { background-color: rgba(45, 95, 107, 0.04); }
+.surface-tint-gold       { background-color: rgba(196, 154, 74, 0.05); }
+.surface-tint-neutral    { background-color: rgba(42, 36, 32, 0.025); }
 
 /* Blueprint grid overlay — for cards, not full pages */
 .surface-grid {
@@ -131,7 +136,7 @@ body::after {
     linear-gradient(var(--color-border-light) 1px, transparent 1px),
     linear-gradient(90deg, var(--color-border-light) 1px, transparent 1px);
   background-size: 40px 40px;
-  opacity: 0.15;
+  opacity: 0.35;
   pointer-events: none;
   border-radius: inherit;
 }

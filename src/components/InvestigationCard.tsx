@@ -26,7 +26,7 @@ export default function InvestigationCard({
     : '';
 
   return (
-    <RoughBox padding={0} hover>
+    <RoughBox padding={0} hover tint="terracotta">
       <div className="overflow-hidden group">
         <Link href={href} className="block no-underline text-ink hover:text-ink">
           <div className="md:flex">

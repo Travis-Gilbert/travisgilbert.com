@@ -3,6 +3,15 @@
 import { useRef, useEffect, type ReactNode } from 'react';
 import rough from 'roughjs';
 
+type CardTint = 'terracotta' | 'teal' | 'gold' | 'neutral';
+
+const tintClass: Record<CardTint, string> = {
+  terracotta: 'surface-tint-terracotta',
+  teal: 'surface-tint-teal',
+  gold: 'surface-tint-gold',
+  neutral: 'surface-tint-neutral',
+};
+
 interface RoughBoxProps {
   children: ReactNode;
   padding?: number;
@@ -12,10 +21,12 @@ interface RoughBoxProps {
   seed?: number;
   /** Show blueprint grid lines inside card (default: true) */
   grid?: boolean;
-  /** Show warm shadow + bg-surface (default: true) */
+  /** Show warm shadow (default: true) */
   elevated?: boolean;
   /** Enable hover lift animation (default: false — opt-in for linked cards) */
   hover?: boolean;
+  /** Transparent brand-color wash (default: 'neutral') */
+  tint?: CardTint;
 }
 
 export default function RoughBox({
@@ -28,6 +39,7 @@ export default function RoughBox({
   grid = true,
   elevated = true,
   hover = false,
+  tint = 'neutral',
 }: RoughBoxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,6 +90,7 @@ export default function RoughBox({
     elevated ? 'surface-elevated' : '',
     grid ? 'surface-grid' : '',
     hover ? 'surface-hover' : '',
+    tintClass[tint],
   ]
     .filter(Boolean)
     .join(' ');

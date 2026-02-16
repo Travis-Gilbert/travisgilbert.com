@@ -46,7 +46,7 @@ export default function ColophonPage() {
 
         <section>
           <h2 className="font-title text-xl font-bold mb-3">Tech Stack</h2>
-          <RoughBox padding={20}>
+          <RoughBox padding={20} tint="teal">
             <ul className="space-y-2 list-none p-0 m-0 font-mono text-sm">
               <li>
                 <strong>Framework:</strong> Next.js 15 (static site generation)
