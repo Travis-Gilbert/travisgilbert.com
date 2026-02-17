@@ -36,9 +36,9 @@ const QUADRANTS: {
 ];
 
 /**
- * NowPreviewCompact: slim single-column /now snapshot for the homepage hero.
+ * NowPreviewCompact: wide 2x2 grid /now snapshot for the homepage hero.
  * No RoughBox wrapper. Subtle left border. Server Component.
- * Only shows the four main values (no context lines, no "thinking about").
+ * Horizontal rectangle layout keeps hero height close to the identity column.
  */
 export default function NowPreviewCompact() {
   const data = getNowData();
@@ -58,7 +58,7 @@ export default function NowPreviewCompact() {
           Right now &rarr;
         </span>
       </Link>
-      <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
         {QUADRANTS.map((q) => (
           <div key={q.field}>
             <span
@@ -72,7 +72,7 @@ export default function NowPreviewCompact() {
             >
               {q.label}
             </span>
-            <span className="font-title text-sm font-semibold text-ink block leading-snug">
+            <span className="font-title text-[13px] font-semibold text-ink block leading-tight">
               {data[q.field]}
             </span>
           </div>

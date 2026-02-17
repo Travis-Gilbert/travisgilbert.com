@@ -52,15 +52,28 @@ export default function HomePage() {
     <div>
       {/* ═══════════════════════════════════════════════
           Hero: Breakout width, two-column (identity + /now snapshot)
-          Uses viewport-width technique to exceed parent max-w-4xl
+          Uses viewport-width technique to exceed parent max-w-4xl.
+          Left column (name) extends into the breakout margin; counters
+          line ends where the "Essays on ..." left RoughLine ends below.
+          Now section starts where the right RoughLine begins.
           ═══════════════════════════════════════════════ */}
       <section
-        className="relative w-[calc(100vw-2rem)] max-w-6xl left-1/2 -translate-x-1/2 px-4 sm:px-6 pt-8 md:pt-12 pb-4 md:pb-6 border-b border-border-light"
+        className="relative w-[calc(100vw-2rem)] max-w-6xl left-1/2 -translate-x-1/2 px-4 sm:px-6 pt-4 md:pt-6 pb-3 md:pb-4 border-b border-border-light"
       >
         <ScrollReveal>
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-12">
-            {/* Left: identity */}
-            <div className="flex-1">
+          {/* 3-column grid: left identity, center gap (matches RoughLine label
+              width), right /now. Each 1fr extends 128px beyond the max-w-4xl
+              content area, so the column split aligns exactly with the
+              "Essays on ..." label gap in the RoughLine divider below. */}
+          <div
+            className="flex flex-col lg:grid lg:items-end"
+            style={{ gridTemplateColumns: '1fr 118px 1fr' }}
+          >
+            {/* Left: identity (ends where left RoughLine ends).
+                lg:pl-[128px] shifts the name rightward so it aligns with
+                the max-w-4xl content area's left edge below (the hero's
+                1fr column extends 128px beyond the narrower content zone). */}
+            <div className="flex flex-col justify-end lg:pl-[128px]">
               <h1
                 className="text-[2rem] sm:text-[2.5rem] md:text-[2.75rem] m-0"
                 style={{ fontFamily: 'var(--font-name)', fontWeight: 400, lineHeight: 1.0 }}
@@ -73,7 +86,7 @@ export default function HomePage() {
               </div>
 
               <p
-                className="font-mono text-ink-light mt-3"
+                className="font-mono text-ink-light mt-3 mb-0"
                 style={{
                   fontSize: 11,
                   textTransform: 'uppercase',
@@ -86,8 +99,11 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Right: /now snapshot (compact) */}
-            <div className="lg:w-72 flex-shrink-0">
+            {/* Center spacer: matches the "Essays on ..." label width */}
+            <div className="hidden lg:block" aria-hidden="true" />
+
+            {/* Right: /now snapshot (starts where right RoughLine starts) */}
+            <div className="flex flex-col justify-end">
               <NowPreviewCompact />
             </div>
           </div>
