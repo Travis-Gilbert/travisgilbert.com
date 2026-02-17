@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import RoughLine from '@/components/rough/RoughLine';
 import RoughBox from '@/components/rough/RoughBox';
-import SketchIcon from '@/components/rough/SketchIcon';
+import DrawOnIcon from '@/components/rough/DrawOnIcon';
 
 export const metadata: Metadata = {
   title: 'Colophon',
@@ -13,7 +13,7 @@ export default function ColophonPage() {
     <>
       <section className="py-8">
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <SketchIcon name="info" size={32} color="var(--color-terracotta)" />
+          <DrawOnIcon name="info" size={32} color="var(--color-terracotta)" />
           Colophon
         </h1>
         <p className="text-ink-secondary mb-8">

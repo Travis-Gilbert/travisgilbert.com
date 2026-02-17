@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import SketchIcon from '@/components/rough/SketchIcon';
+import DrawOnIcon from '@/components/rough/DrawOnIcon';
 import { getCollection } from '@/lib/content';
 import type {
   Essay,
@@ -125,7 +125,7 @@ export default async function TagDetailPage({ params }: Props) {
           Tag
         </p>
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <SketchIcon name="tag" size={32} color="var(--color-terracotta)" />
+          <DrawOnIcon name="tag" size={32} color="var(--color-terracotta)" />
           {displayName}
         </h1>
         <p className="text-ink-secondary">

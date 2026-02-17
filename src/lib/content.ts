@@ -30,6 +30,11 @@ export const essaySchema = z.object({
   stage: z.enum(['research', 'drafting', 'production', 'published']).optional(),
   /** Optional hero/card image path */
   image: z.string().optional(),
+  /** Handwritten margin annotations keyed to paragraph index */
+  annotations: z.array(z.object({
+    paragraph: z.number(),
+    text: z.string(),
+  })).default([]),
 });
 
 export const fieldNoteSchema = z.object({
@@ -154,4 +159,82 @@ export async function renderMarkdown(body: string): Promise<string> {
     .use(remarkHtml, { sanitize: false })
     .process(body);
   return result.toString();
+}
+
+// ─────────────────────────────────────────────────
+// Reading Time
+// ─────────────────────────────────────────────────
+
+/**
+ * Estimate reading time from raw markdown body text.
+ * Uses 200 words per minute (average adult reading speed).
+ * Returns at least 1 minute.
+ */
+export function estimateReadingTime(body: string): number {
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+// ─────────────────────────────────────────────────
+// Margin Annotation Injection
+// ─────────────────────────────────────────────────
+
+interface Annotation {
+  paragraph: number;
+  text: string;
+}
+
+/**
+ * Escape a string for safe use inside an HTML attribute value.
+ */
+function escapeAttr(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Inject margin annotation anchors into rendered HTML after the specified
+ * paragraph positions. Annotations alternate between right and left sides.
+ *
+ * Counts closing </p> tags to identify paragraph boundaries. Each annotation
+ * is a zero-height <span> with data attributes that CSS ::after pseudo-elements
+ * read to render the handwritten note.
+ *
+ * No-op when the annotations array is empty.
+ */
+export function injectAnnotations(html: string, annotations: Annotation[]): string {
+  if (annotations.length === 0) return html;
+
+  // Build a map of paragraph index to annotation(s)
+  const annotationMap = new Map<number, Annotation[]>();
+  for (const ann of annotations) {
+    const existing = annotationMap.get(ann.paragraph);
+    if (existing) {
+      existing.push(ann);
+    } else {
+      annotationMap.set(ann.paragraph, [ann]);
+    }
+  }
+
+  let paragraphIndex = 0;
+  let sideToggle = 0; // alternates 0 (right) and 1 (left)
+  const closingTag = '</p>';
+
+  return html.replace(/<\/p>/gi, (match) => {
+    paragraphIndex++;
+    const anns = annotationMap.get(paragraphIndex);
+    if (!anns) return match;
+
+    let injected = match;
+    for (const ann of anns) {
+      const side = sideToggle % 2 === 0 ? 'right' : 'left';
+      sideToggle++;
+      injected += `<span class="margin-annotation-anchor" data-annotation-text="${escapeAttr(ann.text)}" data-annotation-side="${side}"></span>`;
+    }
+    return injected;
+  });
 }

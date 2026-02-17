@@ -43,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/tags`, changeFrequency: 'weekly', priority: 0.5 },
     { url: `${BASE_URL}/colophon`, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/connect`, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE_URL}/now`, changeFrequency: 'monthly', priority: 0.5 },
 
     // Dynamic essay pages
     ...essays.map((i) => ({

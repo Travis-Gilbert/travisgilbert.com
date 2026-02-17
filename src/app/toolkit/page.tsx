@@ -3,7 +3,7 @@ import { getCollection, renderMarkdown } from '@/lib/content';
 import type { ToolkitEntry } from '@/lib/content';
 import SectionLabel from '@/components/SectionLabel';
 import ToolkitAccordion from '@/components/ToolkitAccordion';
-import SketchIcon from '@/components/rough/SketchIcon';
+import DrawOnIcon from '@/components/rough/DrawOnIcon';
 
 export const metadata: Metadata = {
   title: 'Toolkit',
@@ -37,7 +37,7 @@ export default async function ToolkitPage() {
       <section className="py-8">
         <SectionLabel color="terracotta">Workshop Tools</SectionLabel>
         <h1 className="font-title-alt text-3xl md:text-4xl font-semibold mb-2 flex items-center gap-3">
-          <SketchIcon name="wrench" size={32} color="var(--color-terracotta)" />
+          <DrawOnIcon name="wrench" size={32} color="var(--color-terracotta)" />
           Toolkit
         </h1>
         <p className="text-ink-secondary mb-8">

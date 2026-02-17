@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCollection } from '@/lib/content';
-import SketchIcon from '@/components/rough/SketchIcon';
+import DrawOnIcon from '@/components/rough/DrawOnIcon';
 import type { Essay, FieldNote, ShelfEntry, Project } from '@/lib/content';
 import { slugifyTag } from '@/lib/slugify';
 
@@ -49,7 +49,7 @@ export default function TagsPage() {
     <>
       <section className="py-8">
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <SketchIcon name="tag" size={32} color="var(--color-terracotta)" />
+          <DrawOnIcon name="tag" size={32} color="var(--color-terracotta)" />
           Tags
         </h1>
         <p className="text-ink-secondary mb-8">Browse content by topic.</p>

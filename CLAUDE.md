@@ -23,7 +23,7 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `src/components/` | React components (Server + Client) |
 | `src/components/rough/` | Client Components for rough.js visuals (RoughBox, RoughLine, RoughUnderline) |
 | `src/content/` | Markdown content collections (essays, field-notes, shelf, toolkit, projects) |
-| `src/lib/content.ts` | Content loading: Zod schemas, `getCollection()`, `getEntry()`, `renderMarkdown()` |
+| `src/lib/content.ts` | Content loading: Zod schemas, `getCollection()`, `getEntry()`, `renderMarkdown()`, `estimateReadingTime()`, `injectAnnotations()` |
 | `src/lib/slugify.ts` | Tag slug utility |
 | `src/components/SectionLabel.tsx` | Monospace colored section headers (terracotta/teal/gold) |
 | `src/styles/global.css` | Design tokens, surface utilities, prose variants, timeline CSS |
@@ -57,7 +57,7 @@ Most components are **Server Components** by default. Components needing browser
 | `TopNav.tsx` | `usePathname()`, mobile menu `useState` |
 | `ShelfFilter.tsx` | Filter state via `useState` |
 | `YouTubeEmbed.tsx` | Click-to-load facade via `useState` |
-| `ConsoleEasterEgg.tsx` | `console.log` in `useEffect` |
+| `ConsoleEasterEgg.tsx` | `console.log` in `useEffect`; props from layout (stats, latest essay, fun facts) |
 | `rough/RoughBox.tsx` | Canvas drawing via `useRef` + `useEffect` |
 | `rough/RoughLine.tsx` | Canvas drawing |
 | `rough/RoughUnderline.tsx` | Canvas drawing |
@@ -71,6 +71,7 @@ Most components are **Server Components** by default. Components needing browser
 | `MarginNote.tsx` | Positioned margin annotations |
 | `SourcesCollapsible.tsx` | Radix Collapsible for essay sources |
 | `PatternImage.tsx` | Seeded generative canvas (3 layers: dots, curves, contours) |
+| `rough/DrawOnIcon.tsx` | IntersectionObserver SVG stroke draw animation for page headers |
 
 Server Components can import and render Client Components; children pass through as a slot without hydrating.
 
@@ -83,6 +84,32 @@ Server Components can import and render Client Components; children pass through
 Props: `name`, `size` (default 32), `color` (default currentColor), `className`. All paths are `fill="none"` with `strokeWidth={1.8}` and round linecap/linejoin for felt-tip pen effect.
 
 **Note:** Phosphor icons are still used for functional UI glyphs (CaretDown, ArrowSquareOut, ArrowRight, List, X) where brand identity isn't needed.
+
+### DrawOnIcon Animation
+
+`DrawOnIcon` (`src/components/rough/DrawOnIcon.tsx`) is a Client Component that wraps the same SVG paths from SketchIcon but adds an IntersectionObserver-triggered stroke draw animation. Used on all 9 section page headers (replacing SketchIcon in those locations).
+
+**Technique:** `pathLength="1"` normalizes any SVG path to a 0..1 range. `strokeDashoffset` transitions from 1 (hidden) to 0 (drawn) via CSS transition. No `getTotalLength()` measurement needed.
+
+**Props:** `name` (IconName), `size` (32), `color` (currentColor), `className`, `duration` (800ms), `delay` (0ms).
+
+**Accessibility:** Respects `prefers-reduced-motion: reduce` by showing the icon immediately without animation. Observer disconnects after first trigger.
+
+**SketchIcon still used for:** Nav icons (16px, always visible in sticky nav where animation would be distracting).
+
+### MarginAnnotation System
+
+Frontmatter-driven handwritten margin notes on essays, rendered entirely via CSS (no Client Component).
+
+**Architecture:**
+1. Essay frontmatter: `annotations: [{ paragraph: 1, text: "..." }]`
+2. `injectAnnotations()` utility in `content.ts`: counts `</p>` tags, inserts `<span class="margin-annotation-anchor">` with `data-annotation-text` and `data-annotation-side` attributes
+3. CSS `::after` pseudo-elements display the text using `content: attr(data-annotation-text)`
+4. Annotations alternate right/left sides automatically
+
+**Responsive behavior:**
+- Desktop (xl+, 1280px): absolute positioned in margin beside prose, 150px wide, Caveat font
+- Mobile/tablet: inline block below paragraph with subtle terracotta border-top
 
 ### Font System
 
@@ -170,7 +197,7 @@ Generic `stages` array prop; works for any content type. Both are Server Compone
 
 ### NowPreview
 
-`NowPreview` (`src/components/NowPreview.tsx`) is a Server Component that reads `src/content/now.md` frontmatter. Displays a 2x2 grid of current activities (Researching, Reading, Building, Listening to) in a neutral RoughBox. Update by editing `src/content/now.md` frontmatter fields.
+`NowPreview` (`src/components/NowPreview.tsx`) is a Server Component that reads `src/content/now.md` frontmatter. Displays a 2x2 grid of current activities (Researching, Reading, Building, Listening to) in a neutral RoughBox with a "See more →" link to `/now`. Full page version at `src/app/now/page.tsx` with expanded layout and descriptions. Update by editing `src/content/now.md` frontmatter fields.
 
 ### EssayCard Image Hierarchy
 
@@ -235,7 +262,7 @@ Components: `SectionLabel` (monospace header), `TagList` (tint prop), `SketchIco
 
 Vercel with native Next.js builder. Git integration auto-deploys on push to `main`. No `vercel.json` needed; Vercel auto-detects Next.js. **Important:** Vercel dashboard Project Settings > Output Directory must be blank/default (not `dist`).
 
-## Status: Three-Phase Buildout
+## Status: Four-Phase Buildout
 
 ### Phase 1: Foundation + Surface Materiality ✅ Complete
 
@@ -288,7 +315,7 @@ See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for surface mate
 See `docs/plans/2026-02-16-projects-page-redesign.md` for projects column layout design.
 See `docs/records/001-site-wide-redesign.md` for full redesign record with user stories.
 
-### Phase 3: Animations + Content + Polish 🔜 Next
+### Phase 3: Animations + Content + Polish ✅ Complete
 
 | Item | Status |
 |------|--------|
@@ -301,13 +328,37 @@ See `docs/records/001-site-wide-redesign.md` for full redesign record with user 
 | Nav SketchIcons (replaced Phosphor in TopNav) | ✅ |
 | Nav/layout max-width alignment (both `max-w-4xl`) | ✅ |
 | ProjectColumns `whitespace-nowrap` overflow fix | ✅ |
-| DrawOnIcon animation (SVG stroke animation on scroll/hover) | Not started |
-| MarginAnnotation positioned handwritten notes | Not started |
-| Nav restructure: 5 items (Essays on.../Field Notes/Projects/Toolkit/Connect) | Not started |
-| Essay detail page: full ProgressTracker + related notes sidebar | Not started |
-| Field note detail page: CompactTracker in header | Not started |
+| DrawOnIcon animation (SVG stroke animation on scroll/hover) | ✅ |
+| MarginAnnotation positioned handwritten notes | ✅ |
+| Nav restructure: 5 items (Essays on.../Field Notes/Projects/Toolkit/Connect) | ✅ (verified: already done in Phase 2) |
+| Essay detail page: full ProgressTracker + related notes sidebar | ✅ |
+| Field note detail page: CompactTracker in header | ✅ |
 | Additional content pages and essays | Not started |
-| Dark mode (design tokens already prepared in global.css) | Not started |
+| Dark mode (design tokens already prepared in global.css) | Deferred |
+
+### Phase 4: Full Polish Pass ✅ Complete
+
+| Item | Status |
+|------|--------|
+| `/now` page (full-page version of NowPreview) | ✅ |
+| Reading time utility (`estimateReadingTime()`) | ✅ |
+| Reading time on essay detail pages | ✅ |
+| Reading time on field note detail pages (conditional, >1 min) | ✅ |
+| NowPreview "See more →" link to `/now` | ✅ |
+| `/now` added to sitemap | ✅ |
+| Global `focus-visible` keyboard focus indicators | ✅ |
+| TopNav `aria-current="page"` + `aria-label` | ✅ |
+| TopNav mobile menu focus trap (Tab wrapping + focus on open) | ✅ |
+| Footer `aria-label` attributes | ✅ |
+| External link indicator (`.prose a[target="_blank"]::after`) | ✅ |
+| ConsoleEasterEgg expansion (stats, latest essay, fun facts) | ✅ |
+| Layout computes site stats for ConsoleEasterEgg | ✅ |
+| Code block overflow protection (`max-width`, `word-break`) | ✅ |
+| Mobile touch targets (nav `py-2`) | ✅ |
+| Prose `overflow-wrap: break-word` | ✅ |
+| Field note callouts (the-maintenance-question, who-decides-where-the-bench-goes) | ✅ |
+| Second essay annotations (the-sidewalk-tax, 3 margin notes) | ✅ |
+| Bidirectional essay linking (`related` field on both essays) | ✅ |
 
 ## Recent Decisions
 
@@ -326,6 +377,18 @@ See `docs/records/001-site-wide-redesign.md` for full redesign record with user 
 | ProgressTracker | Generic stages array, two variants (full + compact) | Same component serves essays (4 stages) and field notes (3 stages); avoids duplication |
 | PatternImage | Seeded PRNG canvas, 3 layers | Deterministic from slug so patterns are stable; fallback when no video/image exists |
 | EssayCard image fallback | YouTube > curated > PatternImage (3-tier) | Every card gets a visual header; PatternImage is zero-maintenance generative fallback |
+| DrawOnIcon vs SketchIcon | DrawOnIcon (animated) for 9 page headers, SketchIcon (static) for nav | Nav icons are always visible in sticky header; animation there would be distracting |
+| DrawOnIcon technique | `pathLength="1"` + CSS `stroke-dashoffset` transition | Avoids `getTotalLength()` JS measurement; works with SSR; single CSS transition does the work |
+| MarginAnnotation approach | Frontmatter array + CSS-only rendering (no Client Component) | Zero JS overhead; `::after` pseudo-elements + `attr()` read data attributes directly |
+| MarginAnnotation breakpoint | xl (1280px) for margin positioning, not lg (1024px) | At 1024px only ~128px margin space; at 1280px ~192px, comfortably fitting 150px annotations |
+| Related field notes | Two-tier resolution: explicit `related` slugs, then shared-tag fallback | Curated relationships preferred; automatic fallback ensures no empty section |
+| Dark mode | Deferred to separate future effort | Tokens ready in global.css but scope was too large for Phase 3 |
+| Reading time | 200 WPM, `Math.ceil`, min 1 | Standard adult reading speed; ceiling prevents "0 min"; field notes conditional (>1 min only) |
+| Focus-visible strategy | `:focus-visible` on all interactive elements | Only fires for keyboard navigation (not mouse clicks); terracotta ring matches brand |
+| /now page | Separate full page (not extracted shared lib) | Two consumers (NowPreview + /now page) with different display needs; shared logic is trivial |
+| Mobile focus trap | Tab wrapping + auto-focus first item + return focus to hamburger on close | WCAG-compliant modal behavior for mobile menu overlay |
+| ConsoleEasterEgg props | Layout computes stats at build time, passes as props | Server Component (layout) reads collections once; Client Component displays them |
+| Code block overflow | `max-width: 100%` + `word-break: break-word` on inline code | Prevents horizontal page scroll from long code strings on mobile |
 
 ## Gotchas
 
@@ -346,3 +409,9 @@ See `docs/records/001-site-wide-redesign.md` for full redesign record with user 
 - **Satori (OG image) CSS limitations**: Only flexbox layout, no grid. Every element needs `display: 'flex'`. No `position: relative` on children without it
 - **PatternImage CSS color parsing**: Uses a temporary DOM element to resolve CSS custom properties (e.g., `var(--color-terracotta)`) to hex. Runs in useEffect so SSR returns empty canvas; hydration fills it
 - **ProgressTracker stage defaults**: EssayCard defaults missing `stage` to `'published'`; FieldNoteEntry only shows CompactTracker when `status` prop is present (graceful degradation for content without status field)
+- **MarginAnnotation paragraph counting**: `injectAnnotations()` counts `</p>` tags in rendered HTML. Paragraph indices in frontmatter are 1-based (paragraph 1 = first `</p>`). Headings (`<h2>`, `<h3>`) don't count as paragraphs
+- **DrawOnIcon imports ICON_PATHS from SketchIcon**: The `export` on `ICON_PATHS` is the only change to SketchIcon. If new icons are added to SketchIcon, DrawOnIcon picks them up automatically
+- **Focus trap in mobile menu**: Tab wraps between first and last focusable items inside `mobileMenuRef`. On Escape, focus returns to the hamburger button via `hamburgerRef`
+- **Reading time word count**: `estimateReadingTime()` splits on `/\s+/` which handles tabs, newlines, and multiple spaces in markdown. Always returns at least 1
+- **ConsoleEasterEgg dependency array**: All 5 props are in the `useEffect` dependency array. Since they're computed at build time (static), the effect runs exactly once per page load
+- **`pre code` word-break reset**: Inline `code` gets `word-break: break-word` but `pre code` resets to `normal` because code blocks should scroll horizontally, not wrap

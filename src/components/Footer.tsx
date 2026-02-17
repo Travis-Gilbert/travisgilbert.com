@@ -15,9 +15,10 @@ export default function Footer() {
             Travis Gilbert
           </span>
         </p>
-        <nav className="flex items-center gap-4">
+        <nav aria-label="Footer navigation" className="flex items-center gap-4">
           <a
             href="/rss.xml"
+            aria-label="RSS Feed"
             className="text-ink-light hover:text-terracotta no-underline"
             style={{ fontSize: 11 }}
           >

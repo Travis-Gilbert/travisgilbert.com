@@ -3,7 +3,7 @@ import { getCollection } from '@/lib/content';
 import type { Project } from '@/lib/content';
 import ProjectColumns from '@/components/ProjectColumns';
 import SectionLabel from '@/components/SectionLabel';
-import SketchIcon from '@/components/rough/SketchIcon';
+import DrawOnIcon from '@/components/rough/DrawOnIcon';
 
 export const metadata: Metadata = {
   title: 'Projects',
@@ -20,7 +20,7 @@ export default function ProjectsPage() {
       <section className="py-8">
         <SectionLabel color="gold">Project Archive</SectionLabel>
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-          <SketchIcon name="briefcase" size={32} color="var(--color-gold)" />
+          <DrawOnIcon name="briefcase" size={32} color="var(--color-gold)" />
           Projects
         </h1>
         <p className="text-ink-secondary mb-5">

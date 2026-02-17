@@ -3,6 +3,7 @@ title: "The Maintenance Question"
 date: 2026-02-04
 tags: ["infrastructure", "maintenance", "design"]
 excerpt: "Every design decision is also a maintenance decision. We almost never talk about it that way."
+callout: "who pays to keep things working?"
 status: observation
 draft: false
 ---

@@ -13,6 +13,11 @@ sources:
     url: "https://parkingreform.org/"
 related: ["the-sidewalk-tax"]
 stage: research
+annotations:
+  - paragraph: 1
+    text: "This changed how cities think about space"
+  - paragraph: 3
+    text: "See also: induced demand research"
 draft: false
 callout: "The most powerful urban policy you've never heard of"
 callouts:

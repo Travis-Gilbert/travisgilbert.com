@@ -238,6 +238,24 @@ h4 {
 }
 
 /* ─────────────────────────────────────────────────
+   Focus Indicators:Keyboard Navigation
+   :focus-visible fires only for keyboard nav (Tab key),
+   not mouse clicks. Terracotta ring matches brand color.
+   ───────────────────────────────────────────────── */
+
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─────────────────────────────────────────────────
    Links
    ───────────────────────────────────────────────── */
 
@@ -261,11 +279,13 @@ code {
   background-color: var(--color-bg-alt);
   padding: 0.15em 0.35em;
   border-radius: 3px;
+  word-break: break-word;
 }
 
 pre code {
   background: none;
   padding: 0;
+  word-break: normal; /* Undo break-word inside pre blocks */
 }
 
 pre {
@@ -274,6 +294,8 @@ pre {
   padding: 1rem;
   border-radius: 4px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -328,6 +350,7 @@ blockquote {
   font-size: 1.0625rem;
   line-height: 1.75;
   color: var(--color-ink);
+  overflow-wrap: break-word;
 }
 
 .prose h2 {
@@ -357,6 +380,13 @@ blockquote {
   text-underline-offset: 2px;
 }
 .prose a:hover { color: var(--color-terracotta-hover); }
+
+/* External link indicator:subtle arrow for links opening in new tabs */
+.prose a[target="_blank"]::after {
+  content: ' \2197';
+  font-size: 0.75em;
+  opacity: 0.5;
+}
 
 .prose blockquote {
   font-style: normal;
@@ -441,6 +471,71 @@ blockquote {
 .prose-toolkit h3 {
   font-family: var(--font-title-alt);
   font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────────
+   Margin Annotations:Handwritten notes in essay margins
+   Frontmatter-driven, CSS-only (no Client Component).
+   Desktop: positioned in the right/left margin beside prose.
+   Mobile: inline block below the annotated paragraph.
+   ───────────────────────────────────────────────── */
+
+.prose-essays {
+  position: relative;
+  overflow: visible;
+}
+
+.margin-annotation-anchor {
+  display: block;
+  position: relative;
+  height: 0;
+  overflow: visible;
+}
+
+.margin-annotation-anchor::after {
+  content: attr(data-annotation-text);
+  font-family: var(--font-annotation);
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--color-terracotta);
+  opacity: 0.7;
+}
+
+/* Mobile/tablet: inline note below paragraph */
+@media (max-width: 1279px) {
+  .margin-annotation-anchor {
+    height: auto;
+    margin-bottom: 1rem;
+  }
+
+  .margin-annotation-anchor::after {
+    display: inline-block;
+    width: 100%;
+    font-size: 14px;
+    padding: 0.25rem 0;
+    border-top: 1px solid rgba(180, 90, 45, 0.15);
+    margin-top: 0.25rem;
+  }
+}
+
+/* Desktop (xl+): absolute positioned in margin */
+@media (min-width: 1280px) {
+  .margin-annotation-anchor::after {
+    position: absolute;
+    width: 150px;
+    top: 0;
+  }
+
+  /* Right-side annotation (default) */
+  .margin-annotation-anchor[data-annotation-side="right"]::after {
+    left: calc(65ch + 1.5rem);
+  }
+
+  /* Left-side annotation */
+  .margin-annotation-anchor[data-annotation-side="left"]::after {
+    right: calc(65ch + 1.5rem);
+    text-align: right;
+  }
 }
 
 /* ─────────────────────────────────────────────────

@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCollection, getEntry, renderMarkdown } from '@/lib/content';
-import type { Essay } from '@/lib/content';
+import { getCollection, getEntry, renderMarkdown, injectAnnotations, estimateReadingTime } from '@/lib/content';
+import type { Essay, FieldNote, ContentEntry } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
 import RoughLine from '@/components/rough/RoughLine';
 import SourcesCollapsible from '@/components/SourcesCollapsible';
+import ProgressTracker, { ESSAY_STAGES } from '@/components/ProgressTracker';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -33,7 +34,31 @@ export default async function EssayDetailPage({ params }: Props) {
   const entry = getEntry<Essay>('essays', slug);
   if (!entry) notFound();
 
-  const html = await renderMarkdown(entry.body);
+  const rawHtml = await renderMarkdown(entry.body);
+  const html = injectAnnotations(rawHtml, entry.data.annotations ?? []);
+  const readingTime = estimateReadingTime(entry.body);
+
+  // Resolve related field notes
+  const allFieldNotes = getCollection<FieldNote>('field-notes')
+    .filter((n) => !n.data.draft);
+
+  let relatedNotes: ContentEntry<FieldNote>[] = [];
+
+  // Prefer explicit curation via the related field
+  if (entry.data.related.length > 0) {
+    relatedNotes = entry.data.related
+      .map((relSlug) => allFieldNotes.find((n) => n.slug === relSlug))
+      .filter(Boolean) as ContentEntry<FieldNote>[];
+  }
+
+  // Fallback: find field notes sharing at least one tag
+  if (relatedNotes.length === 0 && entry.data.tags.length > 0) {
+    const essayTags = new Set(entry.data.tags);
+    relatedNotes = allFieldNotes
+      .filter((n) => n.data.tags.some((t) => essayTags.has(t)))
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+      .slice(0, 4);
+  }
 
   return (
     <article className="py-8">
@@ -43,7 +68,12 @@ export default async function EssayDetailPage({ params }: Props) {
       />
 
       <header className="mt-6 mb-8">
-        <DateStamp date={entry.data.date} />
+        <div className="flex items-center gap-2">
+          <DateStamp date={entry.data.date} />
+          <span className="font-mono text-[11px] uppercase tracking-widest text-ink-faint select-none">
+            · {readingTime} min read
+          </span>
+        </div>
         <h1 className="font-title text-3xl md:text-4xl font-bold mt-4 mb-2">
           {entry.data.title}
         </h1>
@@ -51,10 +81,16 @@ export default async function EssayDetailPage({ params }: Props) {
           {entry.data.summary}
         </p>
         <TagList tags={entry.data.tags} />
+        <ProgressTracker
+          stages={ESSAY_STAGES}
+          currentStage={entry.data.stage || 'published'}
+          color="var(--color-terracotta)"
+        />
       </header>
 
       <div
         className="prose prose-essays mt-8"
+        // Content sourced from local .md files (trusted, not user-submitted)
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
@@ -62,6 +98,35 @@ export default async function EssayDetailPage({ params }: Props) {
         <>
           <RoughLine />
           <SourcesCollapsible sources={entry.data.sources} />
+        </>
+      )}
+
+      {relatedNotes.length > 0 && (
+        <>
+          <RoughLine />
+          <section className="py-4">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.1em] text-teal mb-3">
+              Related Field Notes
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {relatedNotes.map((note) => (
+                <Link
+                  key={note.slug}
+                  href={`/field-notes/${note.slug}`}
+                  className="block no-underline text-ink hover:text-teal p-3 rounded border border-teal/10 bg-teal/[0.03] transition-colors hover:border-teal/25 hover:bg-teal/[0.06]"
+                >
+                  <span className="block font-title text-sm font-semibold">
+                    {note.data.title}
+                  </span>
+                  {note.data.excerpt && (
+                    <span className="block text-xs text-ink-secondary mt-1 line-clamp-2">
+                      {note.data.excerpt}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </section>
         </>
       )}
 

@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCollection, getEntry, renderMarkdown } from '@/lib/content';
+import { getCollection, getEntry, renderMarkdown, estimateReadingTime } from '@/lib/content';
 import type { FieldNote } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import RoughLine from '@/components/rough/RoughLine';
+import { CompactTracker, NOTE_STAGES } from '@/components/ProgressTracker';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -32,6 +33,7 @@ export default async function FieldNoteDetailPage({ params }: Props) {
   if (!entry) notFound();
 
   const html = await renderMarkdown(entry.body);
+  const readingTime = estimateReadingTime(entry.body);
 
   // Prev/next navigation
   const allNotes = getCollection<FieldNote>('field-notes')
@@ -46,7 +48,23 @@ export default async function FieldNoteDetailPage({ params }: Props) {
   return (
     <article className="py-8">
       <header className="mb-8">
-        <DateStamp date={entry.data.date} />
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <DateStamp date={entry.data.date} />
+            {readingTime > 1 && (
+              <span className="font-mono text-[11px] uppercase tracking-widest text-ink-faint select-none">
+                · {readingTime} min read
+              </span>
+            )}
+          </div>
+          {entry.data.status && (
+            <CompactTracker
+              stages={NOTE_STAGES}
+              currentStage={entry.data.status}
+              color="var(--color-teal)"
+            />
+          )}
+        </div>
         <h1 className="font-title text-3xl md:text-4xl font-bold mt-4 mb-4">
           {entry.data.title}
         </h1>

@@ -9,8 +9,15 @@ sources:
     url: "https://ssir.org/articles/entry/the_curb_cut_effect"
   - title: "ADA Standards for Accessible Design"
     url: "https://www.ada.gov/law-and-regs/design-standards/"
-related: []
+related: ["the-parking-lot-problem"]
 stage: drafting
+annotations:
+  - paragraph: 1
+    text: "Kalamazoo, 1945. The origin story."
+  - paragraph: 3
+    text: "The curb-cut effect: margins improve the center"
+  - paragraph: 6
+    text: "Three inches of concrete. Millions of lives."
 draft: false
 callout: "The one that started everything. 3 inches changed the world"
 callouts:

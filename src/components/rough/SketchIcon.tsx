@@ -27,7 +27,7 @@ type IconName =
   | 'tag'
   | 'info';
 
-const ICON_PATHS: Record<IconName, string> = {
+export const ICON_PATHS: Record<IconName, string> = {
   // Magnifying glass: slightly wobbly circle + angled handle
   'magnifying-glass':
     'M14.2 6.5c4.2 0.3 7.3 3.6 7.1 7.8s-3.5 7.4-7.7 7.1c-4.2-0.3-7.4-3.7-7.1-7.9 0.3-4.1 3.5-7.3 7.7-7zm6.3 14.8l5.8 5.3',

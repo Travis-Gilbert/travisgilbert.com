@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import Link from 'next/link';
 import RoughBox from './rough/RoughBox';
 
 interface NowData {
@@ -72,6 +73,12 @@ export default function NowPreview() {
           </div>
         ))}
       </div>
+      <Link
+        href="/now"
+        className="block mt-4 font-mono text-[11px] uppercase tracking-widest text-ink-faint hover:text-terracotta transition-colors no-underline"
+      >
+        See more &rarr;
+      </Link>
     </RoughBox>
   );
 }
