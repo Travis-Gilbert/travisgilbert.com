@@ -522,7 +522,7 @@ blockquote {
 @media (min-width: 1280px) {
   .margin-annotation-anchor::after {
     position: absolute;
-    width: 150px;
+    width: min(450px, calc(100vw - 65ch - 6rem));
     top: 0;
   }
 

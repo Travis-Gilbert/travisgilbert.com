@@ -149,7 +149,7 @@ export default function RoughPivotCallout({
         />
         {/* Annotation text: starts right after the pivot point */}
         <div
-          className="max-w-[190px] text-[17px] leading-snug select-none"
+          className="max-w-[450px] text-[17px] leading-snug select-none"
           style={{
             fontFamily: 'var(--font-annotation)',
             color,

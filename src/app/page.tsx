@@ -194,7 +194,7 @@ export default function HomePage() {
                     hover
                     tint="terracotta"
                   >
-                    <div className="group overflow-hidden">
+                    <div className="group">
                       {/* Image: YouTube > PatternImage fallback */}
                       {hasVideo ? (
                         <div className="w-full h-36 sm:h-48 md:h-64 overflow-hidden">

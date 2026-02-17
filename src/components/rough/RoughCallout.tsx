@@ -99,7 +99,7 @@ export default function RoughCallout({
               className="block flex-shrink-0 mt-2"
             />
             <div
-              className="max-w-[180px] pl-1 text-[15px] leading-snug select-none"
+              className="max-w-[450px] pl-1 text-[15px] leading-snug select-none"
               style={{
                 fontFamily: 'var(--font-annotation)',
                 color,
@@ -111,7 +111,7 @@ export default function RoughCallout({
         ) : (
           <>
             <div
-              className="max-w-[180px] pr-1 text-right text-[15px] leading-snug select-none"
+              className="max-w-[450px] pr-1 text-right text-[15px] leading-snug select-none"
               style={{
                 fontFamily: 'var(--font-annotation)',
                 color,
