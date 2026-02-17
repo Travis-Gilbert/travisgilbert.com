@@ -522,7 +522,10 @@ blockquote {
 @media (min-width: 1280px) {
   .margin-annotation-anchor::after {
     position: absolute;
-    width: min(450px, calc((100vw - 100%) / 2 - 3rem));
+    /* Use viewport and max-w-4xl (896px) for accurate margin calc.
+       The old 100% resolved to the prose container (~663px), not the
+       layout container, making annotations appear wider than available space. */
+    width: min(450px, calc((100vw - 896px) / 2 - 3rem));
     top: 0;
   }
 

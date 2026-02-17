@@ -49,7 +49,7 @@ export default function RootLayout({
     <html lang="en" className={fontVariableClasses}>
       {/* Built with curiosity and too much coffee. If you're reading this, we should talk. */}
       <body
-        className="min-h-screen flex flex-col"
+        className="min-h-screen flex flex-col overflow-x-clip"
         style={{ isolation: 'isolate' }}
       >
         <DotGrid />

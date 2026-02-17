@@ -139,7 +139,11 @@ export default function RoughPivotCallout({
       {/* Desktop: absolute-positioned in the margin with pivot line */}
       <div
         className={`hidden lg:block absolute ${sideClasses} z-20`}
-        style={{ top: `${offsetY}px`, width: 450 }}
+        style={{
+          top: `${offsetY}px`,
+          width: 450,
+          maxWidth: 'calc((100vw - 960px) / 2 - 1rem)',
+        }}
       >
         {/* Canvas draws horizontal + short diagonal stub */}
         <canvas

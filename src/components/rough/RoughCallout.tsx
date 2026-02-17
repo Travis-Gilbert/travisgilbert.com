@@ -89,7 +89,11 @@ export default function RoughCallout({
       {/* Desktop: absolute-positioned in the margin */}
       <div
         className={`hidden lg:flex items-start absolute ${sideClasses} z-20`}
-        style={{ top: `${offsetY}px`, width: 450 }}
+        style={{
+          top: `${offsetY}px`,
+          width: 450,
+          maxWidth: 'calc((100vw - 896px) / 2 - 1.5rem)',
+        }}
       >
         {side === 'right' ? (
           <>

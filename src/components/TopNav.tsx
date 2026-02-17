@@ -17,6 +17,7 @@ const navLinks: NavLink[] = [
   { href: '/field-notes', label: 'Field Notes', icon: 'note-pencil' },
   { href: '/projects', label: 'Projects', icon: 'briefcase' },
   { href: '/toolkit', label: 'Toolkit', icon: 'wrench' },
+  { href: '/shelf', label: 'Shelf', icon: 'book-open' },
   { href: '/connect', label: 'Connect', icon: 'chat-circle' },
 ];
 
@@ -90,7 +91,7 @@ export default function TopNav() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
+        <ul className="hidden md:flex items-center gap-4 list-none m-0 p-0">
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (

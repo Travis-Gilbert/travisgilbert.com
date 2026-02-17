@@ -169,7 +169,7 @@ Tailwind > font-title class
 
 Used on homepage featured cards (investigation and working idea). Two callouts max per card, staggered on opposite sides.
 
-**Outer wrapper requires explicit `width: 450`** on the absolutely positioned div. Without it, shrink-to-fit sizing collapses text to one word per line (`max-width` alone has no effect on absolute elements with no `width`).
+**Outer wrapper requires explicit `width: 450`** on the absolutely positioned div. Without it, shrink-to-fit sizing collapses text to one word per line (`max-width` alone has no effect on absolute elements with no `width`). Both callout components also set `maxWidth: calc((100vw - Xpx) / 2 - gap)` to prevent overflow at narrow viewports. `RoughPivotCallout` uses 960px (accounts for featured card's `xl:-mx-8` negative margin); `RoughCallout` uses 896px (standard `max-w-4xl` content width).
 
 ### ProgressTracker System
 
@@ -370,7 +370,7 @@ See `docs/records/001-site-wide-redesign.md` for full redesign record with user 
 | Section color system | terracotta=essays, teal=field-notes, gold=projects | Creates wayfinding language; color tells you where you are on the site |
 | No dashes | Colons, periods, parentheses, semicolons | User style preference; applies to all code, comments, and content |
 | Projects: no RoughBox | Inline rgba tinting with three states | RoughBox's fixed CSS classes can't handle dynamic rest/hover/expanded opacity |
-| Nav restructure | On ... / Field Notes / Projects / Toolkit / Connect | Shelf and Colophon folded into Toolkit; Projects promoted above Field Notes |
+| Nav restructure | Essays on... / Field Notes / Projects / Toolkit / Shelf / Connect | 6 items; Shelf promoted to top-level nav; Colophon in footer only; gap-4 for tighter desktop spacing |
 | "Essays on ..." naming | "On ..." prefix for essay section | Less institutional; signals essayistic depth; pattern reinforced by individual titles |
 | Section icons | SketchIcon (hand-drawn SVG) for pages, Phosphor for UI glyphs | Brand identity icons match rough.js aesthetic; utility icons stay crisp |
 | Evidence callouts | `.prose-investigations blockquote::before` with `:has()` selector | Only investigation articles get "NOTE" labels; semantic CSS, no component changes |
