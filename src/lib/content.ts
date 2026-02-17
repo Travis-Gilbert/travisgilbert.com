@@ -7,10 +7,10 @@ import remarkGfm from 'remark-gfm';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────
-// Zod Schemas: ported verbatim from content.config.ts
+// Zod Schemas
 // ─────────────────────────────────────────────────
 
-export const investigationSchema = z.object({
+export const essaySchema = z.object({
   title: z.string(),
   date: z.coerce.date(),
   summary: z.string().max(200),
@@ -26,6 +26,10 @@ export const investigationSchema = z.object({
   callout: z.string().optional(),
   /** Array of callouts for featured cards (pivoted leader-line treatment) */
   callouts: z.array(z.string()).optional(),
+  /** Essay production stage */
+  stage: z.enum(['research', 'drafting', 'production', 'published']).optional(),
+  /** Optional hero/card image path */
+  image: z.string().optional(),
 });
 
 export const fieldNoteSchema = z.object({
@@ -35,6 +39,12 @@ export const fieldNoteSchema = z.object({
   excerpt: z.string().max(300).optional(),
   draft: z.boolean().default(false),
   callout: z.string().optional(),
+  /** Array of callouts for featured cards */
+  callouts: z.array(z.string()).optional(),
+  /** Note development status */
+  status: z.enum(['observation', 'developing', 'connected']).optional(),
+  /** Whether this note is featured on the homepage */
+  featured: z.boolean().default(false),
 });
 
 export const shelfSchema = z.object({
@@ -51,17 +61,6 @@ export const toolkitSchema = z.object({
   title: z.string(),
   category: z.enum(['production', 'tools', 'philosophy', 'automation']),
   order: z.number().default(0),
-});
-
-export const workingIdeaSchema = z.object({
-  title: z.string(),
-  date: z.coerce.date(),
-  status: z.enum(['seed', 'growing', 'pruning']).default('seed'),
-  summary: z.string().max(300).optional(),
-  tags: z.array(z.string()).default([]),
-  draft: z.boolean().default(false),
-  featured: z.boolean().default(false),
-  callouts: z.array(z.string()).optional(),
 });
 
 export const projectSchema = z.object({
@@ -85,23 +84,21 @@ export const projectSchema = z.object({
 // Type exports
 // ─────────────────────────────────────────────────
 
-export type Investigation = z.infer<typeof investigationSchema>;
+export type Essay = z.infer<typeof essaySchema>;
 export type FieldNote = z.infer<typeof fieldNoteSchema>;
 export type ShelfEntry = z.infer<typeof shelfSchema>;
 export type ToolkitEntry = z.infer<typeof toolkitSchema>;
-export type WorkingIdea = z.infer<typeof workingIdeaSchema>;
 export type Project = z.infer<typeof projectSchema>;
 
 // ─────────────────────────────────────────────────
 // Content loading
 // ─────────────────────────────────────────────────
 
-type CollectionName = 'investigations' | 'field-notes' | 'working-ideas' | 'projects' | 'shelf' | 'toolkit';
+type CollectionName = 'essays' | 'field-notes' | 'projects' | 'shelf' | 'toolkit';
 
 const schemaMap: Record<CollectionName, z.ZodSchema> = {
-  investigations: investigationSchema,
+  essays: essaySchema,
   'field-notes': fieldNoteSchema,
-  'working-ideas': workingIdeaSchema,
   projects: projectSchema,
   shelf: shelfSchema,
   toolkit: toolkitSchema,

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCollection, getEntry, renderMarkdown } from '@/lib/content';
-import type { Investigation } from '@/lib/content';
+import type { Essay } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
@@ -14,23 +14,23 @@ interface Props {
 }
 
 export function generateStaticParams() {
-  const investigations = getCollection<Investigation>('investigations');
-  return investigations.map((i) => ({ slug: i.slug }));
+  const essays = getCollection<Essay>('essays');
+  return essays.map((i) => ({ slug: i.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const entry = getEntry<Investigation>('investigations', slug);
+  const entry = getEntry<Essay>('essays', slug);
   if (!entry) return {};
   return {
-    title: `${entry.data.title} | On ...`,
+    title: `${entry.data.title} | Essays on ...`,
     description: entry.data.summary,
   };
 }
 
-export default async function InvestigationDetailPage({ params }: Props) {
+export default async function EssayDetailPage({ params }: Props) {
   const { slug } = await params;
-  const entry = getEntry<Investigation>('investigations', slug);
+  const entry = getEntry<Essay>('essays', slug);
   if (!entry) notFound();
 
   const html = await renderMarkdown(entry.body);
@@ -54,7 +54,7 @@ export default async function InvestigationDetailPage({ params }: Props) {
       </header>
 
       <div
-        className="prose prose-investigations mt-8"
+        className="prose prose-essays mt-8"
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
@@ -67,10 +67,10 @@ export default async function InvestigationDetailPage({ params }: Props) {
 
       <nav className="py-4 border-t border-border mt-6">
         <Link
-          href="/investigations"
+          href="/essays"
           className="font-mono text-sm hover:text-terracotta-hover"
         >
-          &larr; All investigations
+          &larr; All essays
         </Link>
       </nav>
     </article>

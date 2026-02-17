@@ -4,13 +4,13 @@ import { notFound } from 'next/navigation';
 import SketchIcon from '@/components/rough/SketchIcon';
 import { getCollection } from '@/lib/content';
 import type {
-  Investigation,
+  Essay,
   FieldNote,
   ShelfEntry,
   Project,
 } from '@/lib/content';
 import { slugifyTag } from '@/lib/slugify';
-import InvestigationCard from '@/components/InvestigationCard';
+import EssayCard from '@/components/EssayCard';
 import FieldNoteEntry from '@/components/FieldNoteEntry';
 import ShelfItem from '@/components/ShelfItem';
 import ProjectCard from '@/components/ProjectCard';
@@ -20,7 +20,7 @@ interface Props {
 }
 
 function getAllTagData() {
-  const investigations = getCollection<Investigation>('investigations').filter(
+  const essays = getCollection<Essay>('essays').filter(
     (i) => !i.data.draft
   );
   const fieldNotes = getCollection<FieldNote>('field-notes').filter(
@@ -35,7 +35,7 @@ function getAllTagData() {
     string,
     {
       displayName: string;
-      investigations: typeof investigations;
+      essays: typeof essays;
       fieldNotes: typeof fieldNotes;
       shelfItems: typeof shelfItems;
       projects: typeof projectItems;
@@ -47,7 +47,7 @@ function getAllTagData() {
     if (!tagMap.has(slug)) {
       tagMap.set(slug, {
         displayName: tag,
-        investigations: [],
+        essays: [],
         fieldNotes: [],
         shelfItems: [],
         projects: [],
@@ -56,9 +56,9 @@ function getAllTagData() {
     return tagMap.get(slug)!;
   }
 
-  for (const item of investigations) {
+  for (const item of essays) {
     for (const tag of item.data.tags) {
-      ensureTag(tag).investigations.push(item);
+      ensureTag(tag).essays.push(item);
     }
   }
 
@@ -94,13 +94,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = tagMap.get(tag);
   if (!data) return {};
   const total =
-    data.investigations.length +
+    data.essays.length +
     data.fieldNotes.length +
     data.shelfItems.length +
     data.projects.length;
   return {
     title: `Tagged "${data.displayName}"`,
-    description: `${total} item${total !== 1 ? 's' : ''} tagged "${data.displayName}" across investigations, field notes, projects, and the reference shelf.`,
+    description: `${total} item${total !== 1 ? 's' : ''} tagged "${data.displayName}" across essays, field notes, projects, and the reference shelf.`,
   };
 }
 
@@ -110,10 +110,10 @@ export default async function TagDetailPage({ params }: Props) {
   const data = tagMap.get(tag);
   if (!data) notFound();
 
-  const { displayName, investigations, fieldNotes, shelfItems, projects } =
+  const { displayName, essays, fieldNotes, shelfItems, projects } =
     data;
   const totalCount =
-    investigations.length +
+    essays.length +
     fieldNotes.length +
     shelfItems.length +
     projects.length;
@@ -133,23 +133,25 @@ export default async function TagDetailPage({ params }: Props) {
         </p>
       </section>
 
-      {investigations.length > 0 && (
+      {essays.length > 0 && (
         <section className="py-6">
-          <h2 className="font-title text-xl font-bold mb-4">Investigations</h2>
+          <h2 className="font-title text-xl font-bold mb-4">Essays</h2>
           <div className="space-y-6">
-            {investigations
+            {essays
               .sort(
                 (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
               )
               .map((item) => (
-                <InvestigationCard
+                <EssayCard
                   key={item.slug}
                   title={item.data.title}
                   summary={item.data.summary}
                   date={item.data.date}
                   youtubeId={item.data.youtubeId}
                   tags={item.data.tags}
-                  href={`/investigations/${item.slug}`}
+                  href={`/essays/${item.slug}`}
+                  stage={item.data.stage}
+                  slug={item.slug}
                 />
               ))}
           </div>
@@ -172,6 +174,7 @@ export default async function TagDetailPage({ params }: Props) {
                   excerpt={note.data.excerpt}
                   tags={note.data.tags}
                   href={`/field-notes/${note.slug}`}
+                  status={note.data.status}
                 />
               ))}
           </div>

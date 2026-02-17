@@ -15,12 +15,12 @@ Claude helps me research, organize source material, and think through arguments.
 - **Research synthesis:** Quickly surveying a large body of source material and identifying patterns
 - **Draft iteration:** Getting a rough script to a tighter second draft faster
 - **Technical work:** Code, configuration, and infrastructure tasks where precision matters more than creativity
-- **Pattern recognition:** Spotting connections between investigations that I might have missed
+- **Pattern recognition:** Spotting connections between essays that I might have missed
 
 ## What AI is not good for
 
 - **Original observation:** You have to be in the place, looking at the thing. No model can substitute for that.
 - **Aesthetic judgment:** The hand-drawn feel of this site, the pacing of a video edit, the choice of what to include... these require human taste.
-- **Ethical reasoning:** Design investigations involve questions of power and equity. AI can surface information, but the moral framework has to be mine.
+- **Ethical reasoning:** Design essays involve questions of power and equity. AI can surface information, but the moral framework has to be mine.
 
 The best use of these tools is to handle the 80% of work that is mechanical so I can spend more time on the 20% that requires genuine thought.

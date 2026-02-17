@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCollection } from '@/lib/content';
 import SketchIcon from '@/components/rough/SketchIcon';
-import type { Investigation, FieldNote, ShelfEntry, Project } from '@/lib/content';
+import type { Essay, FieldNote, ShelfEntry, Project } from '@/lib/content';
 import { slugifyTag } from '@/lib/slugify';
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function TagsPage() {
-  const investigations = getCollection<Investigation>('investigations').filter(
+  const essays = getCollection<Essay>('essays').filter(
     (i) => !i.data.draft
   );
   const fieldNotes = getCollection<FieldNote>('field-notes').filter(
@@ -25,7 +25,7 @@ export default function TagsPage() {
   const tagCounts = new Map<string, { display: string; count: number }>();
 
   for (const item of [
-    ...investigations,
+    ...essays,
     ...fieldNotes,
     ...shelfItems,
     ...projectItems,

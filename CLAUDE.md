@@ -22,7 +22,7 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `src/app/layout.tsx` | Root layout (DotGrid, TopNav, Footer, metadata) |
 | `src/components/` | React components (Server + Client) |
 | `src/components/rough/` | Client Components for rough.js visuals (RoughBox, RoughLine, RoughUnderline) |
-| `src/content/` | Markdown content collections (investigations, field-notes, shelf, toolkit, projects) |
+| `src/content/` | Markdown content collections (investigations, field-notes, shelf, toolkit, projects, working-ideas) |
 | `src/lib/content.ts` | Content loading: Zod schemas, `getCollection()`, `getEntry()`, `renderMarkdown()` |
 | `src/lib/slugify.ts` | Tag slug utility |
 | `src/components/SectionLabel.tsx` | Monospace colored section headers (terracotta/teal/gold) |
@@ -67,6 +67,8 @@ Most components are **Server Components** by default. Components needing browser
 | `ProjectColumns.tsx` | Role-based column layout with expand/collapse cards |
 | `CyclingTagline.tsx` | Typewriter animation via useState/useEffect |
 | `ToolkitAccordion.tsx` | Radix Accordion with expand/collapse state |
+| `ProjectTimeline.tsx` | Timeline layout with interactive state |
+| `MarginNote.tsx` | Positioned margin annotations |
 | `SourcesCollapsible.tsx` | Radix Collapsible for investigation sources |
 
 Server Components can import and render Client Components; children pass through as a slot without hydrating.
@@ -75,7 +77,7 @@ Server Components can import and render Client Components; children pass through
 
 `SketchIcon` (`src/components/rough/SketchIcon.tsx`) is a Server Component that renders hand-drawn SVG section identity icons. Used on all section page headers, replacing Phosphor icons for brand consistency.
 
-8 icon names: `magnifying-glass`, `note-pencil`, `briefcase`, `wrench`, `book-open`, `chat-circle`, `tag`, `info`.
+10 icon names: `magnifying-glass`, `file-text`, `gears`, `note-pencil`, `briefcase`, `wrench`, `book-open`, `chat-circle`, `tag`, `info`.
 
 Props: `name`, `size` (default 32), `color` (default currentColor), `className`. All paths are `fill="none"` with `strokeWidth={1.8}` and round linecap/linejoin for felt-tip pen effect.
 
@@ -137,7 +139,11 @@ Tailwind > font-title class
 | `totalLength` | `187` | Total leader-line length (horizontal + diagonal) |
 | `pivotDown` | `true` | Diagonal direction |
 
-Used exclusively on the homepage featured investigation card. Two callouts max, staggered on opposite sides.
+Used on homepage featured cards (investigation and working idea). Two callouts max per card, staggered on opposite sides.
+
+### Working Ideas Homepage Feature
+
+Homepage displays one featured Working Idea (between "On ..." and "Projects" sections). Selection: prefers `featured: true` in frontmatter, falls back to most recent. Uses RoughBox with terracotta tint and two RoughPivotCallout annotations (right at offsetY=16, left at offsetY=72). Schema fields in `workingIdeaSchema`: `featured` (boolean, default false), `callouts` (string array, optional). Mirrors the investigation featured card pattern at smaller scale.
 
 ### ProjectColumns Pattern
 
@@ -229,6 +235,10 @@ Vercel with native Next.js builder. Git integration auto-deploys on push to `mai
 | DateStamp subtle color enhancement (terracotta-light) | ✅ |
 | Custom skeuomorphic icons (SketchIcon) replacing Phosphor on pages | ✅ |
 | Colophon no-dash rule enforcement | ✅ |
+| Working Ideas homepage feature with pivot callouts | ✅ |
+| SketchIcon overflow fix (`overflow="visible"` + `flex-shrink-0`) | ✅ |
+| DotGrid interaction tuning (influenceRadius=150, repulsionStrength=15) | ✅ |
+| Blueprint grid removal (CSS + RoughBox `grid` prop) | ✅ |
 
 Decided during brainstorm: Radix Primitives + fully custom styling (no shadcn/ui).
 See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for surface materiality design.
@@ -254,33 +264,26 @@ See `docs/plans/2026-02-16-projects-page-redesign.md` for projects column layout
 
 | Decision | Choice | Why |
 |----------|--------|-----|
-| Framework migration | Next.js 15 App Router | More powerful than Astro for where the design is heading; React-native state/routing |
-| Content loading | gray-matter + remark + Zod | MDX is overkill, Contentlayer is deprecated; manual pipeline gives full control |
-| Card containers | RoughBox everywhere (except ProjectColumns) | Hand-drawn borders are the brand signature; ProjectColumns needs dynamic rgba states |
 | UI library | Radix Primitives (not shadcn/ui) | Full custom styling over brand; shadcn opinionated defaults fight the aesthetic |
-| Card fills | Transparent brand-color tints, not solid white | White `bg-surface` was jarring against warm parchment; tints let paper show through |
 | Section color system | terracotta=investigations, teal=field-notes, gold=projects | Creates wayfinding language; color tells you where you are on the site |
 | No dashes | Colons, periods, parentheses, semicolons | User style preference; applies to all code, comments, and content |
 | Featured card hierarchy | Scale + negative space, no outer box | Double-bordered hero was visually cluttered; subtraction creates emphasis |
-| Font annotation token | `--font-annotation` (Caveat) | Separate from `--font-handwritten` for semantic clarity |
-| Page title separators | Pipe `\|` not em dash | "Title \| Section" in metadata; consistent with no-dash rule |
 | Projects layout | Role-based columns, not timeline | Communicates "types of work I do" rather than chronological history |
 | Projects: no RoughBox | Inline rgba tinting with three states | RoughBox's fixed CSS classes can't handle dynamic rest/hover/expanded opacity |
 | Projects: past-tense roles | "Built & Designed", "Project Managed", "Organized", "Created" | Reads as accomplishments, not job titles; Builder + Designer merged |
 | Projects: no role pills | Removed horizontal pill bar | Column headers already convey the same information; pills were redundant |
 | Projects: column dividers | Dark charcoal (`#3A3632`) at 25% opacity, uniform | Per-role colored dividers looked uneven; single color creates aligned architectural lines |
-| Projects: role slug with `&` | `slugifyRole()` preserves `&` in slugs | "Built & Designed" slugs to `"built-&-designed"`; stricter slugifiers would break lookup |
 | Hero redesign | Compact name + cycling "On..." tagline | Tall static heroes create dead space; cycling tagline shows range and keeps hero alive |
 | Nav restructure | On ... / Field Notes / Projects / Toolkit / Connect | Shelf and Colophon folded into Toolkit; Projects promoted above Field Notes |
 | "Investigations" rename | "On ..." | Less institutional; signals essayistic depth; pattern reinforced by individual titles |
 | "Current Inquiry" rename | "Work in Progress" | Honest about content status; lowers pretension barrier; matches workbench framing |
 | Section icons | SketchIcon (hand-drawn SVG) for pages, Phosphor for UI glyphs | Brand identity icons match rough.js aesthetic; utility icons stay crisp |
-| Radix integration | Accordion + Collapsible + ToggleGroup, fully custom styled | Headless primitives give accessibility for free; no shadcn visual opinions |
 | Evidence callouts | `.prose-investigations blockquote::before` with `:has()` selector | Only investigation articles get "NOTE" labels; semantic CSS, no component changes |
-| Nav icons | SketchIcon (hand-drawn SVG) replacing Phosphor in TopNav | Visual consistency: nav icons now match page header icons |
 | OG image | `opengraph-image.tsx` with `ImageResponse` (Satori) | Auto-generated at build, brand-consistent, no static PNG to maintain |
 | Mobile typography | Mobile-first base sizes with `@media (min-width: 640px)` scale-up | h1: 1.875rem base, 2.44rem at sm; prevents overflow on 320px screens |
 | Font weights | Caveat reduced from 4 weights to 1 (400) | Callouts only use regular weight; saves bandwidth |
+| SketchIcon overflow | `overflow="visible"` + `flex-shrink-0` on SVG | Strokes bleed past 32x32 viewBox at small sizes; flex containers squeeze icon width |
+| Homepage Working Ideas | Featured idea with RoughPivotCallout annotations | Mirrors investigation feature pattern; `featured` + `callouts` frontmatter fields |
 
 ## Gotchas
 

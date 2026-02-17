@@ -12,6 +12,7 @@ sources:
   - title: "Parking Reform Network"
     url: "https://parkingreform.org/"
 related: ["the-sidewalk-tax"]
+stage: research
 draft: false
 callout: "The most powerful urban policy you've never heard of"
 callouts:
@@ -41,4 +42,4 @@ The early results are promising. Developers in these cities are building fewer p
 
 Parking minimums are a case study in how small policy decisions compound into enormous spatial consequences. No single parking requirement seemed unreasonable when it was adopted. But collectively, across thousands of cities and decades of compounding, they reshaped the American landscape more profoundly than almost any deliberate design choice.
 
-The best design investigations often start with the question: who decided this, and did they understand what would happen next? With parking minimums, the answer is clear. Nobody decided to pave a Connecticut's worth of American land. It just happened, one zoning code at a time.
+The best design essays often start with the question: who decided this, and did they understand what would happen next? With parking minimums, the answer is clear. Nobody decided to pave a Connecticut's worth of American land. It just happened, one zoning code at a time.

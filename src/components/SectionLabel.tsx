@@ -1,7 +1,7 @@
 /**
  * SectionLabel: Monospace section identifier
  *
- * Adds the "INVESTIGATION FILE" / "FIELD OBSERVATION" / "PROJECT ARCHIVE"
+ * Adds the "ESSAYS" / "FIELD NOTES" / "PROJECTS"
  * monospace label above section headings, in a section-specific color
  * from the brand palette (terracotta, teal, gold).
  */

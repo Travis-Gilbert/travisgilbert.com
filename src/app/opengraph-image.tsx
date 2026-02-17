@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'nodejs';
-export const alt = 'Travis Gilbert: Investigations, Projects, and Field Notes';
+export const alt = 'Travis Gilbert: Essays, Projects, and Field Notes';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -72,7 +72,7 @@ export default function OGImage() {
             display: 'flex',
           }}
         >
-          Investigating how design decisions shape human outcomes.
+          Exploring how design decisions shape human outcomes.
         </div>
 
         {/* Bottom section markers */}
@@ -109,7 +109,7 @@ export default function OGImage() {
                 display: 'flex',
               }}
             >
-              Investigations
+              Essays
             </span>
           </div>
           <div

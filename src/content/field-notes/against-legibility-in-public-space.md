@@ -1,9 +1,9 @@
 ---
 title: "Against Legibility in Public Space"
 date: 2026-02-10
-status: growing
-summary: "What if the push to make every public space 'readable' is actually erasing the complexity that makes cities worth living in?"
 tags: ["urban design", "legibility", "complexity"]
+excerpt: "What if the push to make every public space 'readable' is actually erasing the complexity that makes cities worth living in?"
+status: developing
 draft: false
 featured: true
 callouts:

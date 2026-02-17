@@ -2,6 +2,7 @@ import Link from 'next/link';
 import DateStamp from './DateStamp';
 import TagList from './TagList';
 import RoughBox from './rough/RoughBox';
+import { CompactTracker, NOTE_STAGES } from './ProgressTracker';
 
 interface FieldNoteEntryProps {
   title: string;
@@ -9,6 +10,7 @@ interface FieldNoteEntryProps {
   excerpt?: string;
   tags: string[];
   href: string;
+  status?: string;
 }
 
 export default function FieldNoteEntry({
@@ -17,13 +19,23 @@ export default function FieldNoteEntry({
   excerpt,
   tags,
   href,
+  status,
 }: FieldNoteEntryProps) {
   return (
     <RoughBox padding={20} hover tint="teal">
       <div className="group">
         <Link href={href} className="block no-underline text-ink hover:text-ink">
           <div className="flex flex-col gap-2">
-            <DateStamp date={date} />
+            <div className="flex justify-between items-center">
+              <DateStamp date={date} />
+              {status && (
+                <CompactTracker
+                  stages={NOTE_STAGES}
+                  currentStage={status}
+                  color="var(--color-teal)"
+                />
+              )}
+            </div>
             <h3 className="text-lg font-title font-bold group-hover:text-terracotta transition-colors m-0">
               {title}
             </h3>

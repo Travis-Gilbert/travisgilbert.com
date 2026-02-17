@@ -10,6 +10,7 @@ sources:
   - title: "ADA Standards for Accessible Design"
     url: "https://www.ada.gov/law-and-regs/design-standards/"
 related: []
+stage: drafting
 draft: false
 callout: "The one that started everything. 3 inches changed the world"
 callouts:

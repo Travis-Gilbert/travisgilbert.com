@@ -38,6 +38,7 @@ export default function FieldNotesPage() {
             excerpt={note.data.excerpt}
             tags={note.data.tags}
             href={`/field-notes/${note.slug}`}
+            status={note.data.status}
           />
         ))}
       </div>

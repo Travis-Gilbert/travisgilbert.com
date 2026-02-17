@@ -1,6 +1,6 @@
 import { Feed } from 'feed';
 import { getCollection } from '@/lib/content';
-import type { Investigation, FieldNote } from '@/lib/content';
+import type { Essay, FieldNote } from '@/lib/content';
 
 export const dynamic = 'force-static';
 
@@ -10,7 +10,7 @@ export function GET() {
   const feed = new Feed({
     title: 'Travis Gilbert',
     description:
-      'Investigations, field notes, and explorations into how design decisions shape human outcomes.',
+      'Essays, field notes, and explorations into how design decisions shape human outcomes.',
     id: SITE_URL,
     link: SITE_URL,
     language: 'en',
@@ -33,16 +33,16 @@ export function GET() {
       link: `${SITE_URL}/field-notes/${note.slug}`,
     }));
 
-  const investigations = getCollection<Investigation>('investigations')
+  const essays = getCollection<Essay>('essays')
     .filter((i) => !i.data.draft)
-    .map((investigation) => ({
-      title: investigation.data.title,
-      date: investigation.data.date,
-      description: investigation.data.summary,
-      link: `${SITE_URL}/investigations/${investigation.slug}`,
+    .map((essay) => ({
+      title: essay.data.title,
+      date: essay.data.date,
+      description: essay.data.summary,
+      link: `${SITE_URL}/essays/${essay.slug}`,
     }));
 
-  const allItems = [...fieldNotes, ...investigations].sort(
+  const allItems = [...fieldNotes, ...essays].sort(
     (a, b) => b.date.valueOf() - a.date.valueOf()
   );
 

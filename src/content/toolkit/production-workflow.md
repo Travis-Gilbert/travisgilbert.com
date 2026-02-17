@@ -4,7 +4,7 @@ category: production
 order: 1
 ---
 
-Every investigation starts as a question. Something I noticed that didn't make sense, or a design decision whose consequences seem underexplored.
+Every essay starts as a question. Something I noticed that didn't make sense, or a design decision whose consequences seem underexplored.
 
 ## Research
 

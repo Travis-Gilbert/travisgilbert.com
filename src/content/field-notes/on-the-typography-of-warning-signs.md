@@ -4,6 +4,7 @@ date: 2025-12-03
 tags: ["typography", "signage", "observation"]
 excerpt: "Noticed something walking through the airport today about how we communicate danger through letterforms."
 callout: "Helvetica = danger? Need to dig deeper on this"
+status: developing
 draft: false
 ---
 

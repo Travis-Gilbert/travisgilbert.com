@@ -4,6 +4,7 @@ date: 2026-02-08
 tags: ["urban design", "observation", "infrastructure"]
 excerpt: "Found a crosswalk in downtown Flint that deposits you on a curb with no sidewalk. Just grass and a fence."
 callout: "Infrastructure as broken promise"
+status: observation
 draft: false
 ---
 

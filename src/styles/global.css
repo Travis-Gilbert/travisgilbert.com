@@ -400,12 +400,12 @@ blockquote {
 }
 
 /* Hide the generic label when no callout pattern is present (only show for
-   blockquotes in the investigation prose variant) */
+   blockquotes in the essay prose variant) */
 .prose blockquote::before {
   display: none;
 }
 
-.prose-investigations blockquote::before {
+.prose-essays blockquote::before {
   display: block;
 }
 
@@ -424,12 +424,12 @@ blockquote {
    Replaces Astro scoped <style> overrides
    ───────────────────────────────────────────────── */
 
-.prose-investigations {
+.prose-essays {
   font-family: var(--font-body-alt);
 }
 
-.prose-investigations h2,
-.prose-investigations h3 {
+.prose-essays h2,
+.prose-essays h3 {
   font-family: var(--font-title);
 }
 

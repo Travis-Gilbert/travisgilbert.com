@@ -4,6 +4,7 @@ date: 2026-01-28
 tags: ["architecture", "materials", "observation"]
 excerpt: "Brick weathers. Vinyl pretends nothing happened. What does that say about the values embedded in material choices?"
 callout: "Patina is information. Vinyl is denial"
+status: observation
 draft: false
 ---
 

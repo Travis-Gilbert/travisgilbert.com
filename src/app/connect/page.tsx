@@ -75,7 +75,7 @@ export default function ConnectPage() {
           </h2>
           <ul className="space-y-2 text-ink-secondary">
             <li>
-              Design decisions you&apos;ve noticed that deserve investigation
+              Design decisions you&apos;ve noticed that deserve a closer look
             </li>
             <li>Corrections or additional context for published work</li>
             <li>Collaboration on research or video projects</li>

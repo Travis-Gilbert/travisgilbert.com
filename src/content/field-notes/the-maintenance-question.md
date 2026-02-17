@@ -1,9 +1,9 @@
 ---
 title: "The Maintenance Question"
 date: 2026-02-04
-status: seed
-summary: "Every design decision is also a maintenance decision. We almost never talk about it that way."
 tags: ["infrastructure", "maintenance", "design"]
+excerpt: "Every design decision is also a maintenance decision. We almost never talk about it that way."
+status: observation
 draft: false
 ---
 

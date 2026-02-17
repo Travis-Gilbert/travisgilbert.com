@@ -1,9 +1,9 @@
 ---
 title: "Who Decides Where the Bench Goes?"
 date: 2026-01-20
-status: seed
-summary: "The placement of a single bench encodes more political decisions than most people realize."
 tags: ["urban design", "power", "public space"]
+excerpt: "The placement of a single bench encodes more political decisions than most people realize."
+status: observation
 draft: false
 ---
 

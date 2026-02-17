@@ -89,7 +89,7 @@ export default function ColophonPage() {
             shouting about it.
           </p>
           <p className="leading-relaxed">
-            For investigations and technical pages,{' '}
+            For essays and technical pages,{' '}
             <strong>IBM Plex Sans</strong> steps in as the body face,
             more clinical, more precise. Labels and metadata are always set in{' '}
             <span className="font-mono text-sm">Courier Prime</span>:

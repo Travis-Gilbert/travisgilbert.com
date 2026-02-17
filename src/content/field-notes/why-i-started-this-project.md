@@ -1,8 +1,9 @@
 ---
-title: "Why I started investigating"
+title: "Why I started this project"
 date: 2026-01-15
 tags: ["meta", "process", "design"]
-excerpt: "The origin story of this project: why design investigations, and why now."
+excerpt: "The origin story of this project: why design essays, and why now."
+status: observation
 callout: "This is where it all started"
 draft: false
 ---
@@ -15,9 +16,9 @@ These aren't idle questions. Each one has an answer, and that answer usually inv
 
 ## The format
 
-I make video essays because some of these stories need to be shown, not just told. You need to see the intersection to understand why it fails. You need to walk through the building to feel what the architect got wrong.
+I write essays because some of these stories need to be examined carefully, with room to think. You need to see the intersection to understand why it fails. You need to walk through the building to feel what the architect got wrong.
 
-But video alone isn't enough. The written companion pieces on this site are where I can go deeper: link to sources, develop arguments that don't fit into a 15-minute edit, and think out loud about what the investigation reveals.
+The written pieces on this site are where I can go deeper: link to sources, develop arguments, and think out loud about what the research reveals.
 
 ## What I'm looking for
 
@@ -25,4 +26,4 @@ I'm looking for the gap between intention and outcome. The space where a designe
 
 Not because designers are incompetent (usually they're not) but because design decisions interact with reality in ways that are genuinely hard to predict. And understanding those interactions makes us better at making the next decision.
 
-This site is my notebook for that ongoing investigation.
+This site is my notebook for that ongoing work.
