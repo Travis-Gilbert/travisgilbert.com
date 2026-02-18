@@ -51,7 +51,7 @@ export default function ConsoleEasterEgg({
 
     // Latest essay
     console.log(
-      `%cLatest essay: ${latestEssayTitle}\n→ travisgilbert.com/essays/${latestEssaySlug}`,
+      `%cLatest essay: ${latestEssayTitle}\n→ travisgilbert.me/essays/${latestEssaySlug}`,
       'color: #C49A4A; font-size: 11px;'
     );
 

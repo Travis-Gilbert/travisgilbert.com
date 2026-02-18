@@ -3,10 +3,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCollection, getEntry, renderMarkdown, estimateReadingTime } from '@/lib/content';
 import type { FieldNote, Essay } from '@/lib/content';
+import ArticleBody from '@/components/ArticleBody';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import RoughLine from '@/components/rough/RoughLine';
 import { CompactTracker, NOTE_STAGES } from '@/components/ProgressTracker';
+import { ArticleJsonLd } from '@/components/JsonLd';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -46,6 +48,15 @@ export default async function FieldNoteDetailPage({ params }: Props) {
   const nextNote = currentIndex > 0 ? allNotes[currentIndex - 1] : null;
 
   return (
+    <>
+    <ArticleJsonLd
+      title={entry.data.title}
+      description={entry.data.excerpt ?? entry.data.title}
+      slug={slug}
+      datePublished={entry.data.date}
+      section="field-notes"
+      tags={entry.data.tags}
+    />
     <article className="py-8">
       <header className="mb-8">
         <div className="flex justify-between items-center">
@@ -92,9 +103,11 @@ export default async function FieldNoteDetailPage({ params }: Props) {
         <TagList tags={entry.data.tags} />
       </header>
 
-      <div
+      <ArticleBody
+        html={html}
         className="prose"
-        dangerouslySetInnerHTML={{ __html: html }}
+        contentType="field-notes"
+        articleSlug={slug}
       />
 
       <RoughLine />
@@ -122,5 +135,6 @@ export default async function FieldNoteDetailPage({ params }: Props) {
         </div>
       </nav>
     </article>
+    </>
   );
 }

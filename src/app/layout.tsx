@@ -4,6 +4,7 @@ import DotGrid from '@/components/DotGrid';
 import TopNav from '@/components/TopNav';
 import Footer from '@/components/Footer';
 import ConsoleEasterEgg from '@/components/ConsoleEasterEgg';
+import { PersonJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 import { getCollection } from '@/lib/content';
 import type { Essay, FieldNote, Project } from '@/lib/content';
 import '@/styles/global.css';
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   },
   description:
     'Exploring how design decisions shape human outcomes. Essays, field notes, and projects on design, policy, and the built environment.',
-  metadataBase: new URL('https://travisgilbert.com'),
+  metadataBase: new URL('https://travisgilbert.me'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -52,6 +53,8 @@ export default function RootLayout({
         className="min-h-screen flex flex-col overflow-x-clip"
         style={{ isolation: 'isolate' }}
       >
+        <PersonJsonLd />
+        <WebSiteJsonLd />
         <DotGrid />
         <a href="#main-content" className="skip-to-content">
           Skip to content

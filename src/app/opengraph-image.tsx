@@ -184,7 +184,7 @@ export default function OGImage() {
             display: 'flex',
           }}
         >
-          travisgilbert.com
+          travisgilbert.me
         </div>
       </div>
     ),

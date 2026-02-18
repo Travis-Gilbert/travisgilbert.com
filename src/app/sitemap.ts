@@ -5,7 +5,7 @@ import { slugifyTag } from '@/lib/slugify';
 
 export const dynamic = 'force-static';
 
-const BASE_URL = 'https://travisgilbert.com';
+const BASE_URL = 'https://travisgilbert.me';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const essays = getCollection<Essay>('essays').filter(

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCollection, getEntry, renderMarkdown, injectAnnotations, estimateReadingTime } from '@/lib/content';
 import type { Essay, FieldNote, ShelfEntry, ContentEntry } from '@/lib/content';
+import ArticleBody from '@/components/ArticleBody';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
@@ -11,6 +12,7 @@ import SourcesCollapsible from '@/components/SourcesCollapsible';
 import type { ShelfAnnotation } from '@/components/SourcesCollapsible';
 import ProgressTracker, { ESSAY_STAGES } from '@/components/ProgressTracker';
 import ReadingProgress from '@/components/ReadingProgress';
+import { ArticleJsonLd } from '@/components/JsonLd';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -98,6 +100,14 @@ export default async function EssayDetailPage({ params }: Props) {
 
   return (
     <>
+    <ArticleJsonLd
+      title={entry.data.title}
+      description={entry.data.summary}
+      slug={slug}
+      datePublished={entry.data.date}
+      section="essays"
+      tags={entry.data.tags}
+    />
     <ReadingProgress />
     <article className="py-8">
       <YouTubeEmbed
@@ -127,10 +137,11 @@ export default async function EssayDetailPage({ params }: Props) {
         />
       </header>
 
-      <div
+      <ArticleBody
+        html={html}
         className="prose prose-essays mt-8"
-        // Content sourced from local .md files (trusted, not user-submitted)
-        dangerouslySetInnerHTML={{ __html: html }}
+        contentType="essays"
+        articleSlug={slug}
       />
 
       {(entry.data.sources.length > 0 || shelfStandalone.length > 0) && (

@@ -4,7 +4,7 @@ import type { Essay, FieldNote } from '@/lib/content';
 
 export const dynamic = 'force-static';
 
-const SITE_URL = 'https://travisgilbert.com';
+const SITE_URL = 'https://travisgilbert.me';
 
 export function GET() {
   const feed = new Feed({

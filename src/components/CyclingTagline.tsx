@@ -61,7 +61,7 @@ export default function CyclingTagline() {
   return (
     <div className="flex items-baseline gap-0" aria-live="polite" aria-atomic="true">
       <span className="font-title text-[26px] font-semibold text-ink-secondary">
-        Essay on...&nbsp;
+        On...&nbsp;
       </span>
       <span className="font-title text-[26px] font-semibold text-terracotta">
         {displayText}

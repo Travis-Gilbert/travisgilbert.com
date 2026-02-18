@@ -57,10 +57,10 @@ export default function ConnectPage() {
                   Email
                 </span>
                 <a
-                  href="mailto:hello@travisgilbert.com"
+                  href="mailto:1travisgilbert@gmail.com"
                   className="font-mono text-sm hover:text-terracotta-hover"
                 >
-                  hello@travisgilbert.com
+                  1travisgilbert@gmail.com
                 </a>
               </li>
             </ul>
