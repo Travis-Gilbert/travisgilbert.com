@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import { getCollection, getEntry, renderMarkdown, injectAnnotations, estimateReadingTime } from '@/lib/content';
 import type { Essay, FieldNote, ShelfEntry, ContentEntry } from '@/lib/content';
 import ArticleBody from '@/components/ArticleBody';
-import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
 import RoughLine from '@/components/rough/RoughLine';
@@ -13,6 +12,7 @@ import type { ShelfAnnotation } from '@/components/SourcesCollapsible';
 import ProgressTracker, { ESSAY_STAGES } from '@/components/ProgressTracker';
 import ReadingProgress from '@/components/ReadingProgress';
 import { ArticleJsonLd } from '@/components/JsonLd';
+import EssayHero from '@/components/EssayHero';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -109,33 +109,38 @@ export default async function EssayDetailPage({ params }: Props) {
       tags={entry.data.tags}
     />
     <ReadingProgress />
-    <article className="py-8">
-      <YouTubeEmbed
-        videoId={entry.data.youtubeId}
+    <article>
+      {/* Full-bleed editorial hero header */}
+      <EssayHero
         title={entry.data.title}
+        date={entry.data.date}
+        readingTime={readingTime}
+        slug={slug}
+        youtubeId={entry.data.youtubeId}
+        summary={entry.data.summary}
+        tags={
+          <TagList tags={entry.data.tags} tint="terracotta" inverted />
+        }
+        progressTracker={
+          <ProgressTracker
+            stages={ESSAY_STAGES}
+            currentStage={entry.data.stage || 'published'}
+            color="var(--color-terracotta-light)"
+            annotationCount={entry.data.annotations?.length}
+            inverted
+          />
+        }
       />
 
-      <header className="mt-6 mb-8">
-        <div className="flex items-center gap-2">
-          <DateStamp date={entry.data.date} />
-          <span className="font-mono text-[11px] uppercase tracking-widest text-ink-faint select-none">
-            · {readingTime} min read
-          </span>
+      {/* YouTube embed below hero if video exists */}
+      {entry.data.youtubeId && (
+        <div className="mt-6">
+          <YouTubeEmbed
+            videoId={entry.data.youtubeId}
+            title={entry.data.title}
+          />
         </div>
-        <h1 className="font-title text-3xl md:text-4xl font-bold mt-4 mb-2">
-          {entry.data.title}
-        </h1>
-        <p className="text-ink-secondary text-lg mb-4">
-          {entry.data.summary}
-        </p>
-        <TagList tags={entry.data.tags} />
-        <ProgressTracker
-          stages={ESSAY_STAGES}
-          currentStage={entry.data.stage || 'published'}
-          color="var(--color-terracotta)"
-          annotationCount={entry.data.annotations?.length}
-        />
-      </header>
+      )}
 
       <ArticleBody
         html={html}

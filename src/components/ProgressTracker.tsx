@@ -33,6 +33,8 @@ interface ProgressTrackerProps {
   currentStage: string;
   color?: string;
   annotationCount?: number;
+  /** When true, renders light colors for dark backgrounds (hero zone) */
+  inverted?: boolean;
 }
 
 export default function ProgressTracker({
@@ -40,6 +42,7 @@ export default function ProgressTracker({
   currentStage,
   color = 'var(--color-terracotta)',
   annotationCount,
+  inverted = false,
 }: ProgressTrackerProps) {
   const currentIdx = stages.findIndex((s) => s.key === currentStage);
 
@@ -60,7 +63,7 @@ export default function ProgressTracker({
                   width: 10,
                   height: 10,
                   background: isComplete || isCurrent ? color : 'transparent',
-                  border: `2px solid ${isUpcoming ? 'var(--color-border)' : color}`,
+                  border: `2px solid ${isUpcoming ? (inverted ? 'rgba(240, 235, 228, 0.2)' : 'var(--color-border)') : color}`,
                   boxShadow: isCurrent ? `0 0 0 3px ${color}22` : 'none',
                 }}
               />
@@ -71,7 +74,9 @@ export default function ProgressTracker({
                   fontSize: 9,
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
-                  color: isCurrent ? color : isComplete ? 'var(--color-ink-muted)' : 'var(--color-ink-light)',
+                  color: isCurrent ? color : isComplete
+                    ? (inverted ? 'var(--color-hero-text-muted)' : 'var(--color-ink-muted)')
+                    : (inverted ? 'rgba(240, 235, 228, 0.35)' : 'var(--color-ink-light)'),
                   fontWeight: isCurrent ? 700 : 400,
                 }}
               >
@@ -85,7 +90,7 @@ export default function ProgressTracker({
                 style={{
                   width: 32,
                   height: 2,
-                  background: isComplete ? color : 'var(--color-border-light)',
+                  background: isComplete ? color : (inverted ? 'rgba(240, 235, 228, 0.15)' : 'var(--color-border-light)'),
                   marginBottom: 16,
                   marginLeft: 2,
                   marginRight: 2,
@@ -102,7 +107,7 @@ export default function ProgressTracker({
             fontSize: 9,
             textTransform: 'uppercase',
             letterSpacing: '0.06em',
-            color: 'var(--color-ink-light)',
+            color: inverted ? 'rgba(240, 235, 228, 0.5)' : 'var(--color-ink-light)',
           }}
         >
           {annotationCount} margin note{annotationCount !== 1 ? 's' : ''}

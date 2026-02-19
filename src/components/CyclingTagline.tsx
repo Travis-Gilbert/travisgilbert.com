@@ -16,7 +16,12 @@ const ON_TOPICS = [
 
 type Phase = 'typing' | 'holding' | 'erasing';
 
-export default function CyclingTagline() {
+interface CyclingTaglineProps {
+  /** When true, renders light text for dark backgrounds (hero zone) */
+  inverted?: boolean;
+}
+
+export default function CyclingTagline({ inverted = false }: CyclingTaglineProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const [phase, setPhase] = useState<Phase>('typing');
@@ -58,19 +63,30 @@ export default function CyclingTagline() {
     };
   }, [phase, displayText, currentIndex]);
 
+  const prefixColor = inverted ? 'var(--color-hero-text-muted)' : undefined;
+  const topicColor = inverted ? 'var(--color-terracotta-light)' : undefined;
+  const cursorColor = inverted ? 'var(--color-terracotta-light)' : undefined;
+
   return (
     <div className="flex items-baseline gap-0" aria-live="polite" aria-atomic="true">
-      <span className="font-title text-[26px] font-semibold text-ink-secondary">
+      <span
+        className={`font-title text-[26px] font-semibold ${inverted ? '' : 'text-ink-secondary'}`}
+        style={prefixColor ? { color: prefixColor } : undefined}
+      >
         On...&nbsp;
       </span>
-      <span className="font-title text-[26px] font-semibold text-terracotta">
+      <span
+        className={`font-title text-[26px] font-semibold ${inverted ? '' : 'text-terracotta'}`}
+        style={topicColor ? { color: topicColor } : undefined}
+      >
         {displayText}
       </span>
       <span
-        className="inline-block w-[2px] h-[26px] bg-terracotta ml-0.5 translate-y-[3px]"
+        className={`inline-block w-[2px] h-[26px] ml-0.5 translate-y-[3px] ${inverted ? '' : 'bg-terracotta'}`}
         style={{
           animation: phase === 'holding' ? 'blink 0.8s step-end infinite' : 'none',
           opacity: 1,
+          backgroundColor: cursorColor ?? undefined,
         }}
         aria-hidden="true"
       />

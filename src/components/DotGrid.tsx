@@ -2,7 +2,11 @@
 
 // DotGrid.tsx: Interactive dot grid with radial edge vignette
 // React client component · ~2.5 kB gzipped
-// Ported from Preact island (preact/hooks → react)
+// Ported from Preact island (preact/hooks to react)
+//
+// Zone-aware: reads --hero-height CSS custom property from <html> to render
+// cream dots over the dark hero ground and dark dots over the parchment below.
+// A 50px crossfade band smoothly blends between the two color zones.
 
 import { useEffect, useRef, useCallback } from 'react';
 
@@ -21,6 +25,13 @@ interface DotGridProps {
   repulsionStrength?: number;
 }
 
+// Hero zone dot color: cream to match --color-hero-text (#F0EBE4)
+const HERO_DOT_COLOR: [number, number, number] = [240, 235, 228];
+const HERO_DOT_OPACITY = 0.35;
+
+// Crossfade band height in px: dots within this range blend between zones
+const CROSSFADE_BAND = 50;
+
 export default function DotGrid({
   dotRadius = 0.75,
   spacing = 20,
@@ -36,6 +47,7 @@ export default function DotGrid({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
+  const heroHeightRef = useRef<number>(0);
 
   // Dot state in typed arrays for performance
   const dotsRef = useRef<{
@@ -45,6 +57,14 @@ export default function DotGrid({
     fade: Float32Array;
     count: number;
   } | null>(null);
+
+  // Read hero height from CSS custom property
+  const readHeroHeight = useCallback(() => {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue('--hero-height')
+      .trim();
+    heroHeightRef.current = raw ? parseFloat(raw) : 0;
+  }, []);
 
   // Pre-compute elliptical radial fade per dot
   const computeFade = useCallback((
@@ -126,19 +146,64 @@ export default function DotGrid({
       canvas!.style.height = `${h}px`;
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       initDots(w, h);
+      readHeroHeight();
       drawStatic();
+    }
+
+    // Compute dot color based on its y position relative to hero zone
+    function getDotColor(y: number): { r: number; g: number; b: number; opacity: number } {
+      const hh = heroHeightRef.current;
+      if (hh <= 0) {
+        // No hero zone: use default color
+        return { r: dotColor[0], g: dotColor[1], b: dotColor[2], opacity: dotOpacity };
+      }
+
+      // DotGrid is position: fixed, so dot y is in viewport space.
+      // Hero height is the element's page height. Account for scroll:
+      // if hero is 500px tall, after scrolling 300px, the hero boundary
+      // in viewport space is at 500 - 300 = 200px.
+      const heroBoundary = hh - window.scrollY;
+
+      if (heroBoundary <= 0) {
+        // Hero fully scrolled off screen: all dots are parchment zone
+        return { r: dotColor[0], g: dotColor[1], b: dotColor[2], opacity: dotOpacity };
+      }
+
+      if (y < heroBoundary - CROSSFADE_BAND) {
+        // Fully in hero zone
+        return {
+          r: HERO_DOT_COLOR[0],
+          g: HERO_DOT_COLOR[1],
+          b: HERO_DOT_COLOR[2],
+          opacity: HERO_DOT_OPACITY,
+        };
+      }
+
+      if (y > heroBoundary + CROSSFADE_BAND) {
+        // Fully in parchment zone
+        return { r: dotColor[0], g: dotColor[1], b: dotColor[2], opacity: dotOpacity };
+      }
+
+      // In crossfade band: linearly interpolate
+      const t = (y - (heroBoundary - CROSSFADE_BAND)) / (CROSSFADE_BAND * 2);
+      return {
+        r: Math.round(HERO_DOT_COLOR[0] + (dotColor[0] - HERO_DOT_COLOR[0]) * t),
+        g: Math.round(HERO_DOT_COLOR[1] + (dotColor[1] - HERO_DOT_COLOR[1]) * t),
+        b: Math.round(HERO_DOT_COLOR[2] + (dotColor[2] - HERO_DOT_COLOR[2]) * t),
+        opacity: HERO_DOT_OPACITY + (dotOpacity - HERO_DOT_OPACITY) * t,
+      };
     }
 
     function drawStatic() {
       const dots = dotsRef.current;
       if (!dots) return;
       ctx!.clearRect(0, 0, w, h);
-      const [cr, cg, cb] = dotColor;
 
       for (let i = 0; i < dots.count; i++) {
         if (dots.fade[i] < 0.01) continue;
-        const alpha = dotOpacity * dots.fade[i];
-        ctx!.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+        const { r, g, b, opacity } = getDotColor(dots.gy[i]);
+        const alpha = opacity * dots.fade[i];
+        ctx!.fillStyle = `rgba(${r},${g},${b},${alpha})`;
         ctx!.beginPath();
         ctx!.arc(dots.gx[i], dots.gy[i], dotRadius, 0, Math.PI * 2);
         ctx!.fill();
@@ -155,7 +220,6 @@ export default function DotGrid({
       const my = mouseRef.current.y;
       const isActive = mouseRef.current.active;
       const ir2 = influenceRadius * influenceRadius;
-      const [cr, cg, cb] = dotColor;
       let anyDisplaced = false;
 
       for (let i = 0; i < dots.count; i++) {
@@ -190,11 +254,13 @@ export default function DotGrid({
           anyDisplaced = true;
         }
 
-        // Draw with per-dot fade alpha
-        const alpha = dotOpacity * dots.fade[i];
-        ctx!.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+        // Draw with per-dot zone-aware color + fade alpha
+        const drawY = baseY + dots.oy[i];
+        const { r, g, b, opacity } = getDotColor(drawY);
+        const alpha = opacity * dots.fade[i];
+        ctx!.fillStyle = `rgba(${r},${g},${b},${alpha})`;
         ctx!.beginPath();
-        ctx!.arc(baseX + dots.ox[i], baseY + dots.oy[i], dotRadius, 0, Math.PI * 2);
+        ctx!.arc(baseX + dots.ox[i], drawY, dotRadius, 0, Math.PI * 2);
         ctx!.fill();
       }
 
@@ -226,6 +292,13 @@ export default function DotGrid({
       mouseRef.current.active = false;
     }
 
+    // Redraw on scroll so hero zone color boundary updates
+    function onScroll() {
+      if (!animating) {
+        drawStatic();
+      }
+    }
+
     // Initialize
     resize();
 
@@ -233,6 +306,7 @@ export default function DotGrid({
       window.addEventListener('mousemove', onMouseMove, { passive: true });
     }
     window.addEventListener('resize', resize);
+    window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('mouseleave', onMouseLeave);
 
     return () => {
@@ -241,9 +315,10 @@ export default function DotGrid({
         window.removeEventListener('mousemove', onMouseMove);
       }
       window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', onScroll);
       document.removeEventListener('mouseleave', onMouseLeave);
     };
-  }, [dotRadius, spacing, dotColor, dotOpacity, stiffness, damping, influenceRadius, repulsionStrength, initDots]);
+  }, [dotRadius, spacing, dotColor, dotOpacity, stiffness, damping, influenceRadius, repulsionStrength, initDots, readHeroHeight]);
 
   return (
     <canvas

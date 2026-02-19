@@ -34,16 +34,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     // Static pages
-    { url: BASE_URL, changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${BASE_URL}/essays`, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/field-notes`, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/projects`, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/shelf`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${BASE_URL}/toolkit`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${BASE_URL}/tags`, changeFrequency: 'weekly', priority: 0.5 },
-    { url: `${BASE_URL}/colophon`, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE_URL}/connect`, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE_URL}/now`, changeFrequency: 'monthly', priority: 0.5 },
+    { url: BASE_URL, changeFrequency: 'weekly' as const, priority: 1.0 },
+    { url: `${BASE_URL}/essays`, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${BASE_URL}/field-notes`, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${BASE_URL}/projects`, changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: `${BASE_URL}/shelf`, changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${BASE_URL}/toolkit`, changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${BASE_URL}/tags`, changeFrequency: 'weekly' as const, priority: 0.5 },
+    { url: `${BASE_URL}/colophon`, changeFrequency: 'yearly' as const, priority: 0.3 },
+    { url: `${BASE_URL}/connect`, changeFrequency: 'yearly' as const, priority: 0.3 },
+    { url: `${BASE_URL}/now`, changeFrequency: 'monthly' as const, priority: 0.5 },
 
     // Dynamic essay pages
     ...essays.map((i) => ({

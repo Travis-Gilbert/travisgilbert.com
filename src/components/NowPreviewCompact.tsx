@@ -28,31 +28,56 @@ const QUADRANTS: {
   label: string;
   field: keyof Omit<NowData, 'updated' | 'researching_context' | 'reading_context' | 'building_context' | 'listening_context' | 'thinking'>;
   color: string;
+  /** Lighter variant for inverted (dark background) mode */
+  colorLight: string;
 }[] = [
-  { label: 'Researching', field: 'researching', color: 'var(--color-terracotta)' },
-  { label: 'Reading', field: 'reading', color: 'var(--color-teal)' },
-  { label: 'Building', field: 'building', color: 'var(--color-gold)' },
-  { label: 'Listening to', field: 'listening', color: 'var(--color-success)' },
+  { label: 'Researching', field: 'researching', color: 'var(--color-terracotta)', colorLight: 'var(--color-terracotta-light)' },
+  { label: 'Reading', field: 'reading', color: 'var(--color-teal)', colorLight: 'var(--color-teal-light)' },
+  { label: 'Building', field: 'building', color: 'var(--color-gold)', colorLight: 'var(--color-gold-light)' },
+  { label: 'Listening to', field: 'listening', color: 'var(--color-success)', colorLight: '#7A9A6A' },
 ];
+
+interface NowPreviewCompactProps {
+  /** When true, renders light text for dark backgrounds (hero zone) */
+  inverted?: boolean;
+}
 
 /**
  * NowPreviewCompact: wide 2x2 grid /now snapshot for the homepage hero.
  * No RoughBox wrapper. Subtle left border. Server Component.
  * Horizontal rectangle layout keeps hero height close to the identity column.
+ *
+ * When `inverted` is true, text renders in cream/light tones for the dark hero ground.
  */
-export default function NowPreviewCompact() {
+export default function NowPreviewCompact({ inverted = false }: NowPreviewCompactProps) {
   const data = getNowData();
   if (!data) return null;
 
+  const borderColor = inverted
+    ? 'rgba(240, 235, 228, 0.15)'
+    : undefined;
+
+  const headerColor = inverted
+    ? 'var(--color-hero-text-muted)'
+    : undefined;
+
+  const valueColor = inverted
+    ? 'var(--color-hero-text)'
+    : undefined;
+
   return (
-    <div className="pl-4 border-l-2 border-border-light">
+    <div
+      className={`pl-4 ${inverted ? '' : 'border-l-2 border-border-light'}`}
+      style={inverted ? { borderLeft: `2px solid ${borderColor}` } : undefined}
+    >
       <Link href="/now" className="no-underline group">
         <span
-          className="font-mono block mb-2 text-ink-muted group-hover:text-terracotta transition-colors"
+          className={`font-mono block mb-2 ${inverted ? '' : 'text-ink-muted'} group-hover:text-terracotta transition-colors`}
           style={{
             fontSize: 10,
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
+            color: headerColor ?? undefined,
           }}
         >
           Right now &rarr;
@@ -67,12 +92,15 @@ export default function NowPreviewCompact() {
                 fontSize: 9,
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
-                color: q.color,
+                color: inverted ? q.colorLight : q.color,
               }}
             >
               {q.label}
             </span>
-            <span className="font-title text-[13px] font-semibold text-ink block leading-tight">
+            <span
+              className={`font-title text-[13px] font-semibold block leading-tight ${inverted ? '' : 'text-ink'}`}
+              style={valueColor ? { color: valueColor } : undefined}
+            >
               {data[q.field]}
             </span>
           </div>

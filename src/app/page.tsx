@@ -14,6 +14,7 @@ import CyclingTagline from '@/components/CyclingTagline';
 import ProgressTracker, { CompactTracker, ESSAY_STAGES, NOTE_STAGES } from '@/components/ProgressTracker';
 import PatternImage from '@/components/PatternImage';
 import NowPreviewCompact from '@/components/NowPreviewCompact';
+import CollageHero from '@/components/CollageHero';
 
 export const metadata: Metadata = {
   title: 'Travis Gilbert | Essays, Projects, and Field Notes',
@@ -51,64 +52,16 @@ export default function HomePage() {
   return (
     <div>
       {/* ═══════════════════════════════════════════════
-          Hero: Breakout width, two-column (identity + /now snapshot)
-          Uses viewport-width technique to exceed parent max-w-4xl.
-          Left column (name) extends into the breakout margin; counters
-          line ends where the "Essays on ..." left RoughLine ends below.
-          Now section starts where the right RoughLine begins.
+          Hero: Full-bleed dark collage ground with editorial typography.
+          CollageHero breaks out of max-w-4xl to span full viewport width.
+          DotGrid renders cream dots over this dark zone.
           ═══════════════════════════════════════════════ */}
-      <section
-        className="relative w-[calc(100vw-2rem)] max-w-6xl left-1/2 -translate-x-1/2 px-4 sm:px-6 pt-4 md:pt-6 pb-3 md:pb-4 border-b border-border-light"
-      >
-        <ScrollReveal>
-          {/* 3-column grid: left identity, center gap (matches RoughLine label
-              width), right /now. Each 1fr extends 128px beyond the max-w-4xl
-              content area, so the column split aligns exactly with the
-              "Essays on ..." label gap in the RoughLine divider below. */}
-          <div
-            className="flex flex-col lg:grid lg:items-end"
-            style={{ gridTemplateColumns: '1fr 118px 1fr' }}
-          >
-            {/* Left: identity (ends where left RoughLine ends).
-                lg:pl-[128px] shifts the name rightward so it aligns with
-                the max-w-4xl content area's left edge below (the hero's
-                1fr column extends 128px beyond the narrower content zone). */}
-            <div className="flex flex-col justify-end lg:pl-[128px]">
-              <h1
-                className="text-[2rem] sm:text-[2.5rem] md:text-[2.75rem] m-0"
-                style={{ fontFamily: 'var(--font-name)', fontWeight: 400, lineHeight: 1.0 }}
-              >
-                Travis Gilbert
-              </h1>
-
-              <div className="mt-1">
-                <CyclingTagline />
-              </div>
-
-              <p
-                className="font-mono text-ink-light mt-3 mb-0"
-                style={{
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                {totalEssays} essay{totalEssays !== 1 ? 's' : ''} &middot;{' '}
-                {totalProjects} project{totalProjects !== 1 ? 's' : ''} &middot;{' '}
-                {totalFieldNotes} field note{totalFieldNotes !== 1 ? 's' : ''}
-              </p>
-            </div>
-
-            {/* Center spacer: matches the "Essays on ..." label width */}
-            <div className="hidden lg:block" aria-hidden="true" />
-
-            {/* Right: /now snapshot (starts where right RoughLine starts) */}
-            <div className="flex flex-col justify-end">
-              <NowPreviewCompact />
-            </div>
-          </div>
-        </ScrollReveal>
-      </section>
+      <CollageHero
+        name="Travis Gilbert"
+        countersLabel={`${totalEssays} essay${totalEssays !== 1 ? 's' : ''} · ${totalProjects} project${totalProjects !== 1 ? 's' : ''} · ${totalFieldNotes} field note${totalFieldNotes !== 1 ? 's' : ''}`}
+        tagline={<CyclingTagline inverted />}
+        nowPreview={<NowPreviewCompact inverted />}
+      />
 
       {/* ═══════════════════════════════════════════════
           Featured Essay: Primary visual anchor

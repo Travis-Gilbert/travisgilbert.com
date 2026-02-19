@@ -62,7 +62,7 @@ export default function RootLayout({
         <TopNav />
         <main
           id="main-content"
-          className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8"
+          className="main-content flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8"
         >
           {children}
         </main>
