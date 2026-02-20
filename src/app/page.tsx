@@ -14,6 +14,7 @@ import RoughPivotCallout from '@/components/rough/RoughPivotCallout';
 import ScrollReveal from '@/components/ScrollReveal';
 import CyclingTagline from '@/components/CyclingTagline';
 import ProgressTracker, { CompactTracker, ESSAY_STAGES, NOTE_STAGES } from '@/components/ProgressTracker';
+import Image from 'next/image';
 import PatternImage from '@/components/PatternImage';
 import NowPreviewCompact from '@/components/NowPreviewCompact';
 import CollageHero from '@/components/CollageHero';
@@ -65,38 +66,116 @@ export default function HomePage() {
           Hero: Full-bleed dark collage ground with editorial typography.
           CollageHero breaks out of max-w-4xl to span full viewport width.
           DotGrid renders cream dots over this dark zone.
-          When a generated collage exists for the featured essay, it fills
-          the hero as a dominant background that bleeds past the container.
           ═══════════════════════════════════════════════ */}
       <CollageHero
         name="Travis Gilbert"
         countersLabel={`${totalEssays} essay${totalEssays !== 1 ? 's' : ''} · ${totalProjects} project${totalProjects !== 1 ? 's' : ''} · ${totalFieldNotes} field note${totalFieldNotes !== 1 ? 's' : ''}`}
         tagline={<CyclingTagline inverted />}
         nowPreview={<NowPreviewCompact inverted />}
-        collageImage={featuredCollage}
-        featuredTitle={featured?.data.title}
-        featuredSlug={featured?.slug}
       />
 
       {/* ═══════════════════════════════════════════════
-          Featured Essay: Primary visual anchor
-          PatternImage or YouTube thumbnail, ProgressTracker, pivoted callouts
+          Featured Essay: Primary visual anchor.
+          When a generated collage exists, it erupts upward from the card's
+          top boundary, overflowing into the space above the RoughBox. A
+          gradient fade dissolves the collage top edge into the parchment.
+          Falls back to YouTube thumbnail or PatternImage when no collage.
           ═══════════════════════════════════════════════ */}
       {featured && (
-        <section className="py-6 md:py-12">
+        <section
+          className="md:py-12"
+          style={{ paddingTop: featuredCollage ? 0 : undefined }}
+        >
           <ScrollReveal>
             <RoughLine label="Essays on ..." labelColor="var(--color-terracotta)" />
 
-            <div className="lg:-mx-4 xl:-mx-8 relative">
+            {/* Relative container: NO overflow-hidden so the collage can erupt.
+                Extra top padding on the wrapper creates space for the eruption. */}
+            <div
+              className="lg:-mx-4 xl:-mx-8 relative"
+              style={{ paddingTop: featuredCollage ? 180 : 0 }}
+            >
+              {/* Erupting collage image: extends above the card boundary */}
+              {featuredCollage && (
+                <div
+                  className="absolute left-0 right-0 pointer-events-none"
+                  style={{
+                    top: 0,
+                    height: 'calc(180px + 20rem)',
+                    zIndex: 0,
+                  }}
+                >
+                  <Image
+                    src={featuredCollage}
+                    alt={`Collage for ${featured.data.title}`}
+                    fill
+                    sizes="(min-width: 1280px) 960px, (min-width: 1024px) 896px, 100vw"
+                    className="object-cover object-center"
+                    priority
+                  />
+                  {/* Top fade: dissolves the eruption edge into parchment */}
+                  <div
+                    className="absolute top-0 left-0 right-0 pointer-events-none"
+                    style={{
+                      height: 120,
+                      background: `linear-gradient(
+                        to bottom,
+                        var(--color-paper) 0%,
+                        color-mix(in srgb, var(--color-paper) 80%, transparent) 30%,
+                        color-mix(in srgb, var(--color-paper) 40%, transparent) 60%,
+                        transparent 100%
+                      )`,
+                    }}
+                  />
+                  {/* Bottom fade: blends into the card content below */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                    style={{
+                      height: 100,
+                      background: `linear-gradient(
+                        to bottom,
+                        transparent 0%,
+                        color-mix(in srgb, var(--color-paper) 60%, transparent) 60%,
+                        var(--color-paper) 100%
+                      )`,
+                    }}
+                  />
+                  {/* Left/right side fades for soft lateral edges */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(
+                        to right,
+                        var(--color-paper) 0%,
+                        transparent 8%,
+                        transparent 92%,
+                        var(--color-paper) 100%
+                      )`,
+                    }}
+                  />
+                </div>
+              )}
+
               <RoughBox
                 padding={0}
                 hover
                 tint="terracotta"
                 elevated
               >
-                <div className="group">
-                  {/* Image: YouTube thumbnail > generative fallback */}
-                  {featured.data.youtubeId ? (
+                <div className="group relative" style={{ zIndex: 1 }}>
+                  {/* Image: collage replaces YouTube/PatternImage when available */}
+                  {featuredCollage ? (
+                    <div className="w-full h-48 sm:h-56 md:h-80 overflow-hidden relative">
+                      <Image
+                        src={featuredCollage}
+                        alt={`Collage for ${featured.data.title}`}
+                        fill
+                        sizes="(min-width: 1280px) 960px, (min-width: 1024px) 896px, 100vw"
+                        className="object-cover object-bottom"
+                        priority
+                      />
+                    </div>
+                  ) : featured.data.youtubeId ? (
                     <div className="w-full h-40 sm:h-48 md:h-72 overflow-hidden">
                       <img
                         src={`https://img.youtube.com/vi/${featured.data.youtubeId}/maxresdefault.jpg`}
@@ -109,7 +188,7 @@ export default function HomePage() {
                     <PatternImage seed={featured.slug} height={180} color="var(--color-terracotta)" />
                   )}
 
-                  <div className="p-6 md:p-8 relative">
+                  <div className="p-6 md:p-8 relative" style={{ backgroundColor: 'var(--color-paper)' }}>
                     {/* Progress tracker */}
                     <ProgressTracker
                       stages={ESSAY_STAGES}
