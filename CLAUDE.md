@@ -25,6 +25,10 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `src/content/` | Markdown content collections (essays, field-notes, shelf, toolkit, projects) |
 | `src/lib/content.ts` | Content loading: Zod schemas, `getCollection()`, `getEntry()`, `renderMarkdown()`, `estimateReadingTime()`, `injectAnnotations()` |
 | `src/lib/slugify.ts` | Tag slug utility |
+| `src/lib/comments.ts` | Comment CRUD: file-based JSON storage in `data/comments/` |
+| `src/lib/paragraphPositions.ts` | Maps paragraph indices to Y offsets for sticky note positioning |
+| `src/lib/recaptcha.ts` | reCAPTCHA v3 server-side token verification |
+| `src/app/api/comments/` | REST endpoints: GET/POST comments, POST flag |
 | `src/components/SectionLabel.tsx` | Monospace colored section headers (terracotta/teal/gold) |
 | `src/styles/global.css` | Design tokens, surface utilities, prose variants, timeline CSS |
 | `docs/plans/` | Design documents and implementation plans |
@@ -33,6 +37,7 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 ## Development Commands
 
 ```bash
+npm install        # Install dependencies
 npm run dev        # Start Next.js dev server
 npm run build      # Production build (SSG)
 npm run start      # Serve production build locally
@@ -72,6 +77,16 @@ Most components are **Server Components** by default. Components needing browser
 | `SourcesCollapsible.tsx` | Radix Collapsible for essay sources |
 | `PatternImage.tsx` | Seeded generative canvas (3 layers: dots, curves, contours) |
 | `rough/DrawOnIcon.tsx` | IntersectionObserver SVG stroke draw animation for page headers |
+| `CollageHero.tsx` | Full-bleed dark-ground homepage hero, ResizeObserver reports height to `--hero-height` |
+| `EssayHero.tsx` | Full-bleed editorial header for essay detail pages, YouTube/PatternImage background |
+| `ArticleBody.tsx` | Prose wrapper with paragraph click-to-comment and position tracking |
+| `ArticleComments.tsx` | Orchestrates sticky note layer and mobile comment list for essays |
+| `CommentForm.tsx` | reCAPTCHA-protected comment submission form (sticky note style) |
+| `StickyNote.tsx` | Individual reader comment card with flag/date |
+| `StickyNoteLayer.tsx` | Absolute-positioned margin layer that positions sticky notes at paragraph offsets |
+| `MobileCommentList.tsx` | Below-article comment list for viewports narrower than xl |
+| `ReadingProgress.tsx` | Thin progress bar at top of viewport during article scroll |
+| `NowPreviewCompact.tsx` | 2x2 grid /now snapshot (Server Component reading `now.md`, but has `inverted` prop for hero) |
 
 Server Components can import and render Client Components; children pass through as a slot without hydrating.
 
@@ -96,6 +111,18 @@ Props: `name`, `size` (default 32), `color` (default currentColor), `className`.
 **Accessibility:** Respects `prefers-reduced-motion: reduce` by showing the icon immediately without animation. Observer disconnects after first trigger.
 
 **SketchIcon still used for:** Nav icons (16px, always visible in sticky nav where animation would be distracting).
+
+### Collage Hero System
+
+Two full-bleed editorial hero components share a common pattern: dark ground with cream typography, ResizeObserver reporting height to `--hero-height`, and a multi-stop gradient fade to parchment.
+
+**CollageHero** (`src/components/CollageHero.tsx`): Homepage hero. Dark ground (#2A2824), paper grain overlay, optional PNG fragments (desk objects in `public/collage/`), 3-column grid (1fr 118px 1fr) matching RoughLine label alignment. Name uses Vollkorn 700 (`--font-title`). Receives CyclingTagline and NowPreviewCompact as `inverted` slots. Breaks out of `max-w-4xl` via `margin-left: calc(-50vw + 50%); width: 100vw`. Pulls into main's padding via negative top margin reading `--main-pad-y`.
+
+**EssayHero** (`src/components/EssayHero.tsx`): Essay detail page header. YouTube thumbnail (via `next/image` with `fill`) or PatternImage as background with dark overlay (`--color-hero-overlay` at 70%). Category label (first tag, Courier Prime 11px, uppercase, terracotta with short rule). Date + reading time in top-right corner (9px, cream 50%). Large cream title, summary, inverted TagList and ProgressTracker slots. Same breakout and height-reporting pattern as CollageHero.
+
+**DotGrid zone awareness**: Both heroes set `--hero-height` on `<html>`. DotGrid reads this to render cream dots (`[240, 235, 228]` at 35%) over the dark zone, standard dark dots below, with a 50px crossfade band. Scroll listener redraws static dots so the color boundary moves as the user scrolls.
+
+**Fragment layer** (CollageHero): `FRAGMENTS` array of `CollageFragment` objects with `src`, `alt`, `left`, `top`, `width`, `height`, `rotate`, `z`, `opacity`, `hideOnMobile`. Renders as absolute-positioned `next/image` elements. Currently has 4 fragments; gracefully renders empty.
 
 ### MarginAnnotation System
 
@@ -264,103 +291,14 @@ Components: `SectionLabel` (monospace header), `TagList` (tint prop), `SketchIco
 
 Vercel with native Next.js builder. Git integration auto-deploys on push to `main`. No `vercel.json` needed; Vercel auto-detects Next.js. **Important:** Vercel dashboard Project Settings > Output Directory must be blank/default (not `dist`).
 
-## Status: Four-Phase Buildout
+## Status
 
-### Phase 1: Foundation + Surface Materiality ✅ Complete
+Phases 1 through 4 (Foundation, Micro-interactions, Animations, Polish) are **all complete**. See `docs/records/001-site-wide-redesign.md` for full history.
 
-| Item | Status |
-|------|--------|
-| Astro to Next.js 15 migration | ✅ |
-| RoughBox site-wide card borders | ✅ |
-| Surface materiality layer (tints, grain, shadows) | ✅ |
-| Card tint + colored borders | ✅ |
-| Section color system (labels, icons, tags) | ✅ |
-| Font system (7 fonts + CSS variable bridging) | ✅ |
-| Content pipeline (gray-matter + remark + Zod) | ✅ |
-| Vercel deployment | ✅ Auto-deploys on push to main |
-
-### Phase 2: Micro-interactions + Page Redesigns ✅ Complete
-
-| Item | Status |
-|------|--------|
-| Homepage redesign as creative workbench | ✅ |
-| ScrollReveal scroll-triggered animations | ✅ |
-| RoughCallout editor's-notes callouts | ✅ |
-| Caveat handwritten font + `--font-annotation` token | ✅ |
-| RoughPivotCallout 45° leader-line callouts | ✅ |
-| Featured essay promoted (no outer box, scale hierarchy) | ✅ |
-| Projects page: role-based column layout (ProjectColumns) | ✅ |
-| Projects page: past-tense role labels, YouTube "Created" column | ✅ |
-| Homepage hero: compact name + CyclingTagline typewriter | ✅ |
-| Nav restructure: On ... / Field Notes / Projects / Toolkit / Connect | ✅ |
-| Homepage section reorder: On, Projects, Field Notes (shelf removed) | ✅ |
-| "Work in Progress" badge on featured card | ✅ |
-| Radix UI primitives (Accordion, Collapsible, ToggleGroup) | ✅ |
-| Evidence callout labels in article blockquotes | ✅ |
-| DateStamp subtle color enhancement (terracotta-light) | ✅ |
-| Custom skeuomorphic icons (SketchIcon) replacing Phosphor on pages | ✅ |
-| Colophon no-dash rule enforcement | ✅ |
-| SketchIcon overflow fix (`overflow="visible"` + `flex-shrink-0`) | ✅ |
-| DotGrid interaction tuning (influenceRadius=150, repulsionStrength=15) | ✅ |
-| Blueprint grid removal (CSS + RoughBox `grid` prop) | ✅ |
-| Taxonomy rename: investigations to essays, working-ideas merged into field-notes | ✅ |
-| ProgressTracker (full + compact variants) | ✅ |
-| PatternImage generative canvas fallback | ✅ |
-| NowPreview /now section on homepage | ✅ |
-| EssayCard + FieldNoteEntry compact trackers | ✅ |
-| Footer redesign with colophon link | ✅ |
-| Content schema updates (essay stage, field note status) | ✅ |
-| Redirects for old investigation/working-ideas URLs | ✅ |
-
-Decided during brainstorm: Radix Primitives + fully custom styling (no shadcn/ui).
-See `docs/plans/2026-02-15-surface-materiality-layer-design.md` for surface materiality design.
-See `docs/plans/2026-02-16-projects-page-redesign.md` for projects column layout design.
-See `docs/records/001-site-wide-redesign.md` for full redesign record with user stories.
-
-### Phase 3: Animations + Content + Polish ✅ Complete
-
-| Item | Status |
-|------|--------|
-| Mobile responsive polish (typography, spacing, breakpoints) | ✅ |
-| Caveat font trimmed to single weight (400 only) | ✅ |
-| Homepage custom metadata export | ✅ |
-| Tag page SEO descriptions | ✅ |
-| Open Graph image (`opengraph-image.tsx` via `ImageResponse`) | ✅ |
-| Twitter card upgraded to `summary_large_image` | ✅ |
-| Nav SketchIcons (replaced Phosphor in TopNav) | ✅ |
-| Nav/layout max-width alignment (both `max-w-4xl`) | ✅ |
-| ProjectColumns `whitespace-nowrap` overflow fix | ✅ |
-| DrawOnIcon animation (SVG stroke animation on scroll/hover) | ✅ |
-| MarginAnnotation positioned handwritten notes | ✅ |
-| Nav restructure: 5 items (Essays on.../Field Notes/Projects/Toolkit/Connect) | ✅ (verified: already done in Phase 2) |
-| Essay detail page: full ProgressTracker + related notes sidebar | ✅ |
-| Field note detail page: CompactTracker in header | ✅ |
-| Additional content pages and essays | Not started |
-| Dark mode (design tokens already prepared in global.css) | Deferred |
-
-### Phase 4: Full Polish Pass ✅ Complete
-
-| Item | Status |
-|------|--------|
-| `/now` page (full-page version of NowPreview) | ✅ |
-| Reading time utility (`estimateReadingTime()`) | ✅ |
-| Reading time on essay detail pages | ✅ |
-| Reading time on field note detail pages (conditional, >1 min) | ✅ |
-| NowPreview "See more →" link to `/now` | ✅ |
-| `/now` added to sitemap | ✅ |
-| Global `focus-visible` keyboard focus indicators | ✅ |
-| TopNav `aria-current="page"` + `aria-label` | ✅ |
-| TopNav mobile menu focus trap (Tab wrapping + focus on open) | ✅ |
-| Footer `aria-label` attributes | ✅ |
-| External link indicator (`.prose a[target="_blank"]::after`) | ✅ |
-| ConsoleEasterEgg expansion (stats, latest essay, fun facts) | ✅ |
-| Layout computes site stats for ConsoleEasterEgg | ✅ |
-| Code block overflow protection (`max-width`, `word-break`) | ✅ |
-| Mobile touch targets (nav `py-2`) | ✅ |
-| Prose `overflow-wrap: break-word` | ✅ |
-| Field note callouts (the-maintenance-question, who-decides-where-the-bench-goes) | ✅ |
-| Second essay annotations (the-sidewalk-tax, 3 margin notes) | ✅ |
-| Bidirectional essay linking (`related` field on both essays) | ✅ |
+**Remaining backlog:**
+- Additional content pages and essays (not started)
+- Dark mode (deferred; tokens ready in `global.css`)
+- Collage hero fragment library (desk item photography, `public/collage/`)
 
 ## Recent Decisions
 
@@ -370,29 +308,20 @@ See `docs/records/001-site-wide-redesign.md` for full redesign record with user 
 | Section color system | terracotta=essays, teal=field-notes, gold=projects | Creates wayfinding language; color tells you where you are on the site |
 | No dashes | Colons, periods, parentheses, semicolons | User style preference; applies to all code, comments, and content |
 | Projects: no RoughBox | Inline rgba tinting with three states | RoughBox's fixed CSS classes can't handle dynamic rest/hover/expanded opacity |
-| Nav restructure | Essays on... / Field Notes / Projects / Toolkit / Shelf / Connect | 6 items; Shelf promoted to top-level nav; Colophon in footer only; gap-4 for tighter desktop spacing |
-| "Essays on ..." naming | "On ..." prefix for essay section | Less institutional; signals essayistic depth; pattern reinforced by individual titles |
+| Nav restructure | Essays on... / Field Notes / Projects / Toolkit / Shelf / Connect | 6 items; Shelf promoted to top-level nav; Colophon in footer only |
 | Section icons | SketchIcon (hand-drawn SVG) for pages, Phosphor for UI glyphs | Brand identity icons match rough.js aesthetic; utility icons stay crisp |
-| Evidence callouts | `.prose-investigations blockquote::before` with `:has()` selector | Only investigation articles get "NOTE" labels; semantic CSS, no component changes |
-| OG image | `opengraph-image.tsx` with `ImageResponse` (Satori) | Auto-generated at build, brand-consistent, no static PNG to maintain |
 | Taxonomy rename | investigations to essays, working-ideas merged into field-notes | Less institutional naming; essays signals depth; field-notes consolidates shorter content |
-| ProgressTracker | Generic stages array, two variants (full + compact) | Same component serves essays (4 stages) and field notes (3 stages); avoids duplication |
 | PatternImage | Seeded PRNG canvas, 3 layers | Deterministic from slug so patterns are stable; fallback when no video/image exists |
-| EssayCard image fallback | YouTube > curated > PatternImage (3-tier) | Every card gets a visual header; PatternImage is zero-maintenance generative fallback |
-| DrawOnIcon vs SketchIcon | DrawOnIcon (animated) for 9 page headers, SketchIcon (static) for nav | Nav icons are always visible in sticky header; animation there would be distracting |
-| DrawOnIcon technique | `pathLength="1"` + CSS `stroke-dashoffset` transition | Avoids `getTotalLength()` JS measurement; works with SSR; single CSS transition does the work |
 | MarginAnnotation approach | Frontmatter array + CSS-only rendering (no Client Component) | Zero JS overhead; `::after` pseudo-elements + `attr()` read data attributes directly |
-| MarginAnnotation breakpoint | xl (1280px) for margin positioning, not lg (1024px) | At 1024px only ~128px margin space; at 1280px ~192px; width now responsive via min(450px, ...) |
+| MarginAnnotation breakpoint | xl (1280px) for margin positioning, not lg (1024px) | At 1024px only ~128px margin space; at 1280px ~192px |
 | Related field notes | Two-tier resolution: explicit `related` slugs, then shared-tag fallback | Curated relationships preferred; automatic fallback ensures no empty section |
-| Dark mode | Deferred to separate future effort | Tokens ready in global.css but scope was too large for Phase 3 |
-| Reading time | 200 WPM, `Math.ceil`, min 1 | Standard adult reading speed; ceiling prevents "0 min"; field notes conditional (>1 min only) |
-| Focus-visible strategy | `:focus-visible` on all interactive elements | Only fires for keyboard navigation (not mouse clicks); terracotta ring matches brand |
-| /now page | Separate full page (not extracted shared lib) | Two consumers (NowPreview + /now page) with different display needs; shared logic is trivial |
-| Mobile focus trap | Tab wrapping + auto-focus first item + return focus to hamburger on close | WCAG-compliant modal behavior for mobile menu overlay |
-| ConsoleEasterEgg props | Layout computes stats at build time, passes as props | Server Component (layout) reads collections once; Client Component displays them |
-| Code block overflow | `max-width: 100%` + `word-break: break-word` on inline code | Prevents horizontal page scroll from long code strings on mobile |
-| Hero grid alignment | `1fr 118px 1fr` CSS Grid + `lg:pl-[128px]` | 118px matches RoughLine label width; 128px = (max-w-6xl minus max-w-4xl)/2 aligns name with content area |
-| NowPreviewCompact layout | 2x2 grid (grid-cols-2) not vertical stack | Horizontal rectangle keeps hero height compact (181px) while showing all 4 items |
+| Dark mode | Deferred to separate future effort | Tokens ready in global.css but scope was too large |
+| Collage hero aesthetic | Editorial collage (Blake Cale / The Atlantic), dark olive ground, cream serif type | Tactile, layered, uncontained; spec in `docs/plans/collage-hero-implementation-plan.md` |
+| DotGrid zone-aware rendering | Cream dots over hero zone, dark dots over parchment, 50px crossfade | Hero component reports height to `--hero-height` via ResizeObserver; DotGrid reads it |
+| Hero breakout technique | `margin-left: calc(-50vw + 50%); width: 100vw` | Simpler than `left-1/2 -translate-x-1/2`; only one technique per spec directive |
+| Hero grid alignment | `1fr 118px 1fr` CSS Grid + `lg:pl-[128px]` | 118px matches RoughLine label width; 128px = (max-w-6xl minus max-w-4xl)/2 |
+| `inverted` prop pattern | 4 components (CyclingTagline, NowPreviewCompact, TagList, ProgressTracker) | Consistent cream-on-dark rendering in hero zones without duplicating components |
+| Comment system | File-based JSON in `data/comments/`, reCAPTCHA v3, sticky notes in margin | Low-infrastructure reader engagement; matches the handwritten margin note aesthetic |
 
 ## Gotchas
 

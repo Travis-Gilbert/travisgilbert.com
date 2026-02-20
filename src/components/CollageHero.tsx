@@ -23,29 +23,88 @@ interface CollageFragment {
   left: string;
   /** CSS positioning from top edge (percentage or px) */
   top: string;
-  /** Width in px */
+  /** Intrinsic width in px */
   width: number;
+  /** Intrinsic height in px */
+  height: number;
   /** Rotation in degrees */
   rotate?: number;
   /** z-index layer (higher = on top) */
   z?: number;
   /** Opacity (0 to 1) */
   opacity?: number;
+  /** Optional CSS filter override (default: drop-shadow) */
+  filter?: string;
+  /** Hide on mobile (screens below lg breakpoint) */
+  hideOnMobile?: boolean;
 }
 
-// Define your collage fragments here. Add items as you photograph them.
-// Positions are relative to the hero container.
+// Collage fragments: layered visual references on the dark hero ground.
+// Cutout images (transparent bg) feel like objects on a desk.
+// Rectangle images feel like prints or clippings laid flat.
+//
+// Layout zones (desktop, max-w-6xl = 1152px centered):
+//   Left edge (0..10%): bleeds off left, partially visible
+//   Left content (10..42%): name + tagline area, fragments go BEHIND text (z < 10)
+//   Center gap (42..52%): 118px spacer
+//   Right content (52..90%): NowPreview area
+//   Right edge (90..100%): bleeds off right
+//   Top/bottom edges: fragments can peek above/below the content zone
 const FRAGMENTS: CollageFragment[] = [
-  // Example (uncomment and adjust when you have the photo):
-  // {
-  //   src: '/collage/hamming-book.png',
-  //   alt: 'The Art of Doing Science and Engineering by Richard Hamming',
-  //   left: '60%',
-  //   top: '10%',
-  //   width: 200,
-  //   rotate: -3,
-  //   z: 2,
-  // },
+  // Architectural watercolor: large rectangle, upper-right, slight tilt.
+  // Sits behind the NowPreview text as a background texture.
+  {
+    src: '/collage/architectural-watercolor.png',
+    alt: 'Watercolor rendering of arched architectural corridors',
+    left: '68%',
+    top: '3%',
+    width: 350,
+    height: 350,
+    rotate: 2.5,
+    z: 1,
+    opacity: 0.25,
+    hideOnMobile: true,
+  },
+  // Urban design diagram: medium rectangle, lower-left, tucked under name area.
+  {
+    src: '/collage/urban-design-diagram.png',
+    alt: 'Street design diagram showing curb extensions and bike lanes',
+    left: '2%',
+    top: '38%',
+    width: 260,
+    height: 234,
+    rotate: -3,
+    z: 2,
+    opacity: 0.3,
+    hideOnMobile: true,
+  },
+  // Raspberry Pi: cutout, right side, mid-height. Tech object floating free.
+  {
+    src: '/collage/raspberry-pi.png',
+    alt: 'Raspberry Pi single-board computer with cables',
+    left: '78%',
+    top: '58%',
+    width: 220,
+    height: 108,
+    rotate: -5,
+    z: 4,
+    opacity: 0.7,
+    hideOnMobile: true,
+  },
+  // Dragon illustration: tall cutout, far left edge, partially off-screen.
+  // Creates depth by bleeding past the boundary.
+  {
+    src: '/collage/dragon-illustration.png',
+    alt: 'Ink and gold leaf dragon illustration by Alvia Alcedo',
+    left: '-3%',
+    top: '8%',
+    width: 160,
+    height: 234,
+    rotate: 4,
+    z: 3,
+    opacity: 0.45,
+    hideOnMobile: true,
+  },
 ];
 
 interface CollageHeroProps {
@@ -126,7 +185,7 @@ export default function CollageHero({
           {FRAGMENTS.map((frag, i) => (
             <div
               key={i}
-              className="absolute"
+              className={`absolute ${frag.hideOnMobile ? 'hidden lg:block' : ''}`}
               style={{
                 left: frag.left,
                 top: frag.top,
@@ -134,14 +193,14 @@ export default function CollageHero({
                 transform: frag.rotate ? `rotate(${frag.rotate}deg)` : undefined,
                 zIndex: frag.z ?? 1,
                 opacity: frag.opacity ?? 0.85,
-                filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.3))',
+                filter: frag.filter ?? 'drop-shadow(2px 4px 8px rgba(0,0,0,0.3))',
               }}
             >
               <Image
                 src={frag.src}
                 alt={frag.alt}
                 width={frag.width}
-                height={Math.round(frag.width * 1.4)}
+                height={frag.height}
                 className="w-full h-auto"
                 priority
               />
@@ -161,8 +220,8 @@ export default function CollageHero({
             <h1
               className="text-[2.5rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.5rem] m-0"
               style={{
-                fontFamily: 'var(--font-name)',
-                fontWeight: 400,
+                fontFamily: 'var(--font-title)',
+                fontWeight: 700,
                 lineHeight: 1.0,
                 color: 'var(--color-hero-text)',
               }}

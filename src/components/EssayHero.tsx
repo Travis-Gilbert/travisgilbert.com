@@ -12,6 +12,7 @@
  */
 
 import { useRef, useEffect } from 'react';
+import Image from 'next/image';
 import PatternImage from '@/components/PatternImage';
 
 interface EssayHeroProps {
@@ -20,6 +21,8 @@ interface EssayHeroProps {
   readingTime: number;
   slug: string;
   youtubeId?: string;
+  /** First tag used as category label above title */
+  category?: string;
   /** ProgressTracker component passed as a slot */
   progressTracker?: React.ReactNode;
   /** TagList component passed as a slot */
@@ -33,6 +36,7 @@ export default function EssayHero({
   readingTime,
   slug,
   youtubeId,
+  category,
   progressTracker,
   tags,
   summary,
@@ -81,11 +85,14 @@ export default function EssayHero({
       {/* Background layer: YouTube thumbnail or PatternImage */}
       <div className="absolute inset-0">
         {youtubeId ? (
-          <img
+          <Image
             src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
             aria-hidden="true"
+            priority
           />
         ) : (
           <div className="w-full h-full">
@@ -117,31 +124,59 @@ export default function EssayHero({
 
       {/* Typography layer */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-16 md:pt-24 pb-10 md:pb-14">
-        {/* Date + reading time */}
-        <div className="flex items-center gap-2 mb-4">
+        {/* Date + reading time: top-right corner */}
+        <div
+          className="absolute top-4 right-4 sm:right-6 md:top-6 text-right"
+          style={{ zIndex: 10 }}
+        >
           <span
-            className="font-mono"
+            className="font-mono block"
             style={{
-              fontSize: 11,
+              fontSize: 9,
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              color: 'var(--color-hero-text-muted)',
+              color: 'rgba(240, 235, 228, 0.5)',
             }}
           >
             {formattedDate}
           </span>
           <span
-            className="font-mono"
+            className="font-mono block"
             style={{
-              fontSize: 11,
+              fontSize: 9,
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              color: 'var(--color-hero-text-muted)',
+              color: 'rgba(240, 235, 228, 0.5)',
             }}
           >
-            &middot; {readingTime} min read
+            {readingTime} min read
           </span>
         </div>
+
+        {/* Category label: Courier Prime, uppercase, terracotta, short rule */}
+        {category && (
+          <div className="flex items-center gap-3 mb-4">
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: 'var(--color-terracotta-light)',
+              }}
+            >
+              {category}
+            </span>
+            <div
+              style={{
+                width: 32,
+                height: 1,
+                backgroundColor: 'var(--color-terracotta-light)',
+                opacity: 0.5,
+              }}
+            />
+          </div>
+        )}
 
         {/* Title: large, editorial, uncontained */}
         <h1

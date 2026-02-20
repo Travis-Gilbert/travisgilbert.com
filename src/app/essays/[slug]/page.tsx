@@ -117,6 +117,7 @@ export default async function EssayDetailPage({ params }: Props) {
         readingTime={readingTime}
         slug={slug}
         youtubeId={entry.data.youtubeId}
+        category={entry.data.tags[0]}
         summary={entry.data.summary}
         tags={
           <TagList tags={entry.data.tags} tint="terracotta" inverted />
