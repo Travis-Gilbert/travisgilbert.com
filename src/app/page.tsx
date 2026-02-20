@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import fs from 'node:fs';
+import nodePath from 'node:path';
 import Link from 'next/link';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
@@ -49,18 +51,31 @@ export default function HomePage() {
   const totalFieldNotes = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft).length;
   const totalProjects = getCollection<Project>('projects').filter((p) => !p.data.draft).length;
 
+  // Detect generated collage image for the featured essay (build-time filesystem check)
+  const featuredCollage = featured
+    ? (() => {
+        const collagePath = nodePath.join(process.cwd(), 'public', 'collage', `${featured.slug}.jpg`);
+        return fs.existsSync(collagePath) ? `/collage/${featured.slug}.jpg` : undefined;
+      })()
+    : undefined;
+
   return (
     <div>
       {/* ═══════════════════════════════════════════════
           Hero: Full-bleed dark collage ground with editorial typography.
           CollageHero breaks out of max-w-4xl to span full viewport width.
           DotGrid renders cream dots over this dark zone.
+          When a generated collage exists for the featured essay, it fills
+          the hero as a dominant background that bleeds past the container.
           ═══════════════════════════════════════════════ */}
       <CollageHero
         name="Travis Gilbert"
         countersLabel={`${totalEssays} essay${totalEssays !== 1 ? 's' : ''} · ${totalProjects} project${totalProjects !== 1 ? 's' : ''} · ${totalFieldNotes} field note${totalFieldNotes !== 1 ? 's' : ''}`}
         tagline={<CyclingTagline inverted />}
         nowPreview={<NowPreviewCompact inverted />}
+        collageImage={featuredCollage}
+        featuredTitle={featured?.data.title}
+        featuredSlug={featured?.slug}
       />
 
       {/* ═══════════════════════════════════════════════
