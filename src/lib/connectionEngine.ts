@@ -151,20 +151,46 @@ function resolveConnectedShelfEntries(
 // Positioning
 // ─────────────────────────────────────────────────
 
+/**
+ * Find the first paragraph that mentions the connection by title or slug words.
+ *
+ * Tries three strategies in order:
+ * 1. Full title match (e.g., "The Parking Lot Problem: How Minimum...")
+ * 2. Slug words match (e.g., "parking lot problem" from "the-parking-lot-problem")
+ * 3. Returns null if nothing matches (caller provides a fallback)
+ */
 export function findMentionIndex(
   connection: Connection,
   html: string,
 ): number | null {
-  const needle = connection.title.toLowerCase();
   const segments = html.split('</p>');
+  const paragraphs = segments.slice(0, -1).map((seg) =>
+    seg.replace(/<[^>]*>/g, '').toLowerCase()
+  );
 
-  for (let i = 0; i < segments.length - 1; i++) {
-    const plainText = segments[i].replace(/<[^>]*>/g, '').toLowerCase();
-    if (plainText.includes(needle)) return i + 1;
+  // Strategy 1: full title
+  const titleNeedle = connection.title.toLowerCase();
+  for (let i = 0; i < paragraphs.length; i++) {
+    if (paragraphs[i].includes(titleNeedle)) return i + 1;
+  }
+
+  // Strategy 2: slug words (strip common articles, join with spaces)
+  const slugWords = connection.slug
+    .split('-')
+    .filter((w) => !['the', 'a', 'an', 'of', 'in', 'on', 'and', 'for', 'to'].includes(w))
+    .join(' ');
+
+  if (slugWords.length >= 4) {
+    for (let i = 0; i < paragraphs.length; i++) {
+      if (paragraphs[i].includes(slugWords)) return i + 1;
+    }
   }
 
   return null;
 }
+
+/** Default paragraph index when no mention is found in the text */
+const FALLBACK_PARAGRAPH = 1;
 
 export function positionConnections(
   connections: Connection[],
@@ -172,6 +198,6 @@ export function positionConnections(
 ): PositionedConnection[] {
   return connections.map((connection) => ({
     connection,
-    paragraphIndex: findMentionIndex(connection, html),
+    paragraphIndex: findMentionIndex(connection, html) ?? FALLBACK_PARAGRAPH,
   }));
 }
