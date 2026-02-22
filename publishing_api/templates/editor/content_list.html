@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-
 {% block title %}{{ content_type_plural }}{% endblock %}
 
 {% block content %}
 <div class="content-list-page">
     <header class="list-header">
         <h1>{{ content_type_plural }}</h1>
+        {% if items %}
+        <span class="list-count">{{ items|length }} item{{ items|length|pluralize }}</span>
+        {% endif %}
         <a href="{{ new_url }}" class="btn btn-primary">+ New</a>
     </header>
 
@@ -14,24 +16,32 @@
         <li class="content-item">
             <a href="{% if content_type == 'essay' %}{% url 'editor:essay-edit' slug=item.slug %}{% elif content_type == 'field_note' %}{% url 'editor:field-note-edit' slug=item.slug %}{% elif content_type == 'shelf' %}{% url 'editor:shelf-edit' slug=item.slug %}{% elif content_type == 'project' %}{% url 'editor:project-edit' slug=item.slug %}{% endif %}">
                 <span class="content-item-title">{{ item.title }}</span>
-                <span class="content-item-date">{{ item.date|date:"M j, Y" }}</span>
-                {% if item.draft %}
-                <span class="content-badge badge-draft">Draft</span>
-                {% else %}
-                <span class="content-badge badge-published">Published</span>
-                {% endif %}
                 {% if item.stage %}
                 <span class="content-item-stage">{{ item.get_stage_display }}</span>
                 {% endif %}
                 {% if item.status %}
                 <span class="content-item-stage">{{ item.get_status_display }}</span>
                 {% endif %}
+                {% if item.draft %}
+                <span class="content-badge badge-draft">Draft</span>
+                {% else %}
+                <span class="content-badge badge-published">Published</span>
+                {% endif %}
+                <span class="content-item-date">{{ item.date|date:"M j, Y" }}</span>
             </a>
         </li>
         {% empty %}
         <li class="content-list-empty">
-            No {{ content_type_plural|lower }} yet.
-            <a href="{{ new_url }}">Create one.</a>
+            <div class="empty-icon">
+                {% if content_type == 'essay' %}✦{% elif content_type == 'field_note' %}◈{% elif content_type == 'shelf' %}◎{% elif content_type == 'project' %}⬡{% else %}✦{% endif %}
+            </div>
+            <div class="empty-title">
+                {% if content_type == 'essay' %}No essays yet{% elif content_type == 'field_note' %}No field notes yet{% elif content_type == 'shelf' %}Nothing on the shelf{% elif content_type == 'project' %}No projects yet{% else %}Nothing here yet{% endif %}
+            </div>
+            <div class="empty-description">
+                {% if content_type == 'essay' %}Start writing your first long-form investigation.{% elif content_type == 'field_note' %}Capture an observation or developing idea.{% elif content_type == 'shelf' %}Add books, articles, and sources that inform your work.{% elif content_type == 'project' %}Document the work you have built and organized.{% else %}Create your first piece of content.{% endif %}
+            </div>
+            <a href="{{ new_url }}" class="btn btn-primary">+ Create {{ content_type_display }}</a>
         </li>
         {% endfor %}
     </ul>

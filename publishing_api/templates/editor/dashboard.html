@@ -9,30 +9,34 @@
     </header>
 
     <div class="dashboard-grid">
-        <!-- Quick create -->
+        <!-- Quick create: horizontal row -->
         <section class="dashboard-section quick-create">
             <h2>Create</h2>
             <div class="quick-create-grid">
                 <a href="{% url 'editor:essay-create' %}" class="quick-create-btn quick-create-essay">
                     <span class="quick-create-icon">+</span>
-                    <span>New Essay</span>
+                    <span>Essay</span>
                 </a>
                 <a href="{% url 'editor:field-note-create' %}" class="quick-create-btn quick-create-note">
                     <span class="quick-create-icon">+</span>
-                    <span>New Field Note</span>
+                    <span>Field Note</span>
                 </a>
                 <a href="{% url 'editor:shelf-create' %}" class="quick-create-btn quick-create-shelf">
                     <span class="quick-create-icon">+</span>
-                    <span>New Shelf Entry</span>
+                    <span>Shelf Entry</span>
                 </a>
                 <a href="{% url 'editor:project-create' %}" class="quick-create-btn quick-create-project">
                     <span class="quick-create-icon">+</span>
-                    <span>New Project</span>
+                    <span>Project</span>
+                </a>
+                <a href="{% url 'editor:now-edit' %}" class="quick-create-btn quick-create-now">
+                    <span class="quick-create-icon">&#x270E;</span>
+                    <span>Now Page</span>
                 </a>
             </div>
         </section>
 
-        <!-- Recent drafts -->
+        <!-- Drafts in progress -->
         <section class="dashboard-section">
             <h2>Drafts</h2>
             <ul class="content-list">
@@ -68,6 +72,9 @@
                     {% endif %}
                 {% endfor %}
             </ul>
+            {% if not essays and not field_notes and not projects %}
+            <p class="dashboard-empty">No drafts in progress.</p>
+            {% endif %}
         </section>
 
         <!-- Recent publishes -->
@@ -76,7 +83,7 @@
             <ul class="publish-log-list">
                 {% for log in recent_publishes %}
                 <li class="publish-log-item {% if log.success %}publish-success{% else %}publish-fail{% endif %}">
-                    <span class="publish-log-status">{% if log.success %}OK{% else %}FAILED{% endif %}</span>
+                    <span class="publish-log-status">{% if log.success %}OK{% else %}FAIL{% endif %}</span>
                     <span class="publish-log-title">{{ log.content_title }}</span>
                     <time class="publish-log-time" datetime="{{ log.created_at|date:'c' }}">
                         {{ log.created_at|date:"M j, g:i A" }}
@@ -88,8 +95,39 @@
                     {% endif %}
                 </li>
                 {% empty %}
-                <li class="publish-log-empty">Nothing published yet. Write something.</li>
+                <li class="publish-log-empty">Nothing published yet.</li>
                 {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Content overview -->
+        <section class="dashboard-section">
+            <h2>Content</h2>
+            <ul class="content-list">
+                <li class="content-item">
+                    <a href="{% url 'editor:essay-list' %}">
+                        <span class="content-badge badge-essay">Essays</span>
+                        <span class="content-item-title">{{ essays|length }} item{{ essays|length|pluralize }}</span>
+                    </a>
+                </li>
+                <li class="content-item">
+                    <a href="{% url 'editor:field-note-list' %}">
+                        <span class="content-badge badge-note">Notes</span>
+                        <span class="content-item-title">{{ field_notes|length }} item{{ field_notes|length|pluralize }}</span>
+                    </a>
+                </li>
+                <li class="content-item">
+                    <a href="{% url 'editor:shelf-list' %}">
+                        <span class="content-badge badge-shelf">Shelf</span>
+                        <span class="content-item-title">{{ shelf_entries|length }} item{{ shelf_entries|length|pluralize }}</span>
+                    </a>
+                </li>
+                <li class="content-item">
+                    <a href="{% url 'editor:project-list' %}">
+                        <span class="content-badge badge-project">Projects</span>
+                        <span class="content-item-title">{{ projects|length }} item{{ projects|length|pluralize }}</span>
+                    </a>
+                </li>
             </ul>
         </section>
 

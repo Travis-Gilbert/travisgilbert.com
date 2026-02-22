@@ -78,6 +78,7 @@ class EssayListView(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["content_type"] = "essay"
         ctx["content_type_plural"] = "Essays"
+        ctx["content_type_display"] = "Essay"
         ctx["new_url"] = reverse("editor:essay-create")
         return ctx
 
@@ -150,6 +151,7 @@ class FieldNoteListView(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["content_type"] = "field_note"
         ctx["content_type_plural"] = "Field Notes"
+        ctx["content_type_display"] = "Field Note"
         ctx["new_url"] = reverse("editor:field-note-create")
         return ctx
 
@@ -220,6 +222,7 @@ class ShelfListView(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["content_type"] = "shelf"
         ctx["content_type_plural"] = "Shelf"
+        ctx["content_type_display"] = "Shelf Entry"
         ctx["new_url"] = reverse("editor:shelf-create")
         return ctx
 
@@ -290,6 +293,7 @@ class ProjectListView(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["content_type"] = "project"
         ctx["content_type_plural"] = "Projects"
+        ctx["content_type_display"] = "Project"
         ctx["new_url"] = reverse("editor:project-create")
         return ctx
 

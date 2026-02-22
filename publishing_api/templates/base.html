@@ -23,7 +23,7 @@
             <a href="{% url 'editor:now-edit' %}" class="nav-link {% if content_type == 'now' %}active{% endif %}">Now</a>
         </div>
         <div class="nav-user">
-            {{ request.user.username }}
+            <span>{{ request.user.username }}</span>
             <a href="{% url 'logout' %}" class="nav-link">Sign out</a>
         </div>
     </nav>
