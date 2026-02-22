@@ -37,9 +37,9 @@
     --studio-shadow: 0 1px 3px rgba(42, 40, 36, 0.08);
     --studio-shadow-lg: 0 4px 12px rgba(42, 40, 36, 0.12);
 
-    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --font-body: "Cabin", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     --font-mono: "Courier Prime", "Courier New", monospace;
-    --font-writing: Georgia, "Times New Roman", serif;
+    --font-writing: "Vollkorn", Georgia, "Times New Roman", serif;
 }
 
 /* ─── Base ──────────────────────────────────── */

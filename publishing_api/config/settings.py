@@ -141,3 +141,8 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{h.strip()}"
+        for h in ALLOWED_HOSTS_RAW.split(",")
+        if h.strip() and h.strip() != "*"
+    ]
