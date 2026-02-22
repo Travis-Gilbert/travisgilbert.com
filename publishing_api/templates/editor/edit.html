@@ -230,8 +230,11 @@ function handlePublishResponse(event) {
     // Clear previous content safely
     while (toast.firstChild) toast.removeChild(toast.firstChild);
 
+    var xhr = event.detail.xhr;
+    var status = xhr ? xhr.status : 0;
+
     try {
-        const data = JSON.parse(event.detail.xhr.responseText);
+        const data = JSON.parse(xhr.responseText);
         if (data.success) {
             toast.className = 'publish-toast publish-toast-success';
             toast.appendChild(document.createTextNode('Published! Commit: '));
@@ -247,7 +250,16 @@ function handlePublishResponse(event) {
         }
     } catch(e) {
         toast.className = 'publish-toast publish-toast-error';
-        toast.textContent = 'Publish failed: Network error';
+        // Show HTTP status for better diagnostics
+        if (status === 403) {
+            toast.textContent = 'Publish failed: CSRF or permission error (403)';
+        } else if (status >= 500) {
+            toast.textContent = 'Publish failed: Server error (' + status + ')';
+        } else if (status === 0) {
+            toast.textContent = 'Publish failed: Could not reach server';
+        } else {
+            toast.textContent = 'Publish failed: Unexpected response (' + status + ')';
+        }
     }
     toast.style.display = 'block';
     setTimeout(function() { toast.style.display = 'none'; }, 8000);

@@ -43,6 +43,17 @@
     <!-- Publish result toast (HTMX driven) -->
     <div id="publish-toast" class="publish-toast" style="display: none;"></div>
 
+    <script>
+    // HTMX: include Django CSRF token on every non-GET request
+    document.body.addEventListener('htmx:configRequest', function(event) {
+        if (event.detail.verb !== 'get') {
+            var token = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (token) {
+                event.detail.headers['X-CSRFToken'] = token.value;
+            }
+        }
+    });
+    </script>
     <script src="{% static 'js/studio.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>

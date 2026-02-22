@@ -13,6 +13,8 @@ All views require login (enforced via LoginRequiredMixin). The URL structure:
 """
 
 import json
+import logging
+import traceback
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
@@ -20,6 +22,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView
+
+logger = logging.getLogger(__name__)
 
 from apps.content.models import (
     Essay,
@@ -126,7 +130,18 @@ class EssayPublishView(LoginRequiredMixin, View):
 
     def post(self, request, slug):
         essay = get_object_or_404(Essay, slug=slug)
-        log = publish_essay(essay)
+        try:
+            log = publish_essay(essay)
+        except Exception:
+            logger.exception("Publish failed for essay '%s'", slug)
+            if request.headers.get("HX-Request"):
+                return JsonResponse({
+                    "success": False,
+                    "commit_sha": "",
+                    "commit_url": "",
+                    "error": traceback.format_exc().splitlines()[-1],
+                })
+            return redirect(reverse("editor:essay-edit", kwargs={"slug": slug}))
         if request.headers.get("HX-Request"):
             return JsonResponse({
                 "success": log.success,
@@ -197,7 +212,18 @@ class FieldNoteEditView(LoginRequiredMixin, UpdateView):
 class FieldNotePublishView(LoginRequiredMixin, View):
     def post(self, request, slug):
         note = get_object_or_404(FieldNote, slug=slug)
-        log = publish_field_note(note)
+        try:
+            log = publish_field_note(note)
+        except Exception:
+            logger.exception("Publish failed for field note '%s'", slug)
+            if request.headers.get("HX-Request"):
+                return JsonResponse({
+                    "success": False,
+                    "commit_sha": "",
+                    "commit_url": "",
+                    "error": traceback.format_exc().splitlines()[-1],
+                })
+            return redirect(reverse("editor:field-note-edit", kwargs={"slug": slug}))
         if request.headers.get("HX-Request"):
             return JsonResponse({
                 "success": log.success,
@@ -268,7 +294,18 @@ class ShelfEditView(LoginRequiredMixin, UpdateView):
 class ShelfPublishView(LoginRequiredMixin, View):
     def post(self, request, slug):
         entry = get_object_or_404(ShelfEntry, slug=slug)
-        log = publish_shelf_entry(entry)
+        try:
+            log = publish_shelf_entry(entry)
+        except Exception:
+            logger.exception("Publish failed for shelf entry '%s'", slug)
+            if request.headers.get("HX-Request"):
+                return JsonResponse({
+                    "success": False,
+                    "commit_sha": "",
+                    "commit_url": "",
+                    "error": traceback.format_exc().splitlines()[-1],
+                })
+            return redirect(reverse("editor:shelf-edit", kwargs={"slug": slug}))
         if request.headers.get("HX-Request"):
             return JsonResponse({
                 "success": log.success,
@@ -339,7 +376,18 @@ class ProjectEditView(LoginRequiredMixin, UpdateView):
 class ProjectPublishView(LoginRequiredMixin, View):
     def post(self, request, slug):
         project = get_object_or_404(Project, slug=slug)
-        log = publish_project(project)
+        try:
+            log = publish_project(project)
+        except Exception:
+            logger.exception("Publish failed for project '%s'", slug)
+            if request.headers.get("HX-Request"):
+                return JsonResponse({
+                    "success": False,
+                    "commit_sha": "",
+                    "commit_url": "",
+                    "error": traceback.format_exc().splitlines()[-1],
+                })
+            return redirect(reverse("editor:project-edit", kwargs={"slug": slug}))
         if request.headers.get("HX-Request"):
             return JsonResponse({
                 "success": log.success,
@@ -383,7 +431,18 @@ class NowPageEditView(LoginRequiredMixin, UpdateView):
 class NowPagePublishView(LoginRequiredMixin, View):
     def post(self, request):
         now = get_object_or_404(NowPage, pk=1)
-        log = publish_now_page(now)
+        try:
+            log = publish_now_page(now)
+        except Exception:
+            logger.exception("Publish failed for Now page")
+            if request.headers.get("HX-Request"):
+                return JsonResponse({
+                    "success": False,
+                    "commit_sha": "",
+                    "commit_url": "",
+                    "error": traceback.format_exc().splitlines()[-1],
+                })
+            return redirect(reverse("editor:now-edit"))
         if request.headers.get("HX-Request"):
             return JsonResponse({
                 "success": log.success,
