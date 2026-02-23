@@ -128,10 +128,10 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# GitHub publishing settings
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "")
-GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
+# GitHub publishing settings (strip whitespace; dashboard paste can add newlines)
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "").strip()
+GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main").strip()
 
 # Production security (only when DEBUG=False)
 if not DEBUG:
