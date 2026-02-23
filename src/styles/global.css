@@ -1084,3 +1084,57 @@ blockquote {
     left: 0.75rem; /* center of 1.5rem dot-col */
   }
 }
+
+/* ─────────────────────────────────────────────────
+   Connection Callouts (inline, build-time injected)
+   ───────────────────────────────────────────────── */
+
+.connection-callout {
+  display: block;
+  margin: 0.75rem 0 0.75rem 1rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--callout-color, var(--color-terracotta));
+  border-radius: 0 4px 4px 0;
+  transition: border-width 200ms ease, background-color 200ms ease;
+}
+
+.connection-callout:hover {
+  border-left-width: 3px;
+  background-color: color-mix(in srgb, var(--callout-color, var(--color-terracotta)) 3%, transparent);
+}
+
+.connection-callout[data-connection-type="essay"] {
+  --callout-color: #B45A2D;
+}
+
+.connection-callout[data-connection-type="field-note"] {
+  --callout-color: #2D5F6B;
+}
+
+.connection-callout[data-connection-type="shelf"] {
+  --callout-color: #C49A4A;
+}
+
+.connection-callout-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.connection-callout-type {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--callout-color, var(--color-terracotta));
+  opacity: 0.7;
+}
+
+.connection-callout-title {
+  font-family: var(--font-annotation);
+  font-size: 15px;
+  color: var(--callout-color, var(--color-terracotta));
+  line-height: 1.3;
+}
