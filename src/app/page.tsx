@@ -4,7 +4,7 @@ import nodePath from 'node:path';
 import Link from 'next/link';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
-import type { Essay, FieldNote, Project } from '@/lib/content';
+import type { Essay, FieldNote, ShelfEntry, Project } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import RoughBox from '@/components/rough/RoughBox';
@@ -18,6 +18,9 @@ import Image from 'next/image';
 import PatternImage from '@/components/PatternImage';
 import NowPreviewCompact from '@/components/NowPreviewCompact';
 import CollageHero from '@/components/CollageHero';
+import { computeThreadPairs } from '@/lib/connectionEngine';
+import type { AllContent } from '@/lib/connectionEngine';
+import ThreadLines from '@/components/ThreadLines';
 
 export const metadata: Metadata = {
   title: 'Travis Gilbert | Essays, Projects, and Field Notes',
@@ -52,6 +55,17 @@ export default function HomePage() {
   const totalFieldNotes = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft).length;
   const totalProjects = getCollection<Project>('projects').filter((p) => !p.data.draft).length;
 
+  // Thread pairs for connecting cards within the essay section
+  const allFieldNotesForThreads = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft);
+  const allShelfForThreads = getCollection<ShelfEntry>('shelf');
+  const threadContent: AllContent = {
+    essays,
+    fieldNotes: allFieldNotesForThreads,
+    shelf: allShelfForThreads,
+  };
+  const threadPairs = computeThreadPairs(threadContent);
+  const essayThreadPairs = threadPairs.filter((p) => p.type === 'essay');
+
   // Detect generated collage image for the featured essay (build-time filesystem check)
   const featuredCollage = featured
     ? (() => {
@@ -70,9 +84,15 @@ export default function HomePage() {
       <CollageHero
         name="Travis Gilbert"
         countersLabel={`${totalEssays} essay${totalEssays !== 1 ? 's' : ''} · ${totalProjects} project${totalProjects !== 1 ? 's' : ''} · ${totalFieldNotes} field note${totalFieldNotes !== 1 ? 's' : ''}`}
-        tagline={<CyclingTagline inverted />}
-        nowPreview={<NowPreviewCompact inverted />}
+        tagline={<CyclingTagline />}
+        nowPreview={<NowPreviewCompact />}
       />
+
+      {/* ═══════════════════════════════════════════════
+          Essay sections: wrapped in relative container for ThreadLines
+          ═══════════════════════════════════════════════ */}
+      <div className="relative">
+        <ThreadLines pairs={essayThreadPairs} />
 
       {/* ═══════════════════════════════════════════════
           Featured Essay: Primary visual anchor.
@@ -94,6 +114,7 @@ export default function HomePage() {
             <div
               className="lg:-mx-4 xl:-mx-8 relative"
               style={{ paddingTop: featuredCollage ? 180 : 0 }}
+              data-slug={featured.slug}
             >
               {/* Erupting collage image: extends above the card boundary */}
               {featuredCollage && (
@@ -113,42 +134,16 @@ export default function HomePage() {
                     className="object-cover object-center"
                     priority
                   />
-                  {/* Top fade: dissolves the eruption edge into parchment */}
-                  <div
-                    className="absolute top-0 left-0 right-0 pointer-events-none"
-                    style={{
-                      height: 120,
-                      background: `linear-gradient(
-                        to bottom,
-                        var(--color-paper) 0%,
-                        color-mix(in srgb, var(--color-paper) 80%, transparent) 30%,
-                        color-mix(in srgb, var(--color-paper) 40%, transparent) 60%,
-                        transparent 100%
-                      )`,
-                    }}
-                  />
-                  {/* Bottom fade: blends into the card content below */}
+                  {/* Bottom fade: dissolves image into the card content below */}
                   <div
                     className="absolute bottom-0 left-0 right-0 pointer-events-none"
                     style={{
-                      height: 100,
+                      height: 160,
                       background: `linear-gradient(
                         to bottom,
                         transparent 0%,
-                        color-mix(in srgb, var(--color-paper) 60%, transparent) 60%,
-                        var(--color-paper) 100%
-                      )`,
-                    }}
-                  />
-                  {/* Left/right side fades for soft lateral edges */}
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: `linear-gradient(
-                        to right,
-                        var(--color-paper) 0%,
-                        transparent 8%,
-                        transparent 92%,
+                        color-mix(in srgb, var(--color-paper) 50%, transparent) 30%,
+                        var(--color-paper) 60%,
                         var(--color-paper) 100%
                       )`,
                     }}
@@ -264,7 +259,8 @@ export default function HomePage() {
                 : '';
 
               return (
-                <ScrollReveal key={essay.slug}>
+                <div key={essay.slug} data-slug={essay.slug}>
+                <ScrollReveal>
                   <RoughBox
                     padding={0}
                     hover
@@ -322,6 +318,7 @@ export default function HomePage() {
                     </div>
                   </RoughBox>
                 </ScrollReveal>
+                </div>
               );
             })}
           </div>
@@ -332,6 +329,96 @@ export default function HomePage() {
               className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
             >
               All essays <ArrowRight size={14} weight="bold" />
+            </Link>
+          </p>
+        </section>
+      )}
+      </div>
+
+      {/* ═══════════════════════════════════════════════
+          Field Notes: Asymmetric grid with compact tracker + callouts
+          ═══════════════════════════════════════════════ */}
+      {fieldNotes.length > 0 && (
+        <section className="py-6">
+          <RoughLine label="Field Notes" labelColor="var(--color-teal)" />
+
+          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-5 items-start">
+            {fieldNotes.map((note, i) => (
+              <ScrollReveal
+                key={note.slug}
+                delay={i * 100}
+                className={i % 2 === 1 ? 'md:mt-10' : ''}
+              >
+                <RoughBox padding={20} hover tint="teal">
+                  <div className="group">
+                    <Link
+                      href={`/field-notes/${note.slug}`}
+                      className="block no-underline text-ink hover:text-ink"
+                    >
+                      <div className="flex justify-between items-center">
+                        <DateStamp date={note.data.date} />
+                        {note.data.status && (
+                          <CompactTracker
+                            stages={NOTE_STAGES}
+                            currentStage={note.data.status}
+                            color="var(--color-teal)"
+                          />
+                        )}
+                      </div>
+                      <h3 className="text-lg font-title font-bold mt-2 mb-1 group-hover:text-teal transition-colors">
+                        {note.data.title}
+                      </h3>
+                      {note.data.excerpt && (
+                        <p className={`text-sm text-ink-secondary m-0 ${i === 0 ? 'line-clamp-3' : 'line-clamp-2'}`}>
+                          {note.data.excerpt}
+                        </p>
+                      )}
+                    </Link>
+                    {/* Handwritten margin callout (outside Link, inside RoughBox) */}
+                    {(() => {
+                      const callouts = note.data.callouts ?? (note.data.callout ? [note.data.callout] : []);
+                      return callouts[0] ? (
+                        <RoughCallout
+                          side={i % 2 === 0 ? 'left' : 'right'}
+                          tint="teal"
+                          offsetY={12}
+                          seed={100 + i}
+                        >
+                          {callouts[0]}
+                        </RoughCallout>
+                      ) : null;
+                    })()}
+                    {note.data.tags.length > 0 && (
+                      <div className="pt-3 relative z-10">
+                        <TagList tags={note.data.tags} tint="teal" />
+                      </div>
+                    )}
+                    {note.data.connectedTo && (() => {
+                      const parentEssay = getCollection<Essay>('essays').find(
+                        (e) => e.slug === note.data.connectedTo && !e.data.draft
+                      );
+                      if (!parentEssay) return null;
+                      return (
+                        <span
+                          className="block mt-1 font-mono text-teal opacity-70"
+                          style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                        >
+                          Connected to: {parentEssay.data.title}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </RoughBox>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          <p className="mt-4 text-right">
+            <Link
+              href="/field-notes"
+              className="inline-flex items-center gap-1 font-mono text-sm text-teal hover:text-teal/80 no-underline"
+            >
+              All field notes <ArrowRight size={14} weight="bold" />
             </Link>
           </p>
         </section>
@@ -423,95 +510,6 @@ export default function HomePage() {
               className="inline-flex items-center gap-1 font-mono text-sm text-gold hover:text-gold/80 no-underline"
             >
               All projects <ArrowRight size={14} weight="bold" />
-            </Link>
-          </p>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════
-          Field Notes: Asymmetric grid with compact tracker + callouts
-          ═══════════════════════════════════════════════ */}
-      {fieldNotes.length > 0 && (
-        <section className="py-6">
-          <RoughLine label="Field Notes" labelColor="var(--color-teal)" />
-
-          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-5 items-start">
-            {fieldNotes.map((note, i) => (
-              <ScrollReveal
-                key={note.slug}
-                delay={i * 100}
-                className={i % 2 === 1 ? 'md:mt-10' : ''}
-              >
-                <RoughBox padding={20} hover tint="teal">
-                  <div className="group">
-                    <Link
-                      href={`/field-notes/${note.slug}`}
-                      className="block no-underline text-ink hover:text-ink"
-                    >
-                      <div className="flex justify-between items-center">
-                        <DateStamp date={note.data.date} />
-                        {note.data.status && (
-                          <CompactTracker
-                            stages={NOTE_STAGES}
-                            currentStage={note.data.status}
-                            color="var(--color-teal)"
-                          />
-                        )}
-                      </div>
-                      <h3 className="text-lg font-title font-bold mt-2 mb-1 group-hover:text-teal transition-colors">
-                        {note.data.title}
-                      </h3>
-                      {note.data.excerpt && (
-                        <p className={`text-sm text-ink-secondary m-0 ${i === 0 ? 'line-clamp-3' : 'line-clamp-2'}`}>
-                          {note.data.excerpt}
-                        </p>
-                      )}
-                    </Link>
-                    {/* Handwritten margin callout (outside Link, inside RoughBox) */}
-                    {(() => {
-                      const callouts = note.data.callouts ?? (note.data.callout ? [note.data.callout] : []);
-                      return callouts[0] ? (
-                        <RoughCallout
-                          side={i % 2 === 0 ? 'left' : 'right'}
-                          tint="teal"
-                          offsetY={12}
-                          seed={100 + i}
-                        >
-                          {callouts[0]}
-                        </RoughCallout>
-                      ) : null;
-                    })()}
-                    {note.data.tags.length > 0 && (
-                      <div className="pt-3 relative z-10">
-                        <TagList tags={note.data.tags} tint="teal" />
-                      </div>
-                    )}
-                    {note.data.connectedTo && (() => {
-                      const parentEssay = getCollection<Essay>('essays').find(
-                        (e) => e.slug === note.data.connectedTo && !e.data.draft
-                      );
-                      if (!parentEssay) return null;
-                      return (
-                        <span
-                          className="block mt-1 font-mono text-teal opacity-70"
-                          style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em' }}
-                        >
-                          Connected to: {parentEssay.data.title}
-                        </span>
-                      );
-                    })()}
-                  </div>
-                </RoughBox>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          <p className="mt-4 text-right">
-            <Link
-              href="/field-notes"
-              className="inline-flex items-center gap-1 font-mono text-sm text-teal hover:text-teal/80 no-underline"
-            >
-              All field notes <ArrowRight size={14} weight="bold" />
             </Link>
           </p>
         </section>
