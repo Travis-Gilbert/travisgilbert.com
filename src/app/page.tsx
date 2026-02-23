@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import fs from 'node:fs';
-import nodePath from 'node:path';
 import Link from 'next/link';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
@@ -66,13 +64,50 @@ export default function HomePage() {
   const threadPairs = computeThreadPairs(threadContent);
   const essayThreadPairs = threadPairs.filter((p) => p.type === 'essay');
 
-  // Detect generated collage image for the featured essay (build-time filesystem check)
-  const featuredCollage = featured
-    ? (() => {
-        const collagePath = nodePath.join(process.cwd(), 'public', 'collage', `${featured.slug}.jpg`);
-        return fs.existsSync(collagePath) ? `/collage/${featured.slug}.jpg` : undefined;
-      })()
-    : undefined;
+  // Collage fragments: individual desk objects that erupt above the featured essay card.
+  // Each piece is its own PNG with transparent background and hard natural edges.
+  const ERUPTION_FRAGMENTS = [
+    {
+      src: '/collage/architectural-watercolor.png',
+      alt: 'Architectural watercolor',
+      width: 320,
+      height: 320,
+      left: '-4%',
+      top: -30,
+      rotate: 2.5,
+      z: 2,
+    },
+    {
+      src: '/collage/urban-design-diagram.png',
+      alt: 'Urban design diagram',
+      width: 280,
+      height: 280,
+      left: '48%',
+      top: -10,
+      rotate: -2,
+      z: 3,
+    },
+    {
+      src: '/collage/dragon-illustration.png',
+      alt: 'Dragon illustration',
+      width: 170,
+      height: 230,
+      left: '80%',
+      top: 20,
+      rotate: 4,
+      z: 1,
+    },
+    {
+      src: '/collage/raspberry-pi.png',
+      alt: 'Raspberry Pi',
+      width: 200,
+      height: 115,
+      left: '28%',
+      top: 170,
+      rotate: -3.5,
+      z: 4,
+    },
+  ];
 
   return (
     <div>
@@ -96,60 +131,51 @@ export default function HomePage() {
 
       {/* ═══════════════════════════════════════════════
           Featured Essay: Primary visual anchor.
-          When a generated collage exists, it erupts upward from the card's
-          top boundary, overflowing into the space above the RoughBox. A
-          gradient fade dissolves the collage top edge into the parchment.
-          Falls back to YouTube thumbnail or PatternImage when no collage.
+          Individual collage fragments (PNGs with transparent backgrounds)
+          erupt above the RoughBox card with hard edges and slight rotations.
+          Card image: YouTube thumbnail or PatternImage fallback.
           ═══════════════════════════════════════════════ */}
       {featured && (
-        <section
-          className="md:py-12"
-          style={{ paddingTop: featuredCollage ? 0 : undefined }}
-        >
+        <section className="md:py-12">
           <ScrollReveal>
             <RoughLine label="Essays on ..." labelColor="var(--color-terracotta)" />
 
-            {/* Relative container: NO overflow-hidden so the collage can erupt.
-                Extra top padding on the wrapper creates space for the eruption. */}
+            {/* Relative container: NO overflow-hidden so fragments can erupt.
+                Top padding creates space for the scattered collage pieces. */}
             <div
-              className="lg:-mx-4 xl:-mx-8 relative"
-              style={{ paddingTop: featuredCollage ? 180 : 0 }}
+              className="lg:-mx-4 xl:-mx-8 relative pt-0 md:pt-[280px]"
               data-slug={featured.slug}
             >
-              {/* Erupting collage image: extends above the card boundary */}
-              {featuredCollage && (
-                <div
-                  className="absolute left-0 right-0 pointer-events-none"
-                  style={{
-                    top: 0,
-                    height: 'calc(180px + 20rem)',
-                    zIndex: 0,
-                  }}
-                >
-                  <Image
-                    src={featuredCollage}
-                    alt={`Collage for ${featured.data.title}`}
-                    fill
-                    sizes="(min-width: 1280px) 960px, (min-width: 1024px) 896px, 100vw"
-                    className="object-cover object-center"
-                    priority
-                  />
-                  {/* Bottom fade: dissolves image into the card content below */}
+              {/* Erupting collage fragments: individual pieces with hard edges */}
+              <div
+                className="absolute left-0 right-0 top-0 pointer-events-none hidden md:block"
+                style={{ height: 280, zIndex: 0 }}
+                aria-hidden="true"
+              >
+                {ERUPTION_FRAGMENTS.map((frag) => (
                   <div
-                    className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                    key={frag.src}
+                    className="absolute"
                     style={{
-                      height: 160,
-                      background: `linear-gradient(
-                        to bottom,
-                        transparent 0%,
-                        color-mix(in srgb, var(--color-paper) 50%, transparent) 30%,
-                        var(--color-paper) 60%,
-                        var(--color-paper) 100%
-                      )`,
+                      left: frag.left,
+                      top: frag.top,
+                      width: frag.width,
+                      height: frag.height,
+                      transform: `rotate(${frag.rotate}deg)`,
+                      zIndex: frag.z,
+                      filter: 'drop-shadow(2px 4px 8px rgba(58, 54, 50, 0.18))',
                     }}
-                  />
-                </div>
-              )}
+                  >
+                    <Image
+                      src={frag.src}
+                      alt={frag.alt}
+                      width={frag.width}
+                      height={frag.height}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
 
               <RoughBox
                 padding={0}
@@ -158,19 +184,8 @@ export default function HomePage() {
                 elevated
               >
                 <div className="group relative" style={{ zIndex: 1 }}>
-                  {/* Image: collage replaces YouTube/PatternImage when available */}
-                  {featuredCollage ? (
-                    <div className="w-full h-48 sm:h-56 md:h-80 overflow-hidden relative">
-                      <Image
-                        src={featuredCollage}
-                        alt={`Collage for ${featured.data.title}`}
-                        fill
-                        sizes="(min-width: 1280px) 960px, (min-width: 1024px) 896px, 100vw"
-                        className="object-cover object-bottom"
-                        priority
-                      />
-                    </div>
-                  ) : featured.data.youtubeId ? (
+                  {/* Card header image: YouTube thumbnail or generative pattern */}
+                  {featured.data.youtubeId ? (
                     <div className="w-full h-40 sm:h-48 md:h-72 overflow-hidden">
                       <img
                         src={`https://img.youtube.com/vi/${featured.data.youtubeId}/maxresdefault.jpg`}
