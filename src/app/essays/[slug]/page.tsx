@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import nodePath from 'node:path';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCollection, getEntry, renderMarkdown, injectAnnotations, estimateReadingTime } from '@/lib/content';
+import { getCollection, getEntry, renderMarkdown, injectAnnotations, injectConnectionCallouts, estimateReadingTime } from '@/lib/content';
 import type { Essay, FieldNote, ShelfEntry, ContentEntry } from '@/lib/content';
 import ArticleBody from '@/components/ArticleBody';
 import TagList from '@/components/TagList';
@@ -17,8 +17,6 @@ import { ArticleJsonLd } from '@/components/JsonLd';
 import EssayHero from '@/components/EssayHero';
 import { computeConnections, positionConnections } from '@/lib/connectionEngine';
 import type { AllContent } from '@/lib/connectionEngine';
-import { ConnectionProvider } from '@/components/ConnectionContext';
-import ConnectionMap from '@/components/ConnectionMap';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -45,7 +43,7 @@ export default async function EssayDetailPage({ params }: Props) {
   if (!entry) notFound();
 
   const rawHtml = await renderMarkdown(entry.body);
-  const html = injectAnnotations(rawHtml, entry.data.annotations ?? []);
+  const annotatedHtml = injectAnnotations(rawHtml, entry.data.annotations ?? []);
   const readingTime = estimateReadingTime(entry.body);
 
   // Prev/next navigation
@@ -115,10 +113,16 @@ export default async function EssayDetailPage({ params }: Props) {
     shelf: allShelf,
   };
   const engineConnections = computeConnections(entry, allContent);
-  const positionedConnections = positionConnections(engineConnections, html);
+  const positionedConnections = positionConnections(engineConnections, annotatedHtml);
+
+  // Inject inline callouts for connections with text mentions
+  const html = injectConnectionCallouts(annotatedHtml, positionedConnections);
+
+  // Only pass fallback connections (no text mention) to margin dots
+  const fallbackConnections = positionedConnections.filter((c) => !c.mentionFound);
 
   return (
-    <ConnectionProvider>
+    <>
     <ArticleJsonLd
       title={entry.data.title}
       description={entry.data.summary}
@@ -168,7 +172,7 @@ export default async function EssayDetailPage({ params }: Props) {
         className="prose prose-essays mt-8"
         contentType="essays"
         articleSlug={slug}
-        positionedConnections={positionedConnections}
+        positionedConnections={fallbackConnections}
       />
 
       {(entry.data.sources.length > 0 || shelfStandalone.length > 0) && (
@@ -251,17 +255,6 @@ export default async function EssayDetailPage({ params }: Props) {
         );
       })()}
 
-      {/* Connection map: freeform scatter with rough.js curves */}
-      {engineConnections.length > 0 && (
-        <>
-          <RoughLine />
-          <ConnectionMap
-            essayTitle={entry.data.title}
-            connections={engineConnections}
-          />
-        </>
-      )}
-
       <nav className="flex justify-between items-start gap-4 py-4 border-t border-border mt-6">
         <div>
           {prevEssay && (
@@ -285,6 +278,6 @@ export default async function EssayDetailPage({ params }: Props) {
         </div>
       </nav>
     </article>
-    </ConnectionProvider>
+    </>
   );
 }
