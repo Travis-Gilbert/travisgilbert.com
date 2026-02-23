@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCollection } from '@/lib/content';
-import type { Essay } from '@/lib/content';
+import type { Essay, FieldNote, ShelfEntry } from '@/lib/content';
 import EssayCard from '@/components/EssayCard';
 import SectionLabel from '@/components/SectionLabel';
 import DrawOnIcon from '@/components/rough/DrawOnIcon';
@@ -10,6 +10,9 @@ import PatternImage from '@/components/PatternImage';
 import RoughBox from '@/components/rough/RoughBox';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
+import { computeThreadPairs } from '@/lib/connectionEngine';
+import type { AllContent } from '@/lib/connectionEngine';
+import ThreadLines from '@/components/ThreadLines';
 
 export const metadata: Metadata = {
   title: 'Essays on ...',
@@ -21,6 +24,14 @@ export default function EssaysPage() {
   const essays = getCollection<Essay>('essays')
     .filter((i) => !i.data.draft)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  // Compute thread pairs for thread lines between connected cards
+  const threadContent: AllContent = {
+    essays,
+    fieldNotes: getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft),
+    shelf: getCollection<ShelfEntry>('shelf'),
+  };
+  const threadPairs = computeThreadPairs(threadContent);
 
   return (
     <>
@@ -35,73 +46,80 @@ export default function EssaysPage() {
         </p>
       </section>
 
-      {/* Featured essay: full width */}
-      {essays[0] && (() => {
-        const featured = essays[0];
-        const hasThumbnail = Boolean(featured.data.youtubeId);
-        return (
-          <RoughBox padding={0} hover tint="terracotta" elevated>
-            <div className="group">
-              {hasThumbnail ? (
-                <div className="w-full h-40 sm:h-48 md:h-64 overflow-hidden">
-                  <img
-                    src={`https://img.youtube.com/vi/${featured.data.youtubeId}/maxresdefault.jpg`}
-                    alt={`Thumbnail for ${featured.data.title}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ) : (
-                <PatternImage seed={featured.slug} height={160} color="var(--color-terracotta)" />
-              )}
-              <div className="p-6 md:p-8">
-                <ProgressTracker
-                  stages={ESSAY_STAGES}
-                  currentStage={featured.data.stage || 'published'}
-                  color="var(--color-terracotta)"
-                  annotationCount={featured.data.annotations?.length}
-                />
-                <div className="mt-3">
-                  <DateStamp date={featured.data.date} />
-                </div>
-                <h2 className="font-title text-2xl md:text-3xl font-bold mt-2 mb-3 group-hover:text-terracotta transition-colors">
-                  <Link
-                    href={`/essays/${featured.slug}`}
-                    className="no-underline text-ink hover:text-ink after:absolute after:inset-0 after:z-0"
-                  >
-                    {featured.data.title}
-                  </Link>
-                </h2>
-                <p className="text-ink-secondary text-base md:text-lg mb-4 max-w-prose leading-relaxed">
-                  {featured.data.summary}
-                </p>
-                <div className="relative z-10">
-                  <TagList tags={featured.data.tags} tint="terracotta" />
-                </div>
-              </div>
-            </div>
-          </RoughBox>
-        );
-      })()}
+      <div className="relative">
+        <ThreadLines pairs={threadPairs} />
 
-      {/* Remaining essays: 2-column grid */}
-      {essays.length > 1 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {essays.slice(1).map((essay) => (
-            <EssayCard
-              key={essay.slug}
-              title={essay.data.title}
-              summary={essay.data.summary}
-              date={essay.data.date}
-              youtubeId={essay.data.youtubeId}
-              tags={essay.data.tags}
-              href={`/essays/${essay.slug}`}
-              stage={essay.data.stage}
-              slug={essay.slug}
-            />
-          ))}
-        </div>
-      )}
+        {/* Featured essay: full width */}
+        {essays[0] && (() => {
+          const featured = essays[0];
+          const hasThumbnail = Boolean(featured.data.youtubeId);
+          return (
+            <div data-slug={featured.slug}>
+              <RoughBox padding={0} hover tint="terracotta" elevated>
+                <div className="group">
+                  {hasThumbnail ? (
+                    <div className="w-full h-40 sm:h-48 md:h-64 overflow-hidden">
+                      <img
+                        src={`https://img.youtube.com/vi/${featured.data.youtubeId}/maxresdefault.jpg`}
+                        alt={`Thumbnail for ${featured.data.title}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <PatternImage seed={featured.slug} height={160} color="var(--color-terracotta)" />
+                  )}
+                  <div className="p-6 md:p-8">
+                    <ProgressTracker
+                      stages={ESSAY_STAGES}
+                      currentStage={featured.data.stage || 'published'}
+                      color="var(--color-terracotta)"
+                      annotationCount={featured.data.annotations?.length}
+                    />
+                    <div className="mt-3">
+                      <DateStamp date={featured.data.date} />
+                    </div>
+                    <h2 className="font-title text-2xl md:text-3xl font-bold mt-2 mb-3 group-hover:text-terracotta transition-colors">
+                      <Link
+                        href={`/essays/${featured.slug}`}
+                        className="no-underline text-ink hover:text-ink after:absolute after:inset-0 after:z-0"
+                      >
+                        {featured.data.title}
+                      </Link>
+                    </h2>
+                    <p className="text-ink-secondary text-base md:text-lg mb-4 max-w-prose leading-relaxed">
+                      {featured.data.summary}
+                    </p>
+                    <div className="relative z-10">
+                      <TagList tags={featured.data.tags} tint="terracotta" />
+                    </div>
+                  </div>
+                </div>
+              </RoughBox>
+            </div>
+          );
+        })()}
+
+        {/* Remaining essays: 2-column grid */}
+        {essays.length > 1 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {essays.slice(1).map((essay) => (
+              <div key={essay.slug} data-slug={essay.slug}>
+                <EssayCard
+                  title={essay.data.title}
+                  summary={essay.data.summary}
+                  date={essay.data.date}
+                  youtubeId={essay.data.youtubeId}
+                  tags={essay.data.tags}
+                  href={`/essays/${essay.slug}`}
+                  stage={essay.data.stage}
+                  slug={essay.slug}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {essays.length === 0 && (
         <p className="text-ink-secondary py-12 text-center">
