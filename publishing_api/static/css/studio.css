@@ -960,3 +960,81 @@ select.field-meta {
     color: var(--studio-error);
     border: 1px solid rgba(180, 74, 45, 0.2);
 }
+
+/* ─── Custom Widget Fields ─────────────────── */
+
+.field-tags {
+    width: 100%;
+    font-size: 0.8125rem;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid var(--studio-border);
+    border-radius: var(--studio-radius);
+    background: var(--studio-surface);
+    color: var(--studio-text);
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.field-tags:focus {
+    border-color: var(--studio-text-muted);
+}
+
+.field-json {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 0.5rem;
+    border: 1px solid var(--studio-border);
+    border-radius: var(--studio-radius);
+    background: var(--studio-surface);
+    color: var(--studio-text);
+    resize: vertical;
+    outline: none;
+    tab-size: 2;
+    white-space: pre;
+    overflow-x: auto;
+    transition: border-color 0.15s;
+}
+
+.field-json:focus {
+    border-color: var(--studio-text-muted);
+}
+
+.field-error-highlight {
+    border-color: var(--studio-error) !important;
+    box-shadow: 0 0 0 2px rgba(180, 74, 45, 0.15);
+}
+
+/* ─── Publish Toast ────────────────────────── */
+
+.publish-toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--studio-radius);
+    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    z-index: 1000;
+    box-shadow: var(--studio-shadow-lg);
+}
+
+.publish-toast a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.publish-toast-success {
+    background: var(--studio-surface);
+    color: var(--studio-success);
+    border: 1px solid rgba(74, 122, 90, 0.3);
+}
+
+.publish-toast-error {
+    background: var(--studio-surface);
+    color: var(--studio-error);
+    border: 1px solid rgba(180, 74, 45, 0.3);
+}

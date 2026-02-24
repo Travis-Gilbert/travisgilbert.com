@@ -1,6 +1,11 @@
 from django import forms
 
 from apps.content.models import Essay, FieldNote, NowPage, Project, ShelfEntry
+from apps.editor.widgets import (
+    JsonObjectListWidget,
+    SlugListWidget,
+    TagsWidget,
+)
 
 
 class EssayForm(forms.ModelForm):
@@ -53,12 +58,35 @@ class EssayForm(forms.ModelForm):
                 "class": "field-meta",
                 "placeholder": "YouTube video ID",
             }),
+            "thumbnail": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "/collage/thumbnail.png",
+            }),
+            "image": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "/collage/image.png",
+            }),
             "callout": forms.Textarea(attrs={
                 "class": "field-summary",
                 "rows": 2,
                 "placeholder": "Callout text. Use [link text](url) for hyperlinks.",
             }),
             "stage": forms.Select(attrs={"class": "field-meta"}),
+            # JSON fields with custom widgets
+            "tags": TagsWidget(),
+            "sources": JsonObjectListWidget(
+                placeholder_hint='[\n  {"title": "Source Name", "url": "https://..."}\n]',
+            ),
+            "related": SlugListWidget(attrs={
+                "placeholder": "essay-slug-1, essay-slug-2",
+            }),
+            "callouts": JsonObjectListWidget(
+                attrs={"rows": 3},
+                placeholder_hint='[\n  {"text": "Callout text", "side": "right"}\n]',
+            ),
+            "annotations": JsonObjectListWidget(
+                placeholder_hint='[\n  {"paragraph": 1, "text": "Margin note text"}\n]',
+            ),
         }
 
 
@@ -111,6 +139,12 @@ class FieldNoteForm(forms.ModelForm):
                 "rows": 2,
                 "placeholder": "Callout text. Use [link text](url) for hyperlinks.",
             }),
+            # JSON fields with custom widgets
+            "tags": TagsWidget(),
+            "callouts": JsonObjectListWidget(
+                attrs={"rows": 3},
+                placeholder_hint='[\n  {"text": "Callout text", "side": "right"}\n]',
+            ),
         }
 
 
@@ -158,6 +192,8 @@ class ShelfEntryForm(forms.ModelForm):
                 "class": "field-meta",
                 "placeholder": "Related essay slug",
             }),
+            # JSON fields with custom widgets
+            "tags": TagsWidget(),
         }
 
 
@@ -216,6 +252,15 @@ class ProjectForm(forms.ModelForm):
                 "rows": 2,
                 "placeholder": "Callout text. Use [link text](url) for hyperlinks.",
             }),
+            "order": forms.NumberInput(attrs={
+                "class": "field-meta",
+                "placeholder": "Sort order (0 = default)",
+            }),
+            # JSON fields with custom widgets
+            "tags": TagsWidget(),
+            "urls": JsonObjectListWidget(
+                placeholder_hint='[\n  {"label": "Live Site", "url": "https://..."}\n]',
+            ),
         }
 
 
