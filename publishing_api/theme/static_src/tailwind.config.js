@@ -17,6 +17,8 @@ module.exports = {
     "../../**/templates/**/*.html",
     // Crispy template pack
     "../../crispy_studio/templates/**/*.html",
+    // Python widgets that render inline HTML with Tailwind classes
+    "../../apps/editor/widgets.py",
   ],
   theme: {
     extend: {
