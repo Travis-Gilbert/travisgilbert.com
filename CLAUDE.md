@@ -42,10 +42,10 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `publishing_api/apps/editor/context_processors.py` | Injects `studio_nav` context (content types, compose pages, settings links) into all templates |
 | `publishing_api/apps/publisher/github.py` | GitHub Contents API (single file) + Git Trees API (atomic multi-file commits) |
 | `research_api/` | Django research API: source tracking, backlinks, Webmention receiver, DRF read-only API. Sibling service to publishing_api |
-| `research_api/apps/research/` | Source, ContentReference, ResearchThread, ThreadEntry models + backlink computation service |
+| `research_api/apps/research/` | Source, SourceLink, ResearchThread, ThreadEntry models + backlink computation service |
 | `research_api/apps/mentions/` | Webmention model + W3C webhook receiver |
-| `research_api/apps/api/` | DRF read-only viewsets (sources, references, threads, mentions, backlinks) |
-| `research_api/apps/publisher/` | GitHub API client + JSON serializers + publish orchestrator (commits to `src/data/research/`) |
+| `research_api/apps/api/` | DRF read-only viewsets (sources, links, threads, mentions, backlinks) |
+| `research_api/apps/publisher/` | PublishLog model, GitHub API client, JSON serializers, publish orchestrator (commits to `src/data/research/`) |
 
 ## Development Commands
 
@@ -361,7 +361,7 @@ Key capabilities:
 
 Django check passes (0 issues). Not yet deployed or tested end-to-end.
 
-**Research API:** Fully scaffolded. Source tracking, backlink engine, Webmention receiver, DRF read-only API, GitHub publisher. Django check passes (0 issues). Publishes static JSON to `src/data/research/`. Not yet deployed.
+**Research API:** Models redesigned with richer domain (13 source types, SourceLink roles, public/private annotations, geolocation, PublishLog audit trail). Django check passes (0 issues). Publishes static JSON to `src/data/research/`. Not yet deployed.
 
 **Next step:** Deploy both Django services to Railway (publishing_api + research_api), create superusers, test publish pipelines, set `NEXT_PUBLIC_STUDIO_URL` in Vercel.
 
@@ -392,8 +392,12 @@ Django check passes (0 issues). Not yet deployed or tested end-to-end.
 | Composition JSONField | Added to all content models (Essay, FieldNote, ShelfEntry, Project, ToolkitEntry) | Per-instance visual overrides without schema migration; loose `z.record()` in Zod |
 | Studio three-zone sidebar | Content / Compose / Settings navigation groups | Maps to the three concerns: writing, visual design, site-wide settings |
 | StructuredListWidget | Row-based JSON editing with add/remove/reorder | Replaces raw JSON textarea for nav items, sources, annotations; prevents syntax errors |
-| Backlinks as computed data | `get_backlinks()` derives from ContentReference joins (no Backlink model) | Avoids sync overhead; cheap for single-user scale; backlink graph published as static JSON |
+| Backlinks as computed data | `get_backlinks()` derives from SourceLink joins (no Backlink model) | Avoids sync overhead; cheap for single-user scale; backlink graph published as static JSON |
 | research_api: admin as authoring UI | Django admin with rich fieldsets and inlines (no custom Studio editor) | Simpler than publishing_api's HTMX Studio; source tracking is data entry, not content editing |
+| SourceLink replaces ContentReference | Clearer name for the Source-to-content join table | "Link" is more intuitive than "Reference"; content_types narrowed to essay/field_note |
+| PublishLog in publisher app (not research) | Audit trail model lives with the publish orchestrator | Semantic cohesion; publish.py creates the log entries, not research models |
+| private_annotation excluded from all serializers | Server-only field never exposed through API or published JSON | Author's private notes stay in Django admin; readers only see public_annotation |
+| Source.public + custom managers | `.public()` manager filters to `public=True` across API, publisher, and management commands | Two-layer access: admin sees everything, public sees only curated sources |
 
 ## Gotchas
 
@@ -435,4 +439,4 @@ Django check passes (0 issues). Not yet deployed or tested end-to-end.
 - **ToolkitEntry has no date field**: Unlike other content types, toolkit entries use `category` + `order` for organization. The `_parse_toolkit` function defaults `stage` to `"published"` because existing content is already live
 - **`python3 -m pip` required on this machine**: `pip` alone is not found. Use `python3 -m pip install` for all package installs
 - **Two Django services share patterns**: `research_api` mirrors `publishing_api` structure (single `config/settings.py`, `railway.toml`, requirements split, GitHub publisher). When updating one, check if the other needs the same change
-- **research_api publishes to `src/data/research/`**: Four JSON files (sources.json, references.json, threads.json, backlinks.json) committed atomically via Git Trees API. Next.js site reads these at build time
+- **research_api publishes to `src/data/research/`**: Four JSON files (sources.json, links.json, threads.json, backlinks.json) committed atomically via Git Trees API. Next.js site reads these at build time
