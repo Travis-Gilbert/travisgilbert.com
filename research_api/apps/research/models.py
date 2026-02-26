@@ -464,3 +464,174 @@ class ThreadEntry(TimeStampedModel):
 
     def __str__(self):
         return f'{self.thread.title}: {self.title} ({self.date})'
+
+
+# ---------------------------------------------------------------------------
+# Community contributions
+# ---------------------------------------------------------------------------
+
+class ReviewStatus(models.TextChoices):
+    PENDING = 'pending', 'Pending Review'
+    APPROVED = 'approved', 'Approved'
+    REJECTED = 'rejected', 'Rejected'
+
+
+class SourceSuggestion(TimeStampedModel):
+    """A reader-submitted source suggestion tied to a specific essay or note.
+
+    Visitors discover a source you missed, fill out a short form (with
+    reCAPTCHA v3), and the suggestion lands here for review. Promoting it
+    creates a real Source + SourceLink with one admin action, preserving
+    contributor attribution in the public annotation.
+    """
+
+    # Submitted content
+    title = models.CharField(
+        max_length=500,
+        help_text='Title of the suggested source.',
+    )
+    url = models.URLField(
+        max_length=2000,
+        blank=True,
+        help_text='Link to the source.',
+    )
+    source_type = models.CharField(
+        max_length=20,
+        choices=SourceType.choices,
+        default=SourceType.ARTICLE,
+    )
+    relevance_note = models.TextField(
+        max_length=1000,
+        help_text='Why this source is relevant (the contributor\'s words).',
+    )
+
+    # Target content
+    target_content_type = models.CharField(
+        max_length=20,
+        choices=ContentType.choices,
+        default=ContentType.ESSAY,
+        help_text='essay or field_note.',
+    )
+    target_slug = models.CharField(
+        max_length=300,
+        help_text='Slug of the content this source relates to.',
+    )
+
+    # Contributor identity (no account required)
+    contributor_name = models.CharField(
+        max_length=100,
+        help_text='Display name of the contributor.',
+    )
+    contributor_url = models.URLField(
+        max_length=500,
+        blank=True,
+        help_text='Optional website or social link for attribution.',
+    )
+
+    # Moderation
+    status = models.CharField(
+        max_length=20,
+        choices=ReviewStatus.choices,
+        default=ReviewStatus.PENDING,
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewer_note = models.TextField(
+        blank=True,
+        help_text='Internal note about why this was approved/rejected.',
+    )
+
+    # If promoted, link to the created Source
+    promoted_source = models.ForeignKey(
+        Source,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='suggestions',
+        help_text='The Source created when this suggestion was approved.',
+    )
+
+    # Spam protection metadata
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    is_flagged = models.BooleanField(
+        default=False,
+        help_text='Flagged as potential spam by reCAPTCHA score.',
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(
+                fields=['status', 'created_at'],
+                name='idx_suggestion_status_date',
+            ),
+            models.Index(
+                fields=['target_slug'],
+                name='idx_suggestion_target',
+            ),
+        ]
+
+    def __str__(self):
+        return f'[{self.status}] {self.title} -> {self.target_slug} (by {self.contributor_name})'
+
+
+class ConnectionSuggestion(TimeStampedModel):
+    """A reader-suggested connection between two pieces of content.
+
+    "Your field note about sidewalk width relates to your essay about
+    ADA compliance." These surface as proposed links you can approve
+    in the admin.
+    """
+
+    # The two pieces of content the visitor thinks are connected
+    from_content_type = models.CharField(
+        max_length=20,
+        choices=ContentType.choices,
+        default=ContentType.ESSAY,
+    )
+    from_slug = models.CharField(max_length=300)
+    to_content_type = models.CharField(
+        max_length=20,
+        choices=ContentType.choices,
+        default=ContentType.ESSAY,
+    )
+    to_slug = models.CharField(max_length=300)
+
+    # Why they think these are connected
+    explanation = models.TextField(
+        max_length=1000,
+        help_text='How these pieces of content relate to each other.',
+    )
+
+    # Contributor
+    contributor_name = models.CharField(max_length=100)
+    contributor_url = models.URLField(max_length=500, blank=True)
+
+    # Moderation
+    status = models.CharField(
+        max_length=20,
+        choices=ReviewStatus.choices,
+        default=ReviewStatus.PENDING,
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    # Spam protection
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    is_flagged = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(
+                fields=['status'],
+                name='idx_connection_status',
+            ),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['from_slug', 'to_slug'],
+                name='unique_connection_suggestion',
+            ),
+        ]
+
+    def __str__(self):
+        return f'[{self.status}] {self.from_slug} <-> {self.to_slug} (by {self.contributor_name})'

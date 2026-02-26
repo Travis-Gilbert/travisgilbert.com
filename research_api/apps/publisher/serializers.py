@@ -160,6 +160,85 @@ def serialize_backlinks(backlink_graph):
     }
 
 
+# ---------------------------------------------------------------------------
+# Graph serializer (D3.js visual explorer)
+# ---------------------------------------------------------------------------
+
+
+def serialize_graph(links):
+    """
+    Serialize all public SourceLinks into a D3-compatible graph.
+
+    Produces {nodes, edges} where nodes are sources and content pieces,
+    and edges are the SourceLinks between them. Node IDs are namespaced
+    (e.g., "source:housing-crisis", "essay:flint-water") to avoid
+    collisions between sources and content with the same slug.
+
+    Args:
+        links: queryset of SourceLink with select_related('source')
+    """
+    source_nodes = {}
+    content_nodes = {}
+    edges = []
+
+    for lnk in links:
+        src = lnk.source
+        source_key = f'source:{src.slug}'
+        content_key = f'{lnk.content_type}:{lnk.content_slug}'
+
+        if source_key not in source_nodes:
+            source_nodes[source_key] = {
+                'id': source_key,
+                'type': 'source',
+                'label': src.title,
+                'slug': src.slug,
+                'sourceType': src.source_type,
+                'creator': src.creator,
+            }
+
+        if content_key not in content_nodes:
+            content_nodes[content_key] = {
+                'id': content_key,
+                'type': lnk.content_type,
+                'label': lnk.content_title or lnk.content_slug,
+                'slug': lnk.content_slug,
+            }
+
+        edges.append({
+            'source': source_key,
+            'target': content_key,
+            'role': lnk.role,
+        })
+
+    nodes = list(source_nodes.values()) + list(content_nodes.values())
+    return {'nodes': nodes, 'edges': edges}
+
+
+# ---------------------------------------------------------------------------
+# Trail serializer (per-slug research context)
+# ---------------------------------------------------------------------------
+
+
+def serialize_trail(slug, content_type, sources_data, backlinks_data,
+                    thread_data, mentions_data):
+    """
+    Serialize a complete research trail for a single content slug.
+
+    This is the static JSON equivalent of the /api/v1/trail/<slug>/ BFF
+    endpoint. Each essay and field note gets one of these committed to
+    src/data/research/trails/<slug>.json so the Next.js build reads
+    from disk instead of calling the live API.
+    """
+    return {
+        'slug': slug,
+        'contentType': content_type,
+        'sources': sources_data,
+        'backlinks': backlinks_data,
+        'thread': thread_data,
+        'mentions': mentions_data,
+    }
+
+
 def to_json(data):
     """Serialize to formatted JSON string."""
     return json.dumps(data, indent=2, ensure_ascii=False) + '\n'

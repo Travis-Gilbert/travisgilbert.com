@@ -147,10 +147,15 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS: read-only public API, allow all origins for GET only
+# CORS: public API, allow all origins for read + community submissions
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_METHODS = ['GET', 'HEAD', 'OPTIONS']
+CORS_ALLOW_METHODS = ['GET', 'HEAD', 'OPTIONS', 'POST']
+
+# reCAPTCHA v3 (community submissions)
+
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
+RECAPTCHA_MIN_SCORE = float(os.environ.get('RECAPTCHA_MIN_SCORE', '0.5'))
 
 # GitHub publishing
 
