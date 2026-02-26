@@ -5,6 +5,7 @@ import TopNav from '@/components/TopNav';
 import Footer from '@/components/Footer';
 import ConsoleEasterEgg from '@/components/ConsoleEasterEgg';
 import StudioShortcut from '@/components/StudioShortcut';
+import ArchitectureEasterEgg from '@/components/ArchitectureEasterEgg';
 import { PersonJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 import { getCollection } from '@/lib/content';
 import type { Essay, FieldNote, Project } from '@/lib/content';
@@ -76,6 +77,7 @@ export default function RootLayout({
           latestEssaySlug={latestEssay?.slug ?? ''}
         />
         <StudioShortcut />
+        <ArchitectureEasterEgg />
       </body>
     </html>
   );
