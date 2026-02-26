@@ -3,8 +3,20 @@
 
 {% block title %}{% if is_new %}New{% else %}Edit{% endif %} {{ content_type|title }}{% endblock %}
 
+{% block body_attrs %}{% if not is_new %}data-content-type="{{ content_type }}" data-slug="{{ object.slug }}"{% endif %}{% endblock %}
+
 {% block content %}
 <div class="editor-layout">
+    <!-- Top bar: status pipeline (existing content only) -->
+    {% if not is_new and stage_choices %}
+    <header class="editor-pipeline" id="status-pipeline"
+            data-stages='{{ stage_choices|safe }}'
+            data-current="{{ current_stage }}"
+            {% if set_stage_url %}data-url="{{ set_stage_url }}"{% endif %}>
+        <!-- Rendered by JS in studio.js -->
+    </header>
+    {% endif %}
+
     <!-- Sidebar: metadata fields -->
     <aside class="editor-sidebar">
         <form method="post" id="content-form" class="editor-form">
@@ -13,7 +25,7 @@
             <div class="sidebar-header">
                 <h2>{% if is_new %}New{% else %}Edit{% endif %} {{ content_type|title }}</h2>
                 {% if not is_new %}
-                <span class="save-indicator" id="save-indicator">Saved</span>
+                <span class="save-indicator" id="save-indicator"></span>
                 {% endif %}
             </div>
 
@@ -56,17 +68,25 @@
             </div>
             {% endif %}
 
-            <!-- Content-type specific metadata -->
+            <!-- Stage/status dropdown (hidden when pipeline is active, kept for form submission) -->
             {% if form.stage %}
-            <div class="field-group">
+            <div class="field-group" {% if stage_choices %}style="display:none"{% endif %}>
                 <label for="{{ form.stage.id_for_label }}">Stage</label>
                 {{ form.stage }}
             </div>
             {% endif %}
             {% if form.status %}
-            <div class="field-group">
+            <div class="field-group" {% if stage_choices %}style="display:none"{% endif %}>
                 <label for="{{ form.status.id_for_label }}">Status</label>
                 {{ form.status }}
+            </div>
+            {% endif %}
+
+            <!-- Content-type specific metadata -->
+            {% if form.category %}
+            <div class="field-group">
+                <label for="{{ form.category.id_for_label }}">Category</label>
+                {{ form.category }}
             </div>
             {% endif %}
             {% if form.youtube_id %}
@@ -158,19 +178,17 @@
             </div>
             {% endif %}
 
-            <!-- JSON object fields (structured data) -->
+            <!-- JSON object fields (structured data via StructuredListWidget) -->
             {% if form.sources %}
             <div class="field-group">
-                <label for="{{ form.sources.id_for_label }}">Sources</label>
+                <label>Sources</label>
                 {{ form.sources }}
-                <span class="field-hint">JSON array of {title, url} objects</span>
             </div>
             {% endif %}
             {% if form.urls %}
             <div class="field-group">
-                <label for="{{ form.urls.id_for_label }}">Project URLs</label>
+                <label>Project URLs</label>
                 {{ form.urls }}
-                <span class="field-hint">JSON array of {label, url} objects</span>
             </div>
             {% endif %}
             {% if form.related %}
@@ -182,16 +200,23 @@
             {% endif %}
             {% if form.callouts %}
             <div class="field-group">
-                <label for="{{ form.callouts.id_for_label }}">Callouts</label>
+                <label>Callouts</label>
                 {{ form.callouts }}
-                <span class="field-hint">JSON array of callout objects</span>
             </div>
             {% endif %}
             {% if form.annotations %}
             <div class="field-group">
-                <label for="{{ form.annotations.id_for_label }}">Annotations</label>
+                <label>Annotations</label>
                 {{ form.annotations }}
-                <span class="field-hint">JSON array of {paragraph, text} objects</span>
+            </div>
+            {% endif %}
+
+            <!-- Composition (per-instance visual overrides) -->
+            {% if form.composition %}
+            <div class="field-group">
+                <label for="{{ form.composition.id_for_label }}">Composition</label>
+                {{ form.composition }}
+                <span class="field-hint">Visual overrides (JSON)</span>
             </div>
             {% endif %}
 
@@ -266,10 +291,45 @@
             </div>
             {% endif %}
         </form>
+
+        <!-- Delete (outside the main form to prevent accidental submission) -->
+        {% if not is_new and delete_url %}
+        <div class="sidebar-delete">
+            <details class="delete-confirm">
+                <summary class="btn btn-danger-subtle">Delete this {{ content_type|title }}</summary>
+                <form method="post" action="{{ delete_url }}" class="delete-form">
+                    {% csrf_token %}
+                    <p>Type <strong>{{ object.slug }}</strong> to confirm:</p>
+                    <input type="text" name="confirm_slug" class="field-text" autocomplete="off" required>
+                    <button type="submit" class="btn btn-danger">Permanently Delete</button>
+                </form>
+            </details>
+        </div>
+        {% endif %}
     </aside>
 
     <!-- Main writing area -->
     <section class="editor-writing-area">
+        <!-- Markdown toolbar -->
+        {% if form.body or form.annotation %}
+        <div class="editor-toolbar" id="editor-toolbar">
+            <button type="button" class="toolbar-btn" data-action="bold" title="Bold (Cmd+B)"><strong>B</strong></button>
+            <button type="button" class="toolbar-btn" data-action="italic" title="Italic (Cmd+I)"><em>I</em></button>
+            <span class="toolbar-sep"></span>
+            <button type="button" class="toolbar-btn" data-action="h2" title="Heading 2">H2</button>
+            <button type="button" class="toolbar-btn" data-action="h3" title="Heading 3">H3</button>
+            <button type="button" class="toolbar-btn" data-action="h4" title="Heading 4">H4</button>
+            <span class="toolbar-sep"></span>
+            <button type="button" class="toolbar-btn" data-action="rule" title="Horizontal rule">&mdash;</button>
+            <button type="button" class="toolbar-btn" data-action="ul" title="Unordered list">&bull;</button>
+            <button type="button" class="toolbar-btn" data-action="ol" title="Ordered list">1.</button>
+            <button type="button" class="toolbar-btn" data-action="blockquote" title="Blockquote">&ldquo;</button>
+            <span class="toolbar-sep"></span>
+            <button type="button" class="toolbar-btn" data-action="code" title="Code">&lt;&gt;</button>
+            <button type="button" class="toolbar-btn" data-action="link" title="Link (Cmd+K)">&#128279;</button>
+        </div>
+        {% endif %}
+
         <div class="writing-surface">
             <label for="editor-body" class="sr-only">Body</label>
             {% if form.body %}
@@ -335,7 +395,6 @@ document.querySelectorAll('.field-json').forEach(function(field) {
 // Handle publish button response (safe DOM construction, no innerHTML)
 function handlePublishResponse(event) {
     var toast = document.getElementById('publish-toast');
-    // Clear previous content safely
     while (toast.firstChild) toast.removeChild(toast.firstChild);
 
     var xhr = event.detail.xhr;
@@ -358,7 +417,6 @@ function handlePublishResponse(event) {
         }
     } catch(err) {
         toast.className = 'publish-toast publish-toast-error';
-        // Show HTTP status for better diagnostics
         if (status === 403) {
             toast.textContent = 'Publish failed: CSRF or permission error (403)';
         } else if (status >= 500) {

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit {{ object.get_page_key_display }}{% else %}New Composition{% endif %}{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="settings-header">
+        <h1>{% if object %}{{ object.get_page_key_display }}{% else %}New Page Composition{% endif %}</h1>
+        <a href="{% url 'editor:compose-list' %}" class="btn btn-sm">&larr; All Pages</a>
+    </div>
+
+    <form method="post" class="settings-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="form-errors">
+            {% for error in form.non_field_errors %}
+            <p class="field-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="field-group">
+            <label for="{{ form.page_key.id_for_label }}">Page</label>
+            {{ form.page_key }}
+            {% if form.page_key.errors %}<span class="field-error">{{ form.page_key.errors.0 }}</span>{% endif %}
+            <span class="field-hint">Which page this composition controls</span>
+        </div>
+
+        <div class="field-group">
+            <label for="{{ form.settings.id_for_label }}">Settings</label>
+            {{ form.settings }}
+            {% if form.settings.errors %}<span class="field-error">{{ form.settings.errors.0 }}</span>{% endif %}
+            <span class="field-hint">Component configuration for this page (JSON object)</span>
+        </div>
+
+        <div class="settings-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

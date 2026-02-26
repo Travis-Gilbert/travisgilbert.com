@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Page Compositions{% endblock %}
+
+{% block content %}
+<div class="content-list-page">
+    <div class="list-header">
+        <h1>Page Compositions</h1>
+        <a href="{% url 'editor:compose-create' %}" class="btn btn-primary">New Composition</a>
+    </div>
+
+    {% if compositions %}
+    <table class="content-table">
+        <thead>
+            <tr>
+                <th>Page Key</th>
+                <th>Last Updated</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comp in compositions %}
+            <tr>
+                <td>
+                    <a href="{% url 'editor:compose-edit' page_key=comp.page_key %}" class="item-link">
+                        {{ comp.get_page_key_display }}
+                    </a>
+                </td>
+                <td class="col-date">{{ comp.updated_at|date:"M j, Y" }}</td>
+                <td class="col-actions">
+                    <a href="{% url 'editor:compose-edit' page_key=comp.page_key %}" class="btn btn-sm">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">No page compositions yet. Create one to configure a page's layout and component settings.</p>
+    {% endif %}
+</div>
+{% endblock %}

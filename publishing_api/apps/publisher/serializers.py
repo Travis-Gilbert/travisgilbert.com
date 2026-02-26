@@ -1,10 +1,14 @@
 """
-Serialize Django model instances into markdown files with YAML frontmatter.
+Serialize Django model instances into publishable file formats.
 
-Each serializer produces the exact format that the Next.js site's Zod schemas
-expect. The field names in the YAML must match the Zod property names exactly
-(camelCase in YAML, snake_case in Django).
+Content models serialize to markdown files with YAML frontmatter.
+Site configuration models serialize to a single JSON structure (site.json).
+
+Field names in YAML frontmatter must match the Next.js Zod schema property
+names exactly (camelCase in YAML, snake_case in Django).
 """
+
+import json
 
 import yaml
 from datetime import date
@@ -46,6 +50,11 @@ def _to_yaml_frontmatter(data, body=""):
     return f"---\n{frontmatter}\n---\n"
 
 
+# ---------------------------------------------------------------------------
+# Content serializers (markdown with YAML frontmatter)
+# ---------------------------------------------------------------------------
+
+
 def serialize_essay(essay):
     """Serialize an Essay model instance to markdown string."""
     data = {
@@ -70,6 +79,8 @@ def serialize_essay(essay):
         data["callouts"] = essay.callouts
     if essay.annotations:
         data["annotations"] = essay.annotations
+    if essay.composition:
+        data["composition"] = essay.composition
 
     return _to_yaml_frontmatter(data, essay.body)
 
@@ -94,6 +105,8 @@ def serialize_field_note(note):
         data["featured"] = note.featured
     if note.connected_to:
         data["connectedTo"] = note.connected_to
+    if note.composition:
+        data["composition"] = note.composition
 
     return _to_yaml_frontmatter(data, note.body)
 
@@ -107,11 +120,14 @@ def serialize_shelf_entry(entry):
         "annotation": entry.annotation,
         "date": _date_str(entry.date),
         "tags": entry.tags,
+        "stage": entry.stage,
     }
     if entry.url:
         data["url"] = entry.url
     if entry.connected_essay:
         data["connectedEssay"] = entry.connected_essay
+    if entry.composition:
+        data["composition"] = entry.composition
 
     return _to_yaml_frontmatter(data)
 
@@ -125,6 +141,7 @@ def serialize_project(project):
         "year": project.year,
         "date": _date_str(project.date),
         "tags": project.tags,
+        "stage": project.stage,
         "draft": project.draft,
     }
     if project.organization:
@@ -137,8 +154,24 @@ def serialize_project(project):
         data["order"] = project.order
     if project.callout:
         data["callout"] = project.callout
+    if project.composition:
+        data["composition"] = project.composition
 
     return _to_yaml_frontmatter(data, project.body)
+
+
+def serialize_toolkit_entry(entry):
+    """Serialize a ToolkitEntry model instance to markdown string."""
+    data = {
+        "title": entry.title,
+        "category": entry.category,
+        "order": entry.order,
+        "stage": entry.stage,
+    }
+    if entry.composition:
+        data["composition"] = entry.composition
+
+    return _to_yaml_frontmatter(data, entry.body)
 
 
 def serialize_now_page(now):
@@ -160,3 +193,67 @@ def serialize_now_page(now):
     data["updated"] = _date_str(now.updated)
 
     return _to_yaml_frontmatter(data)
+
+
+# ---------------------------------------------------------------------------
+# Site configuration serializer (JSON for src/config/site.json)
+# ---------------------------------------------------------------------------
+
+
+def serialize_site_config():
+    """
+    Aggregate all site configuration models into a single JSON string.
+
+    Reads DesignTokenSet (singleton), NavItem (ordered list),
+    PageComposition (per-page settings), and SiteSettings (singleton).
+    Returns JSON matching the structure the Next.js site expects.
+    """
+    from apps.content.models import (
+        DesignTokenSet,
+        NavItem,
+        PageComposition,
+        SiteSettings,
+    )
+
+    tokens = DesignTokenSet.load()
+    site_settings = SiteSettings.load()
+
+    # Build nav array from ordered, visible nav items
+    nav_items = NavItem.objects.filter(visible=True).order_by("order")
+    nav = [
+        {
+            "label": item.label,
+            "path": item.path,
+            "icon": item.icon,
+            "visible": item.visible,
+        }
+        for item in nav_items
+    ]
+
+    # Build pages dict from PageComposition rows
+    pages = {}
+    for comp in PageComposition.objects.all():
+        pages[comp.page_key] = comp.settings
+
+    config = {
+        "tokens": {
+            "colors": tokens.colors,
+            "fonts": tokens.fonts,
+            "spacing": tokens.spacing,
+            "sectionColors": tokens.section_colors,
+        },
+        "nav": nav,
+        "footer": {
+            "tagline": site_settings.footer_tagline,
+            "links": site_settings.footer_links,
+        },
+        "seo": {
+            "titleTemplate": site_settings.seo_title_template,
+            "description": site_settings.seo_description,
+            "ogImageFallback": site_settings.seo_og_image_fallback,
+        },
+        "toggles": site_settings.global_toggles,
+        "pages": pages,
+    }
+
+    return json.dumps(config, indent=2, ensure_ascii=False)

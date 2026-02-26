@@ -1,15 +1,28 @@
 """
-Editor views: the writing interface.
+Editor views: the writing interface and site management panel.
 
 All views require login (enforced via LoginRequiredMixin). The URL structure:
 
-  /                         Dashboard (list all content)
-  /essays/new/              Create essay
-  /essays/<slug>/           Edit essay
-  /essays/<slug>/publish/   Publish essay (POST only)
-  /field-notes/new/         Create field note
-  /field-notes/<slug>/      Edit field note
-  ... (same pattern for shelf, projects, now)
+  /                                 Dashboard (landing page)
+  /essays/                          Essay list
+  /essays/new/                      Create essay
+  /essays/<slug>/                   Edit essay
+  /essays/<slug>/publish/           Publish essay (POST only)
+  ... (same pattern for field-notes, shelf, projects, toolkit)
+
+  /compose/                         Page composition list
+  /compose/new/                     Create page composition
+  /compose/<page_key>/              Edit page composition
+
+  /settings/tokens/                 Design tokens (singleton)
+  /settings/nav/                    Navigation editor (formset)
+  /settings/site/                   Site settings (singleton)
+  /settings/publish-log/            Publish log (history)
+
+  /delete/<content_type>/<slug>/    Delete content (POST only)
+  /set-stage/<content_type>/<slug>/ Set stage (POST only, HTMX)
+  /publish-config/                  Publish site config (POST only)
+  /auto-save/                       Auto-save (HTMX endpoint)
 """
 
 import json
@@ -17,7 +30,7 @@ import logging
 import traceback
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
@@ -26,32 +39,85 @@ from django.views.generic import CreateView, ListView, TemplateView, UpdateView
 logger = logging.getLogger(__name__)
 
 from apps.content.models import (
+    DesignTokenSet,
     Essay,
     FieldNote,
+    NavItem,
     NowPage,
+    PageComposition,
     Project,
     PublishLog,
     ShelfEntry,
+    SiteSettings,
+    ToolkitEntry,
 )
 from apps.editor.forms import (
+    DesignTokenSetForm,
     EssayForm,
     FieldNoteForm,
+    NavItemFormSet,
     NowPageForm,
+    PageCompositionForm,
     ProjectForm,
     ShelfEntryForm,
+    SiteSettingsForm,
+    ToolkitEntryForm,
 )
 from apps.publisher.publish import (
+    delete_content,
     publish_essay,
     publish_field_note,
     publish_now_page,
     publish_project,
     publish_shelf_entry,
+    publish_site_config,
+    publish_toolkit_entry,
 )
 
 
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _publish_response(request, log, redirect_url):
+    """Standard publish result: HTMX JSON or redirect."""
+    if request.headers.get("HX-Request"):
+        return JsonResponse({
+            "success": log.success,
+            "commit_sha": log.commit_sha,
+            "commit_url": log.commit_url,
+            "error": log.error_message,
+        })
+    return redirect(redirect_url)
+
+
+def _publish_error(request, redirect_url, exc):
+    """Publish exception result: HTMX JSON or redirect."""
+    if request.headers.get("HX-Request"):
+        return JsonResponse({
+            "success": False,
+            "commit_sha": "",
+            "commit_url": "",
+            "error": traceback.format_exc().splitlines()[-1],
+        })
+    return redirect(redirect_url)
+
+
+# Maps URL content type slugs to model and stage field name.
+# Used by DeleteContentView and SetStageView.
+CONTENT_REGISTRY = {
+    "essay": {"model": Essay, "stage_field": "stage"},
+    "field-note": {"model": FieldNote, "stage_field": "status"},
+    "shelf": {"model": ShelfEntry, "stage_field": "stage"},
+    "project": {"model": Project, "stage_field": "stage"},
+    "toolkit": {"model": ToolkitEntry, "stage_field": "stage"},
+}
+
+
+# ---------------------------------------------------------------------------
 # Dashboard
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -63,14 +129,20 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         ctx["field_notes"] = FieldNote.objects.all()[:20]
         ctx["shelf_entries"] = ShelfEntry.objects.all()[:20]
         ctx["projects"] = Project.objects.all()[:20]
+        ctx["toolkit_entries"] = ToolkitEntry.objects.all()[:20]
         ctx["now_page"] = NowPage.objects.first()
         ctx["recent_publishes"] = PublishLog.objects.all()[:10]
+        ctx["draft_counts"] = {
+            "essays": Essay.objects.filter(draft=True).count(),
+            "field_notes": FieldNote.objects.filter(draft=True).count(),
+            "projects": Project.objects.filter(draft=True).count(),
+        }
         return ctx
 
 
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # Essay CRUD
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class EssayListView(LoginRequiredMixin, ListView):
@@ -116,6 +188,16 @@ class EssayEditView(LoginRequiredMixin, UpdateView):
         ctx["publish_url"] = reverse(
             "editor:essay-publish", kwargs={"slug": self.object.slug}
         )
+        ctx["delete_url"] = reverse(
+            "editor:delete-content",
+            kwargs={"content_type": "essay", "slug": self.object.slug},
+        )
+        ctx["set_stage_url"] = reverse(
+            "editor:set-stage",
+            kwargs={"content_type": "essay", "slug": self.object.slug},
+        )
+        ctx["stage_choices"] = self.object.stage_list
+        ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="essay", content_slug=self.object.slug
         )[:5]
@@ -130,31 +212,18 @@ class EssayPublishView(LoginRequiredMixin, View):
 
     def post(self, request, slug):
         essay = get_object_or_404(Essay, slug=slug)
+        redirect_url = reverse("editor:essay-edit", kwargs={"slug": slug})
         try:
             log = publish_essay(essay)
         except Exception:
             logger.exception("Publish failed for essay '%s'", slug)
-            if request.headers.get("HX-Request"):
-                return JsonResponse({
-                    "success": False,
-                    "commit_sha": "",
-                    "commit_url": "",
-                    "error": traceback.format_exc().splitlines()[-1],
-                })
-            return redirect(reverse("editor:essay-edit", kwargs={"slug": slug}))
-        if request.headers.get("HX-Request"):
-            return JsonResponse({
-                "success": log.success,
-                "commit_sha": log.commit_sha,
-                "commit_url": log.commit_url,
-                "error": log.error_message,
-            })
-        return redirect(reverse("editor:essay-edit", kwargs={"slug": slug}))
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
 
 
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # Field Note CRUD
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class FieldNoteListView(LoginRequiredMixin, ListView):
@@ -200,6 +269,16 @@ class FieldNoteEditView(LoginRequiredMixin, UpdateView):
         ctx["publish_url"] = reverse(
             "editor:field-note-publish", kwargs={"slug": self.object.slug}
         )
+        ctx["delete_url"] = reverse(
+            "editor:delete-content",
+            kwargs={"content_type": "field-note", "slug": self.object.slug},
+        )
+        ctx["set_stage_url"] = reverse(
+            "editor:set-stage",
+            kwargs={"content_type": "field-note", "slug": self.object.slug},
+        )
+        ctx["stage_choices"] = self.object.stage_list
+        ctx["current_stage"] = self.object.status
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="field_note", content_slug=self.object.slug
         )[:5]
@@ -212,31 +291,18 @@ class FieldNoteEditView(LoginRequiredMixin, UpdateView):
 class FieldNotePublishView(LoginRequiredMixin, View):
     def post(self, request, slug):
         note = get_object_or_404(FieldNote, slug=slug)
+        redirect_url = reverse("editor:field-note-edit", kwargs={"slug": slug})
         try:
             log = publish_field_note(note)
         except Exception:
             logger.exception("Publish failed for field note '%s'", slug)
-            if request.headers.get("HX-Request"):
-                return JsonResponse({
-                    "success": False,
-                    "commit_sha": "",
-                    "commit_url": "",
-                    "error": traceback.format_exc().splitlines()[-1],
-                })
-            return redirect(reverse("editor:field-note-edit", kwargs={"slug": slug}))
-        if request.headers.get("HX-Request"):
-            return JsonResponse({
-                "success": log.success,
-                "commit_sha": log.commit_sha,
-                "commit_url": log.commit_url,
-                "error": log.error_message,
-            })
-        return redirect(reverse("editor:field-note-edit", kwargs={"slug": slug}))
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
 
 
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # Shelf CRUD
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class ShelfListView(LoginRequiredMixin, ListView):
@@ -282,6 +348,16 @@ class ShelfEditView(LoginRequiredMixin, UpdateView):
         ctx["publish_url"] = reverse(
             "editor:shelf-publish", kwargs={"slug": self.object.slug}
         )
+        ctx["delete_url"] = reverse(
+            "editor:delete-content",
+            kwargs={"content_type": "shelf", "slug": self.object.slug},
+        )
+        ctx["set_stage_url"] = reverse(
+            "editor:set-stage",
+            kwargs={"content_type": "shelf", "slug": self.object.slug},
+        )
+        ctx["stage_choices"] = self.object.stage_list
+        ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="shelf", content_slug=self.object.slug
         )[:5]
@@ -294,31 +370,18 @@ class ShelfEditView(LoginRequiredMixin, UpdateView):
 class ShelfPublishView(LoginRequiredMixin, View):
     def post(self, request, slug):
         entry = get_object_or_404(ShelfEntry, slug=slug)
+        redirect_url = reverse("editor:shelf-edit", kwargs={"slug": slug})
         try:
             log = publish_shelf_entry(entry)
         except Exception:
             logger.exception("Publish failed for shelf entry '%s'", slug)
-            if request.headers.get("HX-Request"):
-                return JsonResponse({
-                    "success": False,
-                    "commit_sha": "",
-                    "commit_url": "",
-                    "error": traceback.format_exc().splitlines()[-1],
-                })
-            return redirect(reverse("editor:shelf-edit", kwargs={"slug": slug}))
-        if request.headers.get("HX-Request"):
-            return JsonResponse({
-                "success": log.success,
-                "commit_sha": log.commit_sha,
-                "commit_url": log.commit_url,
-                "error": log.error_message,
-            })
-        return redirect(reverse("editor:shelf-edit", kwargs={"slug": slug}))
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
 
 
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # Project CRUD
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class ProjectListView(LoginRequiredMixin, ListView):
@@ -364,6 +427,16 @@ class ProjectEditView(LoginRequiredMixin, UpdateView):
         ctx["publish_url"] = reverse(
             "editor:project-publish", kwargs={"slug": self.object.slug}
         )
+        ctx["delete_url"] = reverse(
+            "editor:delete-content",
+            kwargs={"content_type": "project", "slug": self.object.slug},
+        )
+        ctx["set_stage_url"] = reverse(
+            "editor:set-stage",
+            kwargs={"content_type": "project", "slug": self.object.slug},
+        )
+        ctx["stage_choices"] = self.object.stage_list
+        ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="project", content_slug=self.object.slug
         )[:5]
@@ -376,31 +449,97 @@ class ProjectEditView(LoginRequiredMixin, UpdateView):
 class ProjectPublishView(LoginRequiredMixin, View):
     def post(self, request, slug):
         project = get_object_or_404(Project, slug=slug)
+        redirect_url = reverse("editor:project-edit", kwargs={"slug": slug})
         try:
             log = publish_project(project)
         except Exception:
             logger.exception("Publish failed for project '%s'", slug)
-            if request.headers.get("HX-Request"):
-                return JsonResponse({
-                    "success": False,
-                    "commit_sha": "",
-                    "commit_url": "",
-                    "error": traceback.format_exc().splitlines()[-1],
-                })
-            return redirect(reverse("editor:project-edit", kwargs={"slug": slug}))
-        if request.headers.get("HX-Request"):
-            return JsonResponse({
-                "success": log.success,
-                "commit_sha": log.commit_sha,
-                "commit_url": log.commit_url,
-                "error": log.error_message,
-            })
-        return redirect(reverse("editor:project-edit", kwargs={"slug": slug}))
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
 
 
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# Toolkit CRUD (new)
+# ---------------------------------------------------------------------------
+
+
+class ToolkitListView(LoginRequiredMixin, ListView):
+    model = ToolkitEntry
+    template_name = "editor/content_list.html"
+    context_object_name = "items"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["content_type"] = "toolkit"
+        ctx["content_type_plural"] = "Toolkit"
+        ctx["content_type_display"] = "Toolkit Entry"
+        ctx["new_url"] = reverse("editor:toolkit-create")
+        return ctx
+
+
+class ToolkitCreateView(LoginRequiredMixin, CreateView):
+    model = ToolkitEntry
+    form_class = ToolkitEntryForm
+    template_name = "editor/edit.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["content_type"] = "toolkit"
+        ctx["is_new"] = True
+        return ctx
+
+    def get_success_url(self):
+        return reverse("editor:toolkit-edit", kwargs={"slug": self.object.slug})
+
+
+class ToolkitEditView(LoginRequiredMixin, UpdateView):
+    model = ToolkitEntry
+    form_class = ToolkitEntryForm
+    template_name = "editor/edit.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["content_type"] = "toolkit"
+        ctx["is_new"] = False
+        ctx["publish_url"] = reverse(
+            "editor:toolkit-publish", kwargs={"slug": self.object.slug}
+        )
+        ctx["delete_url"] = reverse(
+            "editor:delete-content",
+            kwargs={"content_type": "toolkit", "slug": self.object.slug},
+        )
+        ctx["set_stage_url"] = reverse(
+            "editor:set-stage",
+            kwargs={"content_type": "toolkit", "slug": self.object.slug},
+        )
+        ctx["stage_choices"] = self.object.stage_list
+        ctx["current_stage"] = self.object.stage
+        ctx["recent_publishes"] = PublishLog.objects.filter(
+            content_type="toolkit", content_slug=self.object.slug
+        )[:5]
+        return ctx
+
+    def get_success_url(self):
+        return reverse("editor:toolkit-edit", kwargs={"slug": self.object.slug})
+
+
+class ToolkitPublishView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        entry = get_object_or_404(ToolkitEntry, slug=slug)
+        redirect_url = reverse("editor:toolkit-edit", kwargs={"slug": slug})
+        try:
+            log = publish_toolkit_entry(entry)
+        except Exception:
+            logger.exception("Publish failed for toolkit entry '%s'", slug)
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
+
+
+# ---------------------------------------------------------------------------
 # Now Page
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class NowPageEditView(LoginRequiredMixin, UpdateView):
@@ -431,31 +570,265 @@ class NowPageEditView(LoginRequiredMixin, UpdateView):
 class NowPagePublishView(LoginRequiredMixin, View):
     def post(self, request):
         now = get_object_or_404(NowPage, pk=1)
+        redirect_url = reverse("editor:now-edit")
         try:
             log = publish_now_page(now)
         except Exception:
             logger.exception("Publish failed for Now page")
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
+
+
+# ---------------------------------------------------------------------------
+# Generic content actions (delete, set-stage)
+# ---------------------------------------------------------------------------
+
+
+class DeleteContentView(LoginRequiredMixin, View):
+    """
+    POST-only: delete content from GitHub and DB.
+
+    Requires confirm_slug in POST data to match the actual slug.
+    Returns HTMX JSON or redirects to the content type list.
+    """
+
+    # Maps URL content_type to list URL name
+    LIST_URLS = {
+        "essay": "editor:essay-list",
+        "field-note": "editor:field-note-list",
+        "shelf": "editor:shelf-list",
+        "project": "editor:project-list",
+        "toolkit": "editor:toolkit-list",
+    }
+
+    def post(self, request, content_type, slug):
+        if content_type not in CONTENT_REGISTRY:
+            raise Http404
+
+        model = CONTENT_REGISTRY[content_type]["model"]
+        instance = get_object_or_404(model, slug=slug)
+        list_url = reverse(self.LIST_URLS[content_type])
+
+        # Safety: require the user to type the slug to confirm
+        confirm = request.POST.get("confirm_slug", "")
+        if confirm != slug:
             if request.headers.get("HX-Request"):
-                return JsonResponse({
-                    "success": False,
-                    "commit_sha": "",
-                    "commit_url": "",
-                    "error": traceback.format_exc().splitlines()[-1],
-                })
-            return redirect(reverse("editor:now-edit"))
-        if request.headers.get("HX-Request"):
-            return JsonResponse({
-                "success": log.success,
-                "commit_sha": log.commit_sha,
-                "commit_url": log.commit_url,
-                "error": log.error_message,
-            })
-        return redirect(reverse("editor:now-edit"))
+                return JsonResponse(
+                    {"error": "Slug confirmation does not match."}, status=400
+                )
+            return redirect(list_url)
+
+        try:
+            log = delete_content(instance)
+        except Exception:
+            logger.exception("Delete failed for %s '%s'", content_type, slug)
+            return _publish_error(request, list_url, None)
+
+        return _publish_response(request, log, list_url)
 
 
-# ──────────────────────────────────────────────
+class SetStageView(LoginRequiredMixin, View):
+    """
+    POST-only HTMX endpoint: advance or set a content item's stage.
+
+    POST body (JSON): {"stage": "drafting"}
+    Returns JSON with the new stage value.
+    """
+
+    def post(self, request, content_type, slug):
+        if content_type not in CONTENT_REGISTRY:
+            raise Http404
+
+        reg = CONTENT_REGISTRY[content_type]
+        model = reg["model"]
+        field_name = reg["stage_field"]
+        instance = get_object_or_404(model, slug=slug)
+
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+        new_stage = data.get("stage", "")
+
+        # Validate against the model's field choices
+        field = model._meta.get_field(field_name)
+        valid_values = [c[0] for c in field.choices]
+        if new_stage not in valid_values:
+            return JsonResponse(
+                {"error": f"Invalid stage: {new_stage}"}, status=400
+            )
+
+        setattr(instance, field_name, new_stage)
+        update_fields = [field_name]
+        if hasattr(instance, "updated_at"):
+            update_fields.append("updated_at")
+        instance.save(update_fields=update_fields)
+
+        return JsonResponse({"stage": new_stage, "success": True})
+
+
+# ---------------------------------------------------------------------------
+# Page Composition (Compose section)
+# ---------------------------------------------------------------------------
+
+
+class PageCompositionListView(LoginRequiredMixin, ListView):
+    model = PageComposition
+    template_name = "editor/compose_list.html"
+    context_object_name = "compositions"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "compose"
+        return ctx
+
+
+class PageCompositionCreateView(LoginRequiredMixin, CreateView):
+    model = PageComposition
+    form_class = PageCompositionForm
+    template_name = "editor/compose_edit.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "compose"
+        return ctx
+
+    def get_success_url(self):
+        return reverse(
+            "editor:compose-edit", kwargs={"page_key": self.object.page_key}
+        )
+
+
+class PageCompositionEditView(LoginRequiredMixin, UpdateView):
+    model = PageComposition
+    form_class = PageCompositionForm
+    template_name = "editor/compose_edit.html"
+    slug_field = "page_key"
+    slug_url_kwarg = "page_key"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "compose"
+        return ctx
+
+    def get_success_url(self):
+        return reverse(
+            "editor:compose-edit", kwargs={"page_key": self.object.page_key}
+        )
+
+
+# ---------------------------------------------------------------------------
+# Settings: Design Tokens (singleton)
+# ---------------------------------------------------------------------------
+
+
+class DesignTokensEditView(LoginRequiredMixin, UpdateView):
+    model = DesignTokenSet
+    form_class = DesignTokenSetForm
+    template_name = "editor/tokens.html"
+
+    def get_object(self, queryset=None):
+        return DesignTokenSet.load()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "tokens"
+        return ctx
+
+    def get_success_url(self):
+        return reverse("editor:tokens-edit")
+
+
+# ---------------------------------------------------------------------------
+# Settings: Navigation (formset)
+# ---------------------------------------------------------------------------
+
+
+class NavEditorView(LoginRequiredMixin, TemplateView):
+    template_name = "editor/nav_editor.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "nav"
+        if "formset" not in ctx:
+            ctx["formset"] = NavItemFormSet(
+                queryset=NavItem.objects.order_by("order")
+            )
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        formset = NavItemFormSet(
+            request.POST, queryset=NavItem.objects.order_by("order")
+        )
+        if formset.is_valid():
+            formset.save()
+            return redirect(reverse("editor:nav-editor"))
+        ctx = self.get_context_data(formset=formset)
+        return self.render_to_response(ctx)
+
+
+# ---------------------------------------------------------------------------
+# Settings: Site Settings (singleton)
+# ---------------------------------------------------------------------------
+
+
+class SiteSettingsEditView(LoginRequiredMixin, UpdateView):
+    model = SiteSettings
+    form_class = SiteSettingsForm
+    template_name = "editor/settings.html"
+
+    def get_object(self, queryset=None):
+        return SiteSettings.load()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "site_settings"
+        return ctx
+
+    def get_success_url(self):
+        return reverse("editor:site-settings")
+
+
+# ---------------------------------------------------------------------------
+# Settings: Publish Log
+# ---------------------------------------------------------------------------
+
+
+class PublishLogListView(LoginRequiredMixin, ListView):
+    model = PublishLog
+    template_name = "editor/publish_log.html"
+    context_object_name = "logs"
+    paginate_by = 50
+    ordering = ["-created_at"]
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["nav_section"] = "publish_log"
+        return ctx
+
+
+# ---------------------------------------------------------------------------
+# Publish site configuration (POST only)
+# ---------------------------------------------------------------------------
+
+
+class PublishSiteConfigView(LoginRequiredMixin, View):
+    """Publish site.json to GitHub (design tokens, nav, SEO, pages)."""
+
+    def post(self, request):
+        redirect_url = reverse("editor:site-settings")
+        try:
+            log = publish_site_config()
+        except Exception:
+            logger.exception("Publish failed for site configuration")
+            return _publish_error(request, redirect_url, None)
+        return _publish_response(request, log, redirect_url)
+
+
+# ---------------------------------------------------------------------------
 # Auto-save (HTMX endpoint)
-# ──────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 
 class AutoSaveView(LoginRequiredMixin, View):
@@ -471,6 +844,7 @@ class AutoSaveView(LoginRequiredMixin, View):
         "field_note": (FieldNote, FieldNoteForm),
         "shelf": (ShelfEntry, ShelfEntryForm),
         "project": (Project, ProjectForm),
+        "toolkit": (ToolkitEntry, ToolkitEntryForm),
     }
 
     def post(self, request):

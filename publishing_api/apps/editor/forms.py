@@ -1,9 +1,26 @@
 from django import forms
 
-from apps.content.models import Essay, FieldNote, NowPage, Project, ShelfEntry
+from apps.content.models import (
+    DesignTokenSet,
+    Essay,
+    FieldNote,
+    NavItem,
+    NowPage,
+    PageComposition,
+    Project,
+    ShelfEntry,
+    SiteSettings,
+    ToolkitEntry,
+)
 from apps.editor.widgets import (
+    ANNOTATIONS_SCHEMA,
+    CALLOUTS_SCHEMA,
+    FOOTER_LINKS_SCHEMA,
+    SOURCES_SCHEMA,
+    URLS_SCHEMA,
     JsonObjectListWidget,
     SlugListWidget,
+    StructuredListWidget,
     TagsWidget,
 )
 
@@ -28,6 +45,7 @@ class EssayForm(forms.ModelForm):
             "callouts",
             "stage",
             "annotations",
+            "composition",
         ]
         widgets = {
             "title": forms.TextInput(attrs={
@@ -72,21 +90,18 @@ class EssayForm(forms.ModelForm):
                 "placeholder": "Callout text. Use [link text](url) for hyperlinks.",
             }),
             "stage": forms.Select(attrs={"class": "field-meta"}),
-            # JSON fields with custom widgets
-            "tags": TagsWidget(),
-            "sources": JsonObjectListWidget(
-                placeholder_hint='[\n  {"title": "Source Name", "url": "https://..."}\n]',
+            "composition": JsonObjectListWidget(
+                attrs={"rows": 3},
+                placeholder_hint='{\n  "heroStyle": "full",\n  "accent": "terracotta"\n}',
             ),
+            # JSON fields with structured widgets
+            "tags": TagsWidget(),
+            "sources": StructuredListWidget(fields_schema=SOURCES_SCHEMA),
             "related": SlugListWidget(attrs={
                 "placeholder": "essay-slug-1, essay-slug-2",
             }),
-            "callouts": JsonObjectListWidget(
-                attrs={"rows": 3},
-                placeholder_hint='[\n  {"text": "Callout text", "side": "right"}\n]',
-            ),
-            "annotations": JsonObjectListWidget(
-                placeholder_hint='[\n  {"paragraph": 1, "text": "Margin note text"}\n]',
-            ),
+            "callouts": StructuredListWidget(fields_schema=CALLOUTS_SCHEMA),
+            "annotations": StructuredListWidget(fields_schema=ANNOTATIONS_SCHEMA),
         }
 
 
@@ -106,6 +121,7 @@ class FieldNoteForm(forms.ModelForm):
             "status",
             "featured",
             "connected_to",
+            "composition",
         ]
         widgets = {
             "title": forms.TextInput(attrs={
@@ -139,12 +155,13 @@ class FieldNoteForm(forms.ModelForm):
                 "rows": 2,
                 "placeholder": "Callout text. Use [link text](url) for hyperlinks.",
             }),
-            # JSON fields with custom widgets
-            "tags": TagsWidget(),
-            "callouts": JsonObjectListWidget(
+            "composition": JsonObjectListWidget(
                 attrs={"rows": 3},
-                placeholder_hint='[\n  {"text": "Callout text", "side": "right"}\n]',
+                placeholder_hint='{\n  "layout": "compact"\n}',
             ),
+            # JSON fields with structured widgets
+            "tags": TagsWidget(),
+            "callouts": StructuredListWidget(fields_schema=CALLOUTS_SCHEMA),
         }
 
 
@@ -161,6 +178,8 @@ class ShelfEntryForm(forms.ModelForm):
             "date",
             "tags",
             "connected_essay",
+            "stage",
+            "composition",
         ]
         widgets = {
             "title": forms.TextInput(attrs={
@@ -192,6 +211,11 @@ class ShelfEntryForm(forms.ModelForm):
                 "class": "field-meta",
                 "placeholder": "Related essay slug",
             }),
+            "stage": forms.Select(attrs={"class": "field-meta"}),
+            "composition": JsonObjectListWidget(
+                attrs={"rows": 3},
+                placeholder_hint='{}',
+            ),
             # JSON fields with custom widgets
             "tags": TagsWidget(),
         }
@@ -215,6 +239,8 @@ class ProjectForm(forms.ModelForm):
             "order",
             "callout",
             "body",
+            "stage",
+            "composition",
         ]
         widgets = {
             "title": forms.TextInput(attrs={
@@ -256,10 +282,56 @@ class ProjectForm(forms.ModelForm):
                 "class": "field-meta",
                 "placeholder": "Sort order (0 = default)",
             }),
-            # JSON fields with custom widgets
+            "stage": forms.Select(attrs={"class": "field-meta"}),
+            "composition": JsonObjectListWidget(
+                attrs={"rows": 3},
+                placeholder_hint='{\n  "tint": "teal"\n}',
+            ),
+            # JSON fields with structured widgets
             "tags": TagsWidget(),
-            "urls": JsonObjectListWidget(
-                placeholder_hint='[\n  {"label": "Live Site", "url": "https://..."}\n]',
+            "urls": StructuredListWidget(fields_schema=URLS_SCHEMA),
+        }
+
+
+class ToolkitEntryForm(forms.ModelForm):
+    class Meta:
+        model = ToolkitEntry
+        fields = [
+            "title",
+            "slug",
+            "category",
+            "order",
+            "body",
+            "stage",
+            "composition",
+        ]
+        widgets = {
+            "title": forms.TextInput(attrs={
+                "class": "field-title",
+                "placeholder": "Tool or process name...",
+                "autocomplete": "off",
+            }),
+            "slug": forms.TextInput(attrs={
+                "class": "field-slug",
+                "placeholder": "auto-generated-from-title",
+            }),
+            "category": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "e.g. production, research, automation",
+            }),
+            "order": forms.NumberInput(attrs={
+                "class": "field-meta",
+                "placeholder": "Sort order (0 = default)",
+            }),
+            "body": forms.Textarea(attrs={
+                "class": "field-body",
+                "id": "editor-body",
+                "placeholder": "Describe this tool or process...",
+            }),
+            "stage": forms.Select(attrs={"class": "field-meta"}),
+            "composition": JsonObjectListWidget(
+                attrs={"rows": 3},
+                placeholder_hint='{}',
             ),
         }
 
@@ -322,4 +394,150 @@ class NowPageForm(forms.ModelForm):
                 "rows": 4,
                 "placeholder": "What you're thinking about...",
             }),
+        }
+
+
+# ---------------------------------------------------------------------------
+# Site configuration forms
+# ---------------------------------------------------------------------------
+
+
+class DesignTokenSetForm(forms.ModelForm):
+    class Meta:
+        model = DesignTokenSet
+        fields = ["colors", "fonts", "spacing", "section_colors"]
+        widgets = {
+            "colors": JsonObjectListWidget(
+                attrs={"rows": 8},
+                placeholder_hint=(
+                    '{\n'
+                    '  "terracotta": "#B45A2D",\n'
+                    '  "teal": "#2D5F6B",\n'
+                    '  "gold": "#C49A4A",\n'
+                    '  "green": "#5A7A4A",\n'
+                    '  "parchment": "#F5F0E8",\n'
+                    '  "darkGround": "#2A2824",\n'
+                    '  "cream": "#F0EBE3"\n'
+                    '}'
+                ),
+            ),
+            "fonts": JsonObjectListWidget(
+                attrs={"rows": 6},
+                placeholder_hint=(
+                    '{\n'
+                    '  "title": "Vollkorn",\n'
+                    '  "body": "Cabin",\n'
+                    '  "mono": "Courier Prime",\n'
+                    '  "annotation": "Caveat",\n'
+                    '  "tagline": "Ysabeau"\n'
+                    '}'
+                ),
+            ),
+            "spacing": JsonObjectListWidget(
+                attrs={"rows": 4},
+                placeholder_hint=(
+                    '{\n'
+                    '  "contentMaxWidth": "896px",\n'
+                    '  "heroMaxWidth": "1152px"\n'
+                    '}'
+                ),
+            ),
+            "section_colors": JsonObjectListWidget(
+                attrs={"rows": 6},
+                placeholder_hint=(
+                    '{\n'
+                    '  "essays": "terracotta",\n'
+                    '  "fieldNotes": "teal",\n'
+                    '  "projects": "gold"\n'
+                    '}'
+                ),
+            ),
+        }
+
+
+class NavItemForm(forms.ModelForm):
+    class Meta:
+        model = NavItem
+        fields = ["label", "path", "icon", "visible", "order"]
+        widgets = {
+            "label": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "Nav label",
+            }),
+            "path": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "/section-path",
+            }),
+            "icon": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "SketchIcon name (e.g. file-text)",
+            }),
+            "order": forms.NumberInput(attrs={
+                "class": "field-meta",
+                "placeholder": "0",
+            }),
+        }
+
+
+NavItemFormSet = forms.modelformset_factory(
+    NavItem,
+    form=NavItemForm,
+    extra=1,
+    can_delete=True,
+)
+
+
+class PageCompositionForm(forms.ModelForm):
+    class Meta:
+        model = PageComposition
+        fields = ["page_key", "settings"]
+        widgets = {
+            "page_key": forms.Select(attrs={"class": "field-meta"}),
+            "settings": JsonObjectListWidget(
+                attrs={"rows": 12},
+                placeholder_hint='{\n  "key": "value"\n}',
+            ),
+        }
+
+
+class SiteSettingsForm(forms.ModelForm):
+    class Meta:
+        model = SiteSettings
+        fields = [
+            "footer_tagline",
+            "footer_links",
+            "seo_title_template",
+            "seo_description",
+            "seo_og_image_fallback",
+            "global_toggles",
+        ]
+        widgets = {
+            "footer_tagline": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "Footer tagline text",
+            }),
+            "footer_links": StructuredListWidget(fields_schema=FOOTER_LINKS_SCHEMA),
+            "seo_title_template": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "%s | travisgilbert.com",
+            }),
+            "seo_description": forms.Textarea(attrs={
+                "class": "field-summary",
+                "rows": 3,
+                "placeholder": "Default meta description...",
+            }),
+            "seo_og_image_fallback": forms.TextInput(attrs={
+                "class": "field-meta",
+                "placeholder": "https://travisgilbert.com/og-image.png",
+            }),
+            "global_toggles": JsonObjectListWidget(
+                attrs={"rows": 5},
+                placeholder_hint=(
+                    '{\n'
+                    '  "dotgrid_enabled": true,\n'
+                    '  "paper_grain_enabled": true,\n'
+                    '  "console_easter_egg": true\n'
+                    '}'
+                ),
+            ),
         }

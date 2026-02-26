@@ -11,6 +11,10 @@ urlpatterns = [
     # Auto-save (HTMX)
     path("auto-save/", views.AutoSaveView.as_view(), name="auto-save"),
 
+    # -----------------------------------------------------------------------
+    # Content types
+    # -----------------------------------------------------------------------
+
     # Essays
     path("essays/", views.EssayListView.as_view(), name="essay-list"),
     path("essays/new/", views.EssayCreateView.as_view(), name="essay-create"),
@@ -35,7 +39,43 @@ urlpatterns = [
     path("projects/<slug:slug>/", views.ProjectEditView.as_view(), name="project-edit"),
     path("projects/<slug:slug>/publish/", views.ProjectPublishView.as_view(), name="project-publish"),
 
+    # Toolkit
+    path("toolkit/", views.ToolkitListView.as_view(), name="toolkit-list"),
+    path("toolkit/new/", views.ToolkitCreateView.as_view(), name="toolkit-create"),
+    path("toolkit/<slug:slug>/", views.ToolkitEditView.as_view(), name="toolkit-edit"),
+    path("toolkit/<slug:slug>/publish/", views.ToolkitPublishView.as_view(), name="toolkit-publish"),
+
     # Now page
     path("now/", views.NowPageEditView.as_view(), name="now-edit"),
     path("now/publish/", views.NowPagePublishView.as_view(), name="now-publish"),
+
+    # -----------------------------------------------------------------------
+    # Generic content actions
+    # -----------------------------------------------------------------------
+    path(
+        "delete/<slug:content_type>/<slug:slug>/",
+        views.DeleteContentView.as_view(),
+        name="delete-content",
+    ),
+    path(
+        "set-stage/<slug:content_type>/<slug:slug>/",
+        views.SetStageView.as_view(),
+        name="set-stage",
+    ),
+
+    # -----------------------------------------------------------------------
+    # Compose (page compositions)
+    # -----------------------------------------------------------------------
+    path("compose/", views.PageCompositionListView.as_view(), name="compose-list"),
+    path("compose/new/", views.PageCompositionCreateView.as_view(), name="compose-create"),
+    path("compose/<slug:page_key>/", views.PageCompositionEditView.as_view(), name="compose-edit"),
+
+    # -----------------------------------------------------------------------
+    # Settings
+    # -----------------------------------------------------------------------
+    path("settings/tokens/", views.DesignTokensEditView.as_view(), name="tokens-edit"),
+    path("settings/nav/", views.NavEditorView.as_view(), name="nav-editor"),
+    path("settings/site/", views.SiteSettingsEditView.as_view(), name="site-settings"),
+    path("settings/publish-log/", views.PublishLogListView.as_view(), name="publish-log"),
+    path("settings/publish-config/", views.PublishSiteConfigView.as_view(), name="publish-config"),
 ]

@@ -13,10 +13,17 @@ import frontmatter
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from apps.content.models import Essay, FieldNote, NowPage, Project, ShelfEntry
+from apps.content.models import (
+    Essay,
+    FieldNote,
+    NowPage,
+    Project,
+    ShelfEntry,
+    ToolkitEntry,
+)
 
 
-CONTENT_TYPES = ("essays", "field-notes", "shelf", "projects", "now")
+CONTENT_TYPES = ("essays", "field-notes", "shelf", "projects", "toolkit", "now")
 
 
 def _parse_date(value):
@@ -103,6 +110,19 @@ def _parse_project(post, slug):
     }
 
 
+def _parse_toolkit(post, slug):
+    meta = post.metadata
+    return {
+        "title": meta["title"],
+        "slug": slug,
+        "category": meta.get("category", ""),
+        "order": meta.get("order", 0),
+        "body": post.content.strip(),
+        # Existing content is already live, so default to published
+        "stage": meta.get("stage", "published"),
+    }
+
+
 def _parse_now_page(post):
     meta = post.metadata
     return {
@@ -125,6 +145,7 @@ TYPE_REGISTRY = {
     "field-notes": ("field-notes", FieldNote, _parse_field_note),
     "shelf": ("shelf", ShelfEntry, _parse_shelf_entry),
     "projects": ("projects", Project, _parse_project),
+    "toolkit": ("toolkit", ToolkitEntry, _parse_toolkit),
 }
 
 

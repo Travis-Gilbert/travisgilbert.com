@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Navigation{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="settings-header">
+        <h1>Navigation</h1>
+    </div>
+
+    <form method="post" class="settings-form">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        {% if formset.non_form_errors %}
+        <div class="form-errors">
+            {% for error in formset.non_form_errors %}
+            <p class="field-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <table class="nav-formset-table">
+            <thead>
+                <tr>
+                    <th>Label</th>
+                    <th>Path</th>
+                    <th>Icon</th>
+                    <th>Order</th>
+                    <th>Visible</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr class="nav-row">
+                    {{ form.id }}
+                    <td>{{ form.label }}{% if form.label.errors %}<span class="field-error">{{ form.label.errors.0 }}</span>{% endif %}</td>
+                    <td>{{ form.path }}{% if form.path.errors %}<span class="field-error">{{ form.path.errors.0 }}</span>{% endif %}</td>
+                    <td>{{ form.icon }}{% if form.icon.errors %}<span class="field-error">{{ form.icon.errors.0 }}</span>{% endif %}</td>
+                    <td>{{ form.order }}</td>
+                    <td>{{ form.visible }}</td>
+                    <td>{{ form.DELETE }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="settings-actions">
+            <button type="submit" class="btn btn-primary">Save Navigation</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

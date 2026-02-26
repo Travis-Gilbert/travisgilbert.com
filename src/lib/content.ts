@@ -36,6 +36,8 @@ export const essaySchema = z.object({
     paragraph: z.number(),
     text: z.string(),
   })).default([]),
+  /** Per-instance visual overrides (heroStyle, overlay, accent, etc.) */
+  composition: z.record(z.unknown()).optional(),
 });
 
 export const fieldNoteSchema = z.object({
@@ -53,6 +55,8 @@ export const fieldNoteSchema = z.object({
   featured: z.boolean().default(false),
   /** Slug of the parent essay this note connects to */
   connectedTo: z.string().optional(),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
 });
 
 export const shelfSchema = z.object({
@@ -65,12 +69,16 @@ export const shelfSchema = z.object({
   tags: z.array(z.string()).default([]),
   /** Essay slug this source relates to */
   connectedEssay: z.string().optional(),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
 });
 
 export const toolkitSchema = z.object({
   title: z.string(),
   category: z.enum(['production', 'tools', 'philosophy', 'automation']),
   order: z.number().default(0),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
 });
 
 export const projectSchema = z.object({
@@ -89,6 +97,8 @@ export const projectSchema = z.object({
   draft: z.boolean().default(false),
   order: z.number().default(0),
   callout: z.string().optional(),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
 });
 
 // ─────────────────────────────────────────────────
