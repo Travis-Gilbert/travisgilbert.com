@@ -143,19 +143,31 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ("studio",)
 # Tailwind
 TAILWIND_APP_NAME = "theme"
 
-# Logging: send all errors to stderr so Railway captures tracebacks
+# Logging: send errors to stderr so Railway captures tracebacks
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{levelname}] {name}: {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "loggers": {
         "django": {
             "handlers": ["console"],
+            "level": "WARNING",
+        },
+        "django.request": {
+            "handlers": ["console"],
             "level": "ERROR",
+            "propagate": False,
         },
     },
 }
