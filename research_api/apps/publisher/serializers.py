@@ -10,38 +10,49 @@ import json
 
 def serialize_source(source):
     """Serialize a Source instance for static JSON."""
-    return {
+    data = {
         'id': source.id,
         'title': source.title,
         'slug': source.slug,
+        'creator': source.creator,
         'sourceType': source.source_type,
-        'authors': source.authors or [],
-        'publisher': source.publisher,
-        'publicationDate': (
-            source.publication_date.isoformat()
-            if source.publication_date else None
-        ),
         'url': source.url,
-        'isbn': source.isbn,
-        'doi': source.doi,
-        'notes': source.notes,
+        'publication': source.publication,
+        'datePublished': (
+            source.date_published.isoformat()
+            if source.date_published else None
+        ),
+        'dateEncountered': (
+            source.date_encountered.isoformat()
+            if source.date_encountered else None
+        ),
+        'publicAnnotation': source.public_annotation,
+        'keyFindings': source.key_findings or [],
         'tags': source.tags or [],
-        'coverImageUrl': source.cover_image_url,
-        'contentCount': source.content_count if hasattr(source, 'content_count') else 0,
+        'linkCount': source.link_count if hasattr(source, 'link_count') else 0,
     }
+    # Include location only when present
+    if source.location_name:
+        data['locationName'] = source.location_name
+        data['latitude'] = float(source.latitude) if source.latitude else None
+        data['longitude'] = float(source.longitude) if source.longitude else None
+    return data
 
 
-def serialize_reference(ref):
-    """Serialize a ContentReference for static JSON."""
+def serialize_link(link):
+    """Serialize a SourceLink for static JSON."""
     return {
-        'sourceId': ref.source_id,
-        'sourceTitle': ref.source.title if ref.source_id else '',
-        'sourceSlug': ref.source.slug if ref.source_id else '',
-        'contentType': ref.content_type,
-        'contentSlug': ref.content_slug,
-        'contentTitle': ref.content_title,
-        'context': ref.context,
-        'paragraphIndex': ref.paragraph_index,
+        'sourceId': link.source_id,
+        'sourceTitle': link.source.title if link.source_id else '',
+        'sourceSlug': link.source.slug if link.source_id else '',
+        'contentType': link.content_type,
+        'contentSlug': link.content_slug,
+        'contentTitle': link.content_title,
+        'role': link.role,
+        'keyQuote': link.key_quote,
+        'dateLinked': (
+            link.date_linked.isoformat() if link.date_linked else None
+        ),
     }
 
 
@@ -57,17 +68,23 @@ def serialize_thread(thread, include_entries=True):
             thread.started_date.isoformat()
             if thread.started_date else None
         ),
+        'completedDate': (
+            thread.completed_date.isoformat()
+            if thread.completed_date else None
+        ),
+        'resultingEssaySlug': thread.resulting_essay_slug,
         'tags': thread.tags or [],
     }
     if include_entries:
         data['entries'] = [
             {
+                'entryType': entry.entry_type,
                 'date': entry.date.isoformat(),
+                'order': entry.order,
                 'title': entry.title,
-                'body': entry.body,
-                'sourceIds': list(entry.sources.values_list('id', flat=True)),
-                'contentType': entry.content_type,
-                'contentSlug': entry.content_slug,
+                'description': entry.description,
+                'sourceId': entry.source_id,
+                'fieldNoteSlug': entry.field_note_slug,
             }
             for entry in thread.entries.all()
         ]

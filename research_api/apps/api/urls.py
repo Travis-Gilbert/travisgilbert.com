@@ -7,7 +7,7 @@ app_name = 'api'
 
 router = DefaultRouter()
 router.register('sources', views.SourceViewSet, basename='source')
-router.register('references', views.ContentReferenceViewSet, basename='reference')
+router.register('links', views.SourceLinkViewSet, basename='link')
 router.register('threads', views.ResearchThreadViewSet, basename='thread')
 router.register('mentions', views.WebmentionViewSet, basename='mention')
 

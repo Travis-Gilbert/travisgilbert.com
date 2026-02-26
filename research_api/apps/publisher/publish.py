@@ -10,11 +10,12 @@ import logging
 
 from django.db.models import Count
 
-from apps.research.models import ContentReference, ResearchThread, Source
+from apps.research.models import ResearchThread, Source, SourceLink
 from apps.research.services import get_all_backlinks
 
 from . import serializers
 from .github import publish_files
+from .models import PublishLog
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ def publish_all():
 
     Creates/updates these files:
         src/data/research/sources.json
-        src/data/research/references.json
+        src/data/research/links.json
         src/data/research/threads.json
         src/data/research/backlinks.json
 
@@ -37,18 +38,20 @@ def publish_all():
     """
     logger.info('Starting research data publish...')
 
-    # Gather data
+    # Gather data (only public records)
     sources = list(
-        Source.objects.annotate(content_count=Count('references'))
+        Source.objects.public()
+        .annotate(link_count=Count('links'))
         .order_by('title')
     )
-    references = list(
-        ContentReference.objects.select_related('source')
+    links = list(
+        SourceLink.objects.select_related('source')
+        .filter(source__public=True)
         .order_by('content_type', 'content_slug')
     )
     threads = list(
-        ResearchThread.objects
-        .prefetch_related('entries', 'entries__sources')
+        ResearchThread.objects.public()
+        .prefetch_related('entries', 'entries__source')
         .order_by('-started_date')
     )
     backlink_graph = get_all_backlinks()
@@ -57,8 +60,8 @@ def publish_all():
     sources_json = serializers.to_json([
         serializers.serialize_source(s) for s in sources
     ])
-    references_json = serializers.to_json([
-        serializers.serialize_reference(r) for r in references
+    links_json = serializers.to_json([
+        serializers.serialize_link(lnk) for lnk in links
     ])
     threads_json = serializers.to_json([
         serializers.serialize_thread(t) for t in threads
@@ -70,7 +73,7 @@ def publish_all():
     # Build file operations
     file_ops = [
         {'path': f'{DATA_PREFIX}/sources.json', 'content': sources_json},
-        {'path': f'{DATA_PREFIX}/references.json', 'content': references_json},
+        {'path': f'{DATA_PREFIX}/links.json', 'content': links_json},
         {'path': f'{DATA_PREFIX}/threads.json', 'content': threads_json},
         {'path': f'{DATA_PREFIX}/backlinks.json', 'content': backlinks_json},
     ]
@@ -81,10 +84,21 @@ def publish_all():
         commit_message=f'data(research): publish {len(sources)} sources, {len(threads)} threads',
     )
 
+    # Write audit log
+    total_records = len(sources) + len(links) + len(threads)
+    PublishLog.objects.create(
+        data_type='full',
+        record_count=total_records,
+        commit_sha=result.get('commit_sha', ''),
+        commit_url=result.get('commit_url', ''),
+        success=result['success'],
+        error_message=result.get('error', ''),
+    )
+
     if result['success']:
         logger.info(
-            'Research data published: %s sources, %s references, %s threads. Commit: %s',
-            len(sources), len(references), len(threads), result['commit_sha'][:8],
+            'Research data published: %s sources, %s links, %s threads. Commit: %s',
+            len(sources), len(links), len(threads), result['commit_sha'][:8],
         )
     else:
         logger.error('Research data publish failed: %s', result['error'])

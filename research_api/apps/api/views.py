@@ -4,13 +4,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from apps.mentions.models import MentionStatus, Webmention
-from apps.research.models import ContentReference, ResearchThread, Source
+from apps.research.models import ResearchThread, Source, SourceLink
 from apps.research.services import get_backlinks
 
 from .serializers import (
-    ContentReferenceSerializer,
     ResearchThreadListSerializer,
     ResearchThreadSerializer,
+    SourceLinkSerializer,
     SourceSerializer,
     WebmentionSerializer,
 )
@@ -22,7 +22,7 @@ class SourceViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
     def get_queryset(self):
-        qs = Source.objects.annotate(content_count=Count('references'))
+        qs = Source.objects.public().annotate(link_count=Count('links'))
         source_type = self.request.query_params.get('type')
         if source_type:
             qs = qs.filter(source_type=source_type)
@@ -32,12 +32,12 @@ class SourceViewSet(viewsets.ReadOnlyModelViewSet):
         return qs
 
 
-class ContentReferenceViewSet(viewsets.ReadOnlyModelViewSet):
-    """Public read-only API for content references (source citations)."""
-    serializer_class = ContentReferenceSerializer
+class SourceLinkViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public read-only API for source links (source citations)."""
+    serializer_class = SourceLinkSerializer
 
     def get_queryset(self):
-        qs = ContentReference.objects.select_related('source')
+        qs = SourceLink.objects.select_related('source').filter(source__public=True)
         content_type = self.request.query_params.get('content_type')
         content_slug = self.request.query_params.get('content_slug')
         if content_type:
@@ -52,11 +52,11 @@ class ResearchThreadViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
     def get_queryset(self):
-        qs = ResearchThread.objects.annotate(entry_count=Count('entries'))
+        qs = ResearchThread.objects.public().annotate(entry_count=Count('entries'))
         status = self.request.query_params.get('status')
         if status:
             qs = qs.filter(status=status)
-        return qs.prefetch_related('entries__sources')
+        return qs.prefetch_related('entries__source')
 
     def get_serializer_class(self):
         if self.action == 'list':

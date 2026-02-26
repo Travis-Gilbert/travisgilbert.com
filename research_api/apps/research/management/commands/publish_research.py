@@ -7,10 +7,9 @@ Usage:
 """
 
 from django.core.management.base import BaseCommand
-from django.db.models import Count
 
 from apps.publisher.publish import publish_all
-from apps.research.models import ContentReference, ResearchThread, Source
+from apps.research.models import ResearchThread, Source, SourceLink
 
 
 class Command(BaseCommand):
@@ -24,12 +23,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        sources = Source.objects.count()
-        references = ContentReference.objects.count()
-        threads = ResearchThread.objects.count()
+        sources = Source.objects.public().count()
+        links = SourceLink.objects.filter(source__public=True).count()
+        threads = ResearchThread.objects.public().count()
 
         self.stdout.write(
-            f'Found {sources} sources, {references} references, {threads} threads.'
+            f'Found {sources} public sources, {links} links, {threads} public threads.'
         )
 
         if options['dry_run']:

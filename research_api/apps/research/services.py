@@ -2,13 +2,13 @@
 Backlink computation service.
 
 Backlinks are computed, not stored. Two content pieces are backlinked
-when they share at least one Source via ContentReference. This avoids
+when they share at least one Source via SourceLink. This avoids
 synchronization overhead for a small-scale personal site.
 """
 
 from collections import defaultdict
 
-from .models import ContentReference
+from .models import SourceLink
 
 
 def get_backlinks(content_type, content_slug):
@@ -18,7 +18,7 @@ def get_backlinks(content_type, content_slug):
     Returns a list of dicts:
         [
             {
-                "content_type": "field-note",
+                "content_type": "field_note",
                 "content_slug": "walkability-audit",
                 "content_title": "Walkability Audit",
                 "shared_sources": [
@@ -28,9 +28,9 @@ def get_backlinks(content_type, content_slug):
             ...
         ]
     """
-    # Step 1: Find all source IDs referenced by this content
+    # Step 1: Find all source IDs linked to this content
     my_source_ids = set(
-        ContentReference.objects.filter(
+        SourceLink.objects.filter(
             content_type=content_type,
             content_slug=content_slug,
         ).values_list('source_id', flat=True)
@@ -39,10 +39,10 @@ def get_backlinks(content_type, content_slug):
     if not my_source_ids:
         return []
 
-    # Step 2: Find other ContentReferences that share those sources,
+    # Step 2: Find other SourceLinks that share those sources,
     # excluding the content piece itself
-    shared_refs = (
-        ContentReference.objects
+    shared_links = (
+        SourceLink.objects
         .filter(source_id__in=my_source_ids)
         .exclude(content_type=content_type, content_slug=content_slug)
         .select_related('source')
@@ -56,15 +56,15 @@ def get_backlinks(content_type, content_slug):
         'shared_sources': [],
     })
 
-    for ref in shared_refs:
-        key = (ref.content_type, ref.content_slug)
+    for link in shared_links:
+        key = (link.content_type, link.content_slug)
         entry = backlinks[key]
-        entry['content_type'] = ref.content_type
-        entry['content_slug'] = ref.content_slug
-        entry['content_title'] = ref.content_title
+        entry['content_type'] = link.content_type
+        entry['content_slug'] = link.content_slug
+        entry['content_title'] = link.content_title
         entry['shared_sources'].append({
-            'source_id': ref.source_id,
-            'source_title': ref.source.title,
+            'source_id': link.source_id,
+            'source_title': link.source.title,
         })
 
     return list(backlinks.values())
@@ -77,40 +77,40 @@ def get_all_backlinks():
     Returns a dict keyed by "content_type:content_slug":
         {
             "essay:housing-crisis": [
-                {"content_type": "field-note", "content_slug": "walkability", ...}
+                {"content_type": "field_note", "content_slug": "walkability", ...}
             ],
             ...
         }
     """
-    # Get all content references with their sources in two queries
-    all_refs = list(
-        ContentReference.objects
+    # Get all source links with their sources in two queries
+    all_links = list(
+        SourceLink.objects
         .select_related('source')
         .order_by('content_type', 'content_slug')
     )
 
-    # Build a mapping: source_id -> list of content pieces referencing it
+    # Build a mapping: source_id -> list of content pieces linking it
     source_to_content = defaultdict(list)
-    for ref in all_refs:
-        source_to_content[ref.source_id].append(ref)
+    for link in all_links:
+        source_to_content[link.source_id].append(link)
 
     # For each content piece, find all other content pieces sharing sources
     graph = defaultdict(lambda: defaultdict(list))
 
-    for source_id, refs in source_to_content.items():
-        if len(refs) < 2:
+    for source_id, links in source_to_content.items():
+        if len(links) < 2:
             continue
-        # Every pair of refs sharing this source creates a bidirectional backlink
-        for i, ref_a in enumerate(refs):
-            for ref_b in refs[i + 1:]:
-                key_a = f'{ref_a.content_type}:{ref_a.content_slug}'
-                key_b = f'{ref_b.content_type}:{ref_b.content_slug}'
+        # Every pair of links sharing this source creates a bidirectional backlink
+        for i, link_a in enumerate(links):
+            for link_b in links[i + 1:]:
+                key_a = f'{link_a.content_type}:{link_a.content_slug}'
+                key_b = f'{link_b.content_type}:{link_b.content_slug}'
                 source_info = {
                     'source_id': source_id,
-                    'source_title': ref_a.source.title,
+                    'source_title': link_a.source.title,
                 }
-                graph[key_a][(ref_b.content_type, ref_b.content_slug)].append(source_info)
-                graph[key_b][(ref_a.content_type, ref_a.content_slug)].append(source_info)
+                graph[key_a][(link_b.content_type, link_b.content_slug)].append(source_info)
+                graph[key_b][(link_a.content_type, link_a.content_slug)].append(source_info)
 
     # Flatten into the output format
     result = {}
