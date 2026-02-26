@@ -22,237 +22,278 @@
         <form method="post" id="content-form" class="editor-form">
             {% csrf_token %}
 
-            <div class="sidebar-header">
+            <div class="editor-form-header">
                 <h2>{% if is_new %}New{% else %}Edit{% endif %} {{ content_type|title }}</h2>
                 {% if not is_new %}
                 <span class="save-indicator" id="save-indicator"></span>
                 {% endif %}
             </div>
 
-            <!-- Title (always first, prominent) -->
-            <div class="field-group field-group-title">
-                {{ form.title }}
-                {% if form.title.errors %}<span class="field-error">{{ form.title.errors.0 }}</span>{% endif %}
-            </div>
+            <div class="editor-fields">
+                <!-- Section: Identity -->
+                <div class="field-section">
+                    <div class="field-group field-group-title">
+                        {{ form.title }}
+                        {% if form.title.errors %}<span class="field-error">{{ form.title.errors.0 }}</span>{% endif %}
+                    </div>
 
-            <!-- Slug -->
-            <div class="field-group">
-                <label for="{{ form.slug.id_for_label }}">Slug</label>
-                {{ form.slug }}
-            </div>
+                    <div class="field-group">
+                        <label for="{{ form.slug.id_for_label }}">Slug</label>
+                        {{ form.slug }}
+                    </div>
 
-            <!-- Date -->
-            <div class="field-group">
-                <label for="{{ form.date.id_for_label }}">Date</label>
-                {{ form.date }}
-            </div>
+                    <div class="field-group">
+                        <label for="{{ form.date.id_for_label }}">Date</label>
+                        {{ form.date }}
+                    </div>
 
-            <!-- Summary/Excerpt/Description (depends on content type) -->
-            {% if form.summary %}
-            <div class="field-group">
-                <label for="{{ form.summary.id_for_label }}">Summary</label>
-                {{ form.summary }}
-                <span class="field-count" data-max="200" data-field="{{ form.summary.id_for_label }}"></span>
-            </div>
-            {% endif %}
-            {% if form.excerpt %}
-            <div class="field-group">
-                <label for="{{ form.excerpt.id_for_label }}">Excerpt</label>
-                {{ form.excerpt }}
-            </div>
-            {% endif %}
-            {% if form.description %}
-            <div class="field-group">
-                <label for="{{ form.description.id_for_label }}">Description</label>
-                {{ form.description }}
-            </div>
-            {% endif %}
+                    {% if form.summary %}
+                    <div class="field-group">
+                        <label for="{{ form.summary.id_for_label }}">Summary</label>
+                        {{ form.summary }}
+                        <span class="field-count" data-max="200" data-field="{{ form.summary.id_for_label }}"></span>
+                    </div>
+                    {% endif %}
+                    {% if form.excerpt %}
+                    <div class="field-group">
+                        <label for="{{ form.excerpt.id_for_label }}">Excerpt</label>
+                        {{ form.excerpt }}
+                    </div>
+                    {% endif %}
+                    {% if form.description %}
+                    <div class="field-group">
+                        <label for="{{ form.description.id_for_label }}">Description</label>
+                        {{ form.description }}
+                    </div>
+                    {% endif %}
+                </div>
 
-            <!-- Stage/status dropdown (hidden when pipeline is active, kept for form submission) -->
-            {% if form.stage %}
-            <div class="field-group" {% if stage_choices %}style="display:none"{% endif %}>
-                <label for="{{ form.stage.id_for_label }}">Stage</label>
-                {{ form.stage }}
-            </div>
-            {% endif %}
-            {% if form.status %}
-            <div class="field-group" {% if stage_choices %}style="display:none"{% endif %}>
-                <label for="{{ form.status.id_for_label }}">Status</label>
-                {{ form.status }}
-            </div>
-            {% endif %}
+                <!-- Section: Metadata -->
+                {% if form.stage or form.status or form.category or form.youtube_id or form.thumbnail or form.image or form.role or form.creator or form.type or form.year or form.organization or form.order or form.callout or form.connected_to or form.connected_essay or form.url %}
+                <div class="field-section">
+                    <span class="field-section-label">Details</span>
 
-            <!-- Content-type specific metadata -->
-            {% if form.category %}
-            <div class="field-group">
-                <label for="{{ form.category.id_for_label }}">Category</label>
-                {{ form.category }}
-            </div>
-            {% endif %}
-            {% if form.youtube_id %}
-            <div class="field-group">
-                <label for="{{ form.youtube_id.id_for_label }}">YouTube ID</label>
-                {{ form.youtube_id }}
-            </div>
-            {% endif %}
-            {% if form.thumbnail %}
-            <div class="field-group">
-                <label for="{{ form.thumbnail.id_for_label }}">Thumbnail</label>
-                {{ form.thumbnail }}
-            </div>
-            {% endif %}
-            {% if form.image %}
-            <div class="field-group">
-                <label for="{{ form.image.id_for_label }}">Image</label>
-                {{ form.image }}
-            </div>
-            {% endif %}
-            {% if form.role %}
-            <div class="field-group">
-                <label for="{{ form.role.id_for_label }}">Role</label>
-                {{ form.role }}
-            </div>
-            {% endif %}
-            {% if form.creator %}
-            <div class="field-group">
-                <label for="{{ form.creator.id_for_label }}">Creator</label>
-                {{ form.creator }}
-            </div>
-            {% endif %}
-            {% if form.type %}
-            <div class="field-group">
-                <label for="{{ form.type.id_for_label }}">Type</label>
-                {{ form.type }}
-            </div>
-            {% endif %}
-            {% if form.year %}
-            <div class="field-group">
-                <label for="{{ form.year.id_for_label }}">Year</label>
-                {{ form.year }}
-            </div>
-            {% endif %}
-            {% if form.organization %}
-            <div class="field-group">
-                <label for="{{ form.organization.id_for_label }}">Organization</label>
-                {{ form.organization }}
-            </div>
-            {% endif %}
-            {% if form.order %}
-            <div class="field-group">
-                <label for="{{ form.order.id_for_label }}">Sort Order</label>
-                {{ form.order }}
-            </div>
-            {% endif %}
-            {% if form.callout %}
-            <div class="field-group">
-                <label for="{{ form.callout.id_for_label }}">Callout</label>
-                {{ form.callout }}
-                <span class="field-hint">Supports <code>[link text](url)</code> for hyperlinks</span>
-            </div>
-            {% endif %}
-            {% if form.connected_to %}
-            <div class="field-group">
-                <label for="{{ form.connected_to.id_for_label }}">Connected To</label>
-                {{ form.connected_to }}
-            </div>
-            {% endif %}
-            {% if form.connected_essay %}
-            <div class="field-group">
-                <label for="{{ form.connected_essay.id_for_label }}">Connected Essay</label>
-                {{ form.connected_essay }}
-            </div>
-            {% endif %}
-            {% if form.url %}
-            <div class="field-group">
-                <label for="{{ form.url.id_for_label }}">URL</label>
-                {{ form.url }}
-            </div>
-            {% endif %}
+                    {% if form.stage %}
+                    <div class="field-group" {% if stage_choices %}style="display:none"{% endif %}>
+                        <label for="{{ form.stage.id_for_label }}">Stage</label>
+                        {{ form.stage }}
+                    </div>
+                    {% endif %}
+                    {% if form.status %}
+                    <div class="field-group" {% if stage_choices %}style="display:none"{% endif %}>
+                        <label for="{{ form.status.id_for_label }}">Status</label>
+                        {{ form.status }}
+                    </div>
+                    {% endif %}
 
-            <!-- Tags (comma-separated input via TagsWidget) -->
-            {% if form.tags %}
-            <div class="field-group">
-                <label for="{{ form.tags.id_for_label }}">Tags</label>
-                {{ form.tags }}
-                <span class="field-hint">Comma-separated</span>
-            </div>
-            {% endif %}
+                    {% if form.category %}
+                    <div class="field-group">
+                        <label for="{{ form.category.id_for_label }}">Category</label>
+                        {{ form.category }}
+                    </div>
+                    {% endif %}
+                    {% if form.youtube_id %}
+                    <div class="field-group">
+                        <label for="{{ form.youtube_id.id_for_label }}">YouTube ID</label>
+                        {{ form.youtube_id }}
+                    </div>
+                    {% endif %}
+                    {% if form.thumbnail %}
+                    <div class="field-group">
+                        <label for="{{ form.thumbnail.id_for_label }}">Thumbnail</label>
+                        {{ form.thumbnail }}
+                    </div>
+                    {% endif %}
+                    {% if form.image %}
+                    <div class="field-group">
+                        <label for="{{ form.image.id_for_label }}">Image</label>
+                        {{ form.image }}
+                    </div>
+                    {% endif %}
+                    {% if form.role %}
+                    <div class="field-group">
+                        <label for="{{ form.role.id_for_label }}">Role</label>
+                        {{ form.role }}
+                    </div>
+                    {% endif %}
+                    {% if form.creator %}
+                    <div class="field-group">
+                        <label for="{{ form.creator.id_for_label }}">Creator</label>
+                        {{ form.creator }}
+                    </div>
+                    {% endif %}
+                    {% if form.type %}
+                    <div class="field-group">
+                        <label for="{{ form.type.id_for_label }}">Type</label>
+                        {{ form.type }}
+                    </div>
+                    {% endif %}
+                    {% if form.year %}
+                    <div class="field-group">
+                        <label for="{{ form.year.id_for_label }}">Year</label>
+                        {{ form.year }}
+                    </div>
+                    {% endif %}
+                    {% if form.organization %}
+                    <div class="field-group">
+                        <label for="{{ form.organization.id_for_label }}">Organization</label>
+                        {{ form.organization }}
+                    </div>
+                    {% endif %}
+                    {% if form.order %}
+                    <div class="field-group">
+                        <label for="{{ form.order.id_for_label }}">Sort Order</label>
+                        {{ form.order }}
+                    </div>
+                    {% endif %}
+                    {% if form.callout %}
+                    <div class="field-group">
+                        <label for="{{ form.callout.id_for_label }}">Callout</label>
+                        {{ form.callout }}
+                        <span class="field-hint">Supports <code>[link text](url)</code> for hyperlinks</span>
+                    </div>
+                    {% endif %}
+                    {% if form.connected_to %}
+                    <div class="field-group">
+                        <label for="{{ form.connected_to.id_for_label }}">Connected To</label>
+                        {{ form.connected_to }}
+                    </div>
+                    {% endif %}
+                    {% if form.connected_essay %}
+                    <div class="field-group">
+                        <label for="{{ form.connected_essay.id_for_label }}">Connected Essay</label>
+                        {{ form.connected_essay }}
+                    </div>
+                    {% endif %}
+                    {% if form.url %}
+                    <div class="field-group">
+                        <label for="{{ form.url.id_for_label }}">URL</label>
+                        {{ form.url }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
-            <!-- JSON object fields (structured data via StructuredListWidget) -->
-            {% if form.sources %}
-            <div class="field-group">
-                <label>Sources</label>
-                {{ form.sources }}
-            </div>
-            {% endif %}
-            {% if form.urls %}
-            <div class="field-group">
-                <label>Project URLs</label>
-                {{ form.urls }}
-            </div>
-            {% endif %}
-            {% if form.related %}
-            <div class="field-group">
-                <label for="{{ form.related.id_for_label }}">Related</label>
-                {{ form.related }}
-                <span class="field-hint">Comma-separated essay slugs</span>
-            </div>
-            {% endif %}
-            {% if form.callouts %}
-            <div class="field-group">
-                <label>Callouts</label>
-                {{ form.callouts }}
-            </div>
-            {% endif %}
-            {% if form.annotations %}
-            <div class="field-group">
-                <label>Annotations</label>
-                {{ form.annotations }}
-            </div>
-            {% endif %}
+                <!-- Section: Taxonomy and Relations -->
+                {% if form.tags or form.related %}
+                <div class="field-section">
+                    <span class="field-section-label">Taxonomy</span>
 
-            <!-- Composition (per-instance visual overrides) -->
-            {% if form.composition %}
-            <div class="field-group">
-                <label for="{{ form.composition.id_for_label }}">Composition</label>
-                {{ form.composition }}
-                <span class="field-hint">Visual overrides (JSON)</span>
-            </div>
-            {% endif %}
+                    {% if form.tags %}
+                    <div class="field-group">
+                        <label for="{{ form.tags.id_for_label }}">Tags</label>
+                        {{ form.tags }}
+                        <span class="field-hint">Comma-separated</span>
+                    </div>
+                    {% endif %}
+                    {% if form.related %}
+                    <div class="field-group">
+                        <label for="{{ form.related.id_for_label }}">Related</label>
+                        {{ form.related }}
+                        <span class="field-hint">Comma-separated essay slugs</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
-            <!-- Draft toggle -->
-            {% if form.draft %}
-            <div class="field-group field-group-toggle">
-                <label>
-                    {{ form.draft }}
-                    <span>Draft</span>
-                </label>
-            </div>
-            {% endif %}
-            {% if form.featured %}
-            <div class="field-group field-group-toggle">
-                <label>
-                    {{ form.featured }}
-                    <span>Featured</span>
-                </label>
-            </div>
-            {% endif %}
+                <!-- Section: Structured Data -->
+                {% if form.sources or form.urls or form.callouts or form.annotations %}
+                <div class="field-section">
+                    <span class="field-section-label">Structured Data</span>
 
-            <!-- Hidden fields (CSRF, etc.) -->
-            {% for field in form.hidden_fields %}
-                {{ field }}
-            {% endfor %}
+                    {% if form.sources %}
+                    <div class="field-group">
+                        <label>Sources</label>
+                        {{ form.sources }}
+                    </div>
+                    {% endif %}
+                    {% if form.urls %}
+                    <div class="field-group">
+                        <label>Project URLs</label>
+                        {{ form.urls }}
+                    </div>
+                    {% endif %}
+                    {% if form.callouts %}
+                    <div class="field-group">
+                        <label>Callouts</label>
+                        {{ form.callouts }}
+                    </div>
+                    {% endif %}
+                    {% if form.annotations %}
+                    <div class="field-group">
+                        <label>Annotations</label>
+                        {{ form.annotations }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
-            <!-- Form errors not tied to specific fields -->
-            {% if form.non_field_errors %}
-            <div class="form-errors">
-                {% for error in form.non_field_errors %}
-                <p class="field-error">{{ error }}</p>
+                <!-- Section: Advanced -->
+                {% if form.composition or form.draft or form.featured %}
+                <div class="field-section">
+                    {% if form.composition %}
+                    <div class="field-group">
+                        <label for="{{ form.composition.id_for_label }}">Composition</label>
+                        {{ form.composition }}
+                        <span class="field-hint">Visual overrides (JSON)</span>
+                    </div>
+                    {% endif %}
+
+                    {% if form.draft %}
+                    <div class="field-group field-group-toggle">
+                        <label>
+                            {{ form.draft }}
+                            <span>Draft</span>
+                        </label>
+                    </div>
+                    {% endif %}
+                    {% if form.featured %}
+                    <div class="field-group field-group-toggle">
+                        <label>
+                            {{ form.featured }}
+                            <span>Featured</span>
+                        </label>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Hidden fields (CSRF, etc.) -->
+                {% for field in form.hidden_fields %}
+                    {{ field }}
                 {% endfor %}
-            </div>
-            {% endif %}
 
-            <!-- Action buttons -->
+                <!-- Form errors not tied to specific fields -->
+                {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {% for error in form.non_field_errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Publish history -->
+                {% if recent_publishes %}
+                <div class="publish-history">
+                    <h3>Publish History</h3>
+                    <ul>
+                        {% for log in recent_publishes %}
+                        <li class="{% if log.success %}publish-success{% else %}publish-fail{% endif %}">
+                            {{ log.created_at|date:"M j, g:i A" }}
+                            {% if log.success %} OK{% else %} FAILED{% endif %}
+                            {% if log.commit_url %}
+                            <a href="{{ log.commit_url }}" target="_blank" rel="noopener">
+                                {{ log.commit_sha|truncatechars:7 }}
+                            </a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Action buttons (sticky footer) -->
             <div class="sidebar-actions">
                 <button type="submit" class="btn btn-primary">
                     {% if is_new %}Create{% else %}Save{% endif %}
@@ -270,26 +311,6 @@
                 </button>
                 {% endif %}
             </div>
-
-            <!-- Publish history -->
-            {% if recent_publishes %}
-            <div class="publish-history">
-                <h3>Publish History</h3>
-                <ul>
-                    {% for log in recent_publishes %}
-                    <li class="{% if log.success %}publish-success{% else %}publish-fail{% endif %}">
-                        {{ log.created_at|date:"M j, g:i A" }}
-                        {% if log.success %} OK{% else %} FAILED{% endif %}
-                        {% if log.commit_url %}
-                        <a href="{{ log.commit_url }}" target="_blank" rel="noopener">
-                            {{ log.commit_sha|truncatechars:7 }}
-                        </a>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
         </form>
 
         <!-- Delete (outside the main form to prevent accidental submission) -->
@@ -310,27 +331,26 @@
 
     <!-- Main writing area -->
     <section class="editor-writing-area">
-        <!-- Markdown toolbar -->
         {% if form.body or form.annotation %}
-        <div class="editor-toolbar" id="editor-toolbar">
-            <button type="button" class="toolbar-btn" data-action="bold" title="Bold (Cmd+B)"><strong>B</strong></button>
-            <button type="button" class="toolbar-btn" data-action="italic" title="Italic (Cmd+I)"><em>I</em></button>
-            <span class="toolbar-sep"></span>
-            <button type="button" class="toolbar-btn" data-action="h2" title="Heading 2">H2</button>
-            <button type="button" class="toolbar-btn" data-action="h3" title="Heading 3">H3</button>
-            <button type="button" class="toolbar-btn" data-action="h4" title="Heading 4">H4</button>
-            <span class="toolbar-sep"></span>
-            <button type="button" class="toolbar-btn" data-action="rule" title="Horizontal rule">&mdash;</button>
-            <button type="button" class="toolbar-btn" data-action="ul" title="Unordered list">&bull;</button>
-            <button type="button" class="toolbar-btn" data-action="ol" title="Ordered list">1.</button>
-            <button type="button" class="toolbar-btn" data-action="blockquote" title="Blockquote">&ldquo;</button>
-            <span class="toolbar-sep"></span>
-            <button type="button" class="toolbar-btn" data-action="code" title="Code">&lt;&gt;</button>
-            <button type="button" class="toolbar-btn" data-action="link" title="Link (Cmd+K)">&#128279;</button>
-        </div>
-        {% endif %}
-
         <div class="writing-surface">
+            <!-- Markdown toolbar -->
+            <div class="editor-toolbar" id="editor-toolbar">
+                <button type="button" class="toolbar-btn" data-action="bold" title="Bold (Cmd+B)"><strong>B</strong></button>
+                <button type="button" class="toolbar-btn" data-action="italic" title="Italic (Cmd+I)"><em>I</em></button>
+                <span class="toolbar-sep"></span>
+                <button type="button" class="toolbar-btn" data-action="h2" title="Heading 2">H2</button>
+                <button type="button" class="toolbar-btn" data-action="h3" title="Heading 3">H3</button>
+                <button type="button" class="toolbar-btn" data-action="h4" title="Heading 4">H4</button>
+                <span class="toolbar-sep"></span>
+                <button type="button" class="toolbar-btn" data-action="rule" title="Horizontal rule">&mdash;</button>
+                <button type="button" class="toolbar-btn" data-action="ul" title="Unordered list">&bull;</button>
+                <button type="button" class="toolbar-btn" data-action="ol" title="Ordered list">1.</button>
+                <button type="button" class="toolbar-btn" data-action="blockquote" title="Blockquote">&ldquo;</button>
+                <span class="toolbar-sep"></span>
+                <button type="button" class="toolbar-btn" data-action="code" title="Code">&lt;&gt;</button>
+                <button type="button" class="toolbar-btn" data-action="link" title="Link (Cmd+K)">&#128279;</button>
+            </div>
+
             <label for="editor-body" class="sr-only">Body</label>
             {% if form.body %}
                 {{ form.body }}
@@ -338,6 +358,7 @@
                 {{ form.annotation }}
             {% endif %}
         </div>
+        {% endif %}
     </section>
 </div>
 

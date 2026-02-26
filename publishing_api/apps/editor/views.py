@@ -196,7 +196,7 @@ class EssayEditView(LoginRequiredMixin, UpdateView):
             "editor:set-stage",
             kwargs={"content_type": "essay", "slug": self.object.slug},
         )
-        ctx["stage_choices"] = self.object.stage_list
+        ctx["stage_choices"] = json.dumps(self.object.stage_list)
         ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="essay", content_slug=self.object.slug
@@ -277,7 +277,7 @@ class FieldNoteEditView(LoginRequiredMixin, UpdateView):
             "editor:set-stage",
             kwargs={"content_type": "field-note", "slug": self.object.slug},
         )
-        ctx["stage_choices"] = self.object.stage_list
+        ctx["stage_choices"] = json.dumps(self.object.stage_list)
         ctx["current_stage"] = self.object.status
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="field_note", content_slug=self.object.slug
@@ -356,7 +356,7 @@ class ShelfEditView(LoginRequiredMixin, UpdateView):
             "editor:set-stage",
             kwargs={"content_type": "shelf", "slug": self.object.slug},
         )
-        ctx["stage_choices"] = self.object.stage_list
+        ctx["stage_choices"] = json.dumps(self.object.stage_list)
         ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="shelf", content_slug=self.object.slug
@@ -435,7 +435,7 @@ class ProjectEditView(LoginRequiredMixin, UpdateView):
             "editor:set-stage",
             kwargs={"content_type": "project", "slug": self.object.slug},
         )
-        ctx["stage_choices"] = self.object.stage_list
+        ctx["stage_choices"] = json.dumps(self.object.stage_list)
         ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="project", content_slug=self.object.slug
@@ -514,7 +514,7 @@ class ToolkitEditView(LoginRequiredMixin, UpdateView):
             "editor:set-stage",
             kwargs={"content_type": "toolkit", "slug": self.object.slug},
         )
-        ctx["stage_choices"] = self.object.stage_list
+        ctx["stage_choices"] = json.dumps(self.object.stage_list)
         ctx["current_stage"] = self.object.stage
         ctx["recent_publishes"] = PublishLog.objects.filter(
             content_type="toolkit", content_slug=self.object.slug

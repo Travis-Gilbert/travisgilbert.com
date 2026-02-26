@@ -523,17 +523,38 @@ a:hover {
 
 /* ─── Editor Layout ─────────────────────────── */
 
-.editor-layout {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 0;
-    min-height: calc(100vh - 96px);
-    margin: -2rem;
+/* When the editor is active, let it fill the whole main area */
+.studio-main:has(.editor-layout) {
+    padding: 0;
+    max-width: none;
+    overflow: visible;
 }
 
-@media (max-width: 900px) {
+.editor-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    min-height: 100vh;
+}
+
+@media (max-width: 960px) {
     .editor-layout {
         grid-template-columns: 1fr;
+    }
+
+    .editor-sidebar {
+        position: static;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--studio-border);
+    }
+
+    .editor-fields {
+        max-height: 50vh;
+    }
+
+    .editor-writing-area {
+        padding: 1.5rem 1rem 2rem;
     }
 }
 
@@ -542,21 +563,26 @@ a:hover {
 .editor-sidebar {
     background: var(--studio-sidebar-bg);
     border-right: 1px solid var(--studio-border);
-    padding: 1.5rem;
+    padding: 0;
     overflow-y: auto;
-    max-height: calc(100vh - 96px);
+    max-height: 100vh;
     position: sticky;
-    top: 96px;
+    top: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-.sidebar-header {
+/* Namespaced: editor form header (not the nav sidebar brand) */
+.editor-form-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.25rem;
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--studio-border);
+    flex-shrink: 0;
 }
 
-.sidebar-header h2 {
+.editor-form-header h2 {
     font-family: var(--font-writing);
     font-size: 1.125rem;
     font-weight: 400;
@@ -570,8 +596,42 @@ a:hover {
     letter-spacing: 0.05em;
 }
 
+/* Form must flex-fill to enable header/fields/actions layout */
+.editor-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0; /* required for nested flex overflow */
+}
+
+/* Scrollable form fields region */
+.editor-fields {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--studio-border) transparent;
+}
+
+.editor-fields::-webkit-scrollbar {
+    width: 6px;
+}
+
+.editor-fields::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.editor-fields::-webkit-scrollbar-thumb {
+    background: var(--studio-border);
+    border-radius: 3px;
+}
+
+.editor-fields::-webkit-scrollbar-thumb:hover {
+    background: var(--studio-text-faint);
+}
+
 .field-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
 }
 
 .field-group label {
@@ -586,7 +646,32 @@ a:hover {
 }
 
 .field-group-title {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Field sections: visual grouping of related fields */
+.field-section {
+    padding-bottom: 0.875rem;
+    margin-bottom: 0.875rem;
+    border-bottom: 1px solid var(--studio-border);
+}
+
+.field-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.field-section-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--studio-text-faint);
+    margin-bottom: 0.625rem;
+    padding-bottom: 0.375rem;
 }
 
 .field-group-toggle label {
@@ -640,6 +725,7 @@ a:hover {
 .field-date:focus,
 .field-context:focus {
     border-color: var(--studio-text-muted);
+    box-shadow: 0 0 0 2px rgba(42, 40, 36, 0.04);
 }
 
 .field-slug {
@@ -663,6 +749,7 @@ a:hover {
 
 .field-summary:focus {
     border-color: var(--studio-text-muted);
+    box-shadow: 0 0 0 2px rgba(42, 40, 36, 0.04);
 }
 
 .field-count {
@@ -698,32 +785,39 @@ select.field-meta {
     cursor: pointer;
 }
 
-/* ─── Sidebar Actions ───────────────────────── */
+/* ─── Sidebar Actions (sticky footer) ────────── */
 
 .sidebar-actions {
     display: flex;
     gap: 0.75rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
+    padding: 1rem 1.5rem;
     border-top: 1px solid var(--studio-border);
+    background: var(--studio-sidebar-bg);
+    flex-shrink: 0;
 }
 
-.sidebar-actions .btn-publish {
+.sidebar-actions .btn {
     flex: 1;
+    justify-content: center;
 }
 
 /* ─── Writing Area ──────────────────────────── */
 
 .editor-writing-area {
-    background: var(--studio-surface);
+    background: var(--studio-bg);
     display: flex;
     justify-content: center;
-    padding: 3rem 2rem;
+    padding: 2.5rem 2rem 3rem;
 }
 
 .writing-surface {
     width: 100%;
     max-width: 680px;
+    border: 1px solid var(--studio-border);
+    border-radius: 6px;
+    background: #FFFFFF;
+    box-shadow: 0 1px 4px rgba(42, 40, 36, 0.06), 0 0 0 1px rgba(42, 40, 36, 0.02);
+    overflow: hidden;
 }
 
 .field-body {
@@ -737,7 +831,7 @@ select.field-meta {
     line-height: 1.75;
     color: var(--studio-text);
     background: transparent;
-    padding: 0;
+    padding: 1.25rem 1.5rem;
 }
 
 .field-body::placeholder {
@@ -865,43 +959,12 @@ select.field-meta {
     margin-bottom: 0.25rem;
 }
 
-/* ─── Publish Toast ─────────────────────────── */
-
-.publish-toast {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: var(--studio-radius);
-    font-size: 0.875rem;
-    font-weight: 500;
-    box-shadow: var(--studio-shadow-lg);
-    z-index: 1000;
-    transition: opacity 0.3s;
-}
-
-.publish-toast a {
-    color: inherit;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    text-decoration: underline;
-}
-
-.publish-toast-success {
-    background: var(--studio-success);
-    color: #FFFFFF;
-}
-
-.publish-toast-error {
-    background: var(--studio-error);
-    color: #FFFFFF;
-}
 
 /* ─── Publish History ───────────────────────── */
 
 .publish-history {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
+    margin-top: 0.5rem;
+    padding-top: 0.875rem;
     border-top: 1px solid var(--studio-border);
 }
 
@@ -1037,6 +1100,7 @@ select.field-meta {
 
 .field-tags:focus {
     border-color: var(--studio-text-muted);
+    box-shadow: 0 0 0 2px rgba(42, 40, 36, 0.04);
 }
 
 .field-json {
@@ -1059,6 +1123,7 @@ select.field-meta {
 
 .field-json:focus {
     border-color: var(--studio-text-muted);
+    box-shadow: 0 0 0 2px rgba(42, 40, 36, 0.04);
 }
 
 .field-error-highlight {
@@ -1181,12 +1246,9 @@ select.field-meta {
     display: flex;
     align-items: center;
     gap: 2px;
-    padding: 0.375rem 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-bottom: 1px solid var(--studio-border);
     background: var(--studio-surface);
-    width: 100%;
-    max-width: 680px;
-    margin-bottom: 1rem;
 }
 
 .toolbar-btn {
@@ -1228,9 +1290,9 @@ select.field-meta {
 /* ─── Delete Section ───────────────────────── */
 
 .sidebar-delete {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
+    padding: 0.75rem 1.5rem;
     border-top: 1px solid var(--studio-border);
+    flex-shrink: 0;
 }
 
 .delete-confirm {
