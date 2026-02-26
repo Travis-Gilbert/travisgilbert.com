@@ -17,6 +17,7 @@ import { ArticleJsonLd } from '@/components/JsonLd';
 import EssayHero from '@/components/EssayHero';
 import { computeConnections, positionConnections } from '@/lib/connectionEngine';
 import type { AllContent } from '@/lib/connectionEngine';
+import ResearchTrail from '@/components/research/ResearchTrail';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -185,6 +186,10 @@ export default async function EssayDetailPage({ params }: Props) {
           />
         </>
       )}
+
+      {/* Research Trail: fetches from research API, renders nothing if empty */}
+      <RoughLine />
+      <ResearchTrail slug={slug} />
 
       {(() => {
         const connectedNotes = allFieldNotes.filter(

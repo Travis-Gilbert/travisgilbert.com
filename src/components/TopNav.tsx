@@ -80,7 +80,7 @@ export default function TopNav() {
   }, [pathname, closeMobile]);
 
   return (
-    <nav aria-label="Main navigation" className="sticky top-0 z-50 bg-paper/95 backdrop-blur-sm border-b border-border">
+    <nav aria-label="Main navigation" className="sticky top-0 z-50 backdrop-blur-sm border-b border-border" style={{ backgroundColor: 'color-mix(in srgb, var(--color-nav-bg) 95%, transparent)' }}>
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Site title */}
         <Link

@@ -12,6 +12,7 @@
   --color-bg-alt: #E8E0D6;
   --color-card: #F4EFE8;           /* alias → surface */
   --color-code: #E8E0D6;           /* alias → bg-alt */
+  --color-nav-bg: #F0EBE4;         /* nav: matches paper in light, hero-ground in dark */
 
   /* Text */
   --color-ink: #2A2420;
@@ -95,6 +96,7 @@
 html[data-theme="dark"] {
   /* Backgrounds: warm charcoal, not blue-gray */
   --color-paper: #1A1816;
+  --color-nav-bg: #141210;
   --color-surface: #222018;
   --color-bg-alt: #2E2A26;
   --color-card: #222018;
