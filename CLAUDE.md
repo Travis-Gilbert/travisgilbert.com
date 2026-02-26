@@ -12,7 +12,7 @@ Personal "creative workbench" site: a living record of work, interests, and thin
 
 ## Tech Stack
 
-Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rough.js, rough-notation, `next/font` (Google + local), Zod, gray-matter + remark
+Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rough.js, rough-notation, `next/font` (Google + local), Zod, gray-matter + remark, Django 5.x (publishing_api + research_api), DRF
 
 ## Key Directories
 
@@ -41,6 +41,11 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `publishing_api/apps/editor/widgets.py` | Custom form widgets: TagsWidget, SlugListWidget, StructuredListWidget, ColorPickerWidget, JsonObjectListWidget |
 | `publishing_api/apps/editor/context_processors.py` | Injects `studio_nav` context (content types, compose pages, settings links) into all templates |
 | `publishing_api/apps/publisher/github.py` | GitHub Contents API (single file) + Git Trees API (atomic multi-file commits) |
+| `research_api/` | Django research API: source tracking, backlinks, Webmention receiver, DRF read-only API. Sibling service to publishing_api |
+| `research_api/apps/research/` | Source, ContentReference, ResearchThread, ThreadEntry models + backlink computation service |
+| `research_api/apps/mentions/` | Webmention model + W3C webhook receiver |
+| `research_api/apps/api/` | DRF read-only viewsets (sources, references, threads, mentions, backlinks) |
+| `research_api/apps/publisher/` | GitHub API client + JSON serializers + publish orchestrator (commits to `src/data/research/`) |
 
 ## Development Commands
 
@@ -57,6 +62,13 @@ npm run lint       # Run Next.js linter
 python manage.py import_content             # Import all markdown into Django DB
 python manage.py import_content --dry-run   # Parse and report without writing
 python manage.py import_content --type essays  # Import one content type only
+```
+
+```bash
+# Research API (from research_api/)
+python3 manage.py runserver 8001          # Dev server (8001 to avoid conflict with publishing_api)
+python3 manage.py publish_research        # Publish all research data as JSON to Next.js repo
+python3 manage.py publish_research --dry-run  # Preview without committing
 ```
 
 ## Content Workflow
@@ -328,6 +340,8 @@ Components: `SectionLabel` (monospace header), `TagList` (tint prop), `SketchIco
 
 Vercel with native Next.js builder. Git integration auto-deploys on push to `main`. No `vercel.json` needed; Vercel auto-detects Next.js. **Important:** Vercel dashboard Project Settings > Output Directory must be blank/default (not `dist`).
 
+**Django services (Railway):** Both `publishing_api/` and `research_api/` deploy to Railway with PostgreSQL. Each has `railway.toml` (nixpacks builder, migrate + collectstatic + gunicorn start command). Environment variables: `SECRET_KEY`, `DATABASE_URL`, `GITHUB_TOKEN`, `GITHUB_REPO`, `GITHUB_BRANCH`. research_api also needs `WEBMENTION_TARGET_DOMAIN`.
+
 ## Status
 
 Phases 1 through 4 (Foundation, Micro-interactions, Animations, Polish) are **all complete**. See `docs/records/001-site-wide-redesign.md` for full history.
@@ -347,7 +361,9 @@ Key capabilities:
 
 Django check passes (0 issues). Not yet deployed or tested end-to-end.
 
-**Next step:** Deploy publishing_api to Railway, create superuser, test publish pipeline with a draft essay, set `NEXT_PUBLIC_STUDIO_URL` in Vercel.
+**Research API:** Fully scaffolded. Source tracking, backlink engine, Webmention receiver, DRF read-only API, GitHub publisher. Django check passes (0 issues). Publishes static JSON to `src/data/research/`. Not yet deployed.
+
+**Next step:** Deploy both Django services to Railway (publishing_api + research_api), create superusers, test publish pipelines, set `NEXT_PUBLIC_STUDIO_URL` in Vercel.
 
 **Remaining backlog:**
 - Additional content pages and essays (not started)
@@ -362,7 +378,6 @@ Django check passes (0 issues). Not yet deployed or tested end-to-end.
 | UI library | Radix Primitives (not shadcn/ui) | Full custom styling over brand; shadcn opinionated defaults fight the aesthetic |
 | Section color system | terracotta=essays, teal=field-notes, gold=projects | Creates wayfinding language; color tells you where you are on the site |
 | No dashes | Colons, periods, parentheses, semicolons | User style preference; applies to all code, comments, and content |
-| Projects: no RoughBox | Inline rgba tinting with three states | RoughBox's fixed CSS classes can't handle dynamic rest/hover/expanded opacity |
 | Nav restructure | Essays on... / Field Notes / Projects / Toolkit / Shelf / Connect | 6 items; Shelf promoted to top-level nav; Colophon in footer only |
 | Section icons | SketchIcon (hand-drawn SVG) for pages, Phosphor for UI glyphs | Brand identity icons match rough.js aesthetic; utility icons stay crisp |
 | MarginAnnotation approach | Frontmatter array + CSS-only rendering (no Client Component) | Zero JS overhead; `::after` pseudo-elements + `attr()` read data attributes directly |
@@ -377,6 +392,8 @@ Django check passes (0 issues). Not yet deployed or tested end-to-end.
 | Composition JSONField | Added to all content models (Essay, FieldNote, ShelfEntry, Project, ToolkitEntry) | Per-instance visual overrides without schema migration; loose `z.record()` in Zod |
 | Studio three-zone sidebar | Content / Compose / Settings navigation groups | Maps to the three concerns: writing, visual design, site-wide settings |
 | StructuredListWidget | Row-based JSON editing with add/remove/reorder | Replaces raw JSON textarea for nav items, sources, annotations; prevents syntax errors |
+| Backlinks as computed data | `get_backlinks()` derives from ContentReference joins (no Backlink model) | Avoids sync overhead; cheap for single-user scale; backlink graph published as static JSON |
+| research_api: admin as authoring UI | Django admin with rich fieldsets and inlines (no custom Studio editor) | Simpler than publishing_api's HTMX Studio; source tracking is data entry, not content editing |
 
 ## Gotchas
 
@@ -416,3 +433,6 @@ Django check passes (0 issues). Not yet deployed or tested end-to-end.
 - **site.json must be valid JSON or getSiteConfig() falls back silently**: Zod `.safeParse()` returns `DEFAULT_CONFIG` on any parse failure. Check server logs if config changes aren't appearing
 - **Composition field is `z.record(z.unknown()).optional()`**: Intentionally loose typing so Django can evolve composition schemas without requiring Next.js Zod changes. Consumers must validate the shape they expect
 - **ToolkitEntry has no date field**: Unlike other content types, toolkit entries use `category` + `order` for organization. The `_parse_toolkit` function defaults `stage` to `"published"` because existing content is already live
+- **`python3 -m pip` required on this machine**: `pip` alone is not found. Use `python3 -m pip install` for all package installs
+- **Two Django services share patterns**: `research_api` mirrors `publishing_api` structure (single `config/settings.py`, `railway.toml`, requirements split, GitHub publisher). When updating one, check if the other needs the same change
+- **research_api publishes to `src/data/research/`**: Four JSON files (sources.json, references.json, threads.json, backlinks.json) committed atomically via Git Trees API. Next.js site reads these at build time
