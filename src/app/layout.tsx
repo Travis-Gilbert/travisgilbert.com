@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import ConsoleEasterEgg from '@/components/ConsoleEasterEgg';
 import StudioShortcut from '@/components/StudioShortcut';
 import ArchitectureEasterEgg from '@/components/ArchitectureEasterEgg';
+import DesignLanguageEasterEgg from '@/components/DesignLanguageEasterEgg';
 import { PersonJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 import { getCollection } from '@/lib/content';
 import type { Essay, FieldNote, Project } from '@/lib/content';
@@ -78,6 +79,7 @@ export default function RootLayout({
         />
         <StudioShortcut />
         <ArchitectureEasterEgg />
+        <DesignLanguageEasterEgg />
       </body>
     </html>
   );
