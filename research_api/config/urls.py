@@ -3,19 +3,6 @@ from django.http import JsonResponse
 from django.urls import path, include
 
 
-def api_root(request):
-    """Root endpoint: service info and available endpoints."""
-    return JsonResponse({
-        'service': 'travisgilbert.me research API',
-        'version': 'v1',
-        'endpoints': {
-            'api': '/api/v1/',
-            'health': '/health/',
-            'admin': '/admin/',
-        },
-    })
-
-
 def health_check(request):
     """Health check for Railway and monitoring."""
     from django.db import connection
@@ -36,6 +23,5 @@ urlpatterns = [
     path('api/v1/', include('apps.api.urls', namespace='api')),
     path('webhooks/', include('apps.mentions.urls', namespace='mentions')),
     path('health/', health_check, name='health-check'),
-    path('trail/', include('apps.paper_trail.urls')),
-    path('', api_root, name='api-root'),
+    path('', include('apps.paper_trail.urls')),
 ]
