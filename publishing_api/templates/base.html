@@ -25,23 +25,23 @@
             border-r border-white/5
             z-40
         ">
-            <div class="px-5 pt-5 pb-4">
+            <div class="px-5 pt-6 pb-5">
                 <a
                     href="{% url 'editor:dashboard' %}"
                     class="
-                        font-title text-xl font-bold text-cream
+                        font-title text-[32px] font-bold text-cream
                         no-underline hover:text-white
-                        tracking-tight
+                        tracking-tight leading-none block
                     "
                 >
-                    Studio
+                    Studio.
                 </a>
             </div>
 
             <nav class="flex-1 overflow-y-auto px-3 space-y-5">
                 {# Zone 1: Make Stuff #}
                 <div>
-                    <c-section_label color="terracotta" class="px-2 mb-2">Make Stuff</c-section_label>
+                    <c-section_label color="terracotta" class="px-2 mb-2" size="text-[13px]">Make Stuff</c-section_label>
                     <a href="{% url 'editor:essay-list' %}"
                        class="
                            flex items-center justify-between
@@ -135,7 +135,7 @@
 
                 {# Zone 2: Compose #}
                 <div>
-                    <c-section_label color="gold" class="px-2 mb-2">Compose</c-section_label>
+                    <c-section_label color="gold" class="px-2 mb-2" size="text-[13px]">Compose</c-section_label>
                     <a href="{% url 'editor:compose-list' %}"
                        class="
                            flex items-center justify-between

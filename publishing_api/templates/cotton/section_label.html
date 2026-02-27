@@ -9,7 +9,7 @@
   ></div>
   <span
     class="
-      font-mono text-label uppercase tracking-widest font-bold
+      font-mono {{ size|default:'text-label' }} uppercase tracking-widest font-bold
       {% if color == 'terracotta' %}text-terracotta{% endif %}
       {% if color == 'teal' %}text-teal{% endif %}
       {% if color == 'gold' %}text-gold{% endif %}
