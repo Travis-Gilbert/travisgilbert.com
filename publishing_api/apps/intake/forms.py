@@ -143,7 +143,3 @@ class MoveForm(forms.Form):
 
     source_id = forms.IntegerField()
     phase = forms.ChoiceField(choices=RawSource.Phase.choices)
-
-
-# Backward compatibility alias (views.py still references old name)
-SourceboxAddForm = CaptureForm
