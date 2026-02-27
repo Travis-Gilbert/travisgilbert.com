@@ -11,11 +11,13 @@ class SourceboxAddForm(forms.Form):
         widget=forms.URLInput(attrs={
             "placeholder": "Paste a URL to add to the Sourcebox...",
             "class": (
-                "w-full bg-white/5 border border-white/10 rounded-brand"
-                " px-4 py-3 text-cream placeholder-cream/40"
-                " font-mono text-sm"
-                " focus:outline-none focus:border-terracotta/50 focus:ring-1 focus:ring-terracotta/30"
-                " transition-colors"
+                "w-full bg-cream border border-border rounded-brand"
+                " px-4 py-[10px] text-ink text-[15px]"
+                " font-body"
+                " placeholder:text-ink-muted placeholder:font-body"
+                " shadow-warm-sm"
+                " outline-none transition-all duration-200"
+                " focus:border-terracotta focus:shadow-[0_0_0_3px_rgba(180,90,45,0.12)]"
             ),
             "autofocus": True,
         }),
@@ -32,10 +34,13 @@ class TriageForm(forms.Form):
             "rows": 2,
             "placeholder": "Optional note...",
             "class": (
-                "w-full bg-white/5 border border-white/10 rounded-brand"
-                " px-3 py-2 text-cream placeholder-cream/40"
-                " font-mono text-xs"
-                " focus:outline-none focus:border-white/20"
+                "w-full bg-cream border border-border rounded-brand"
+                " px-3 py-2 text-ink text-sm"
+                " font-body"
+                " placeholder:text-ink-muted placeholder:font-body"
+                " shadow-warm-sm"
+                " outline-none transition-all duration-200"
+                " focus:border-terracotta focus:shadow-[0_0_0_3px_rgba(180,90,45,0.12)]"
             ),
         }),
     )
