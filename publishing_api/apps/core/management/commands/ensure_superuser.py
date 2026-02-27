@@ -1,9 +1,9 @@
 """
-Create a superuser from environment variables if one does not already exist.
+Ensure a superuser exists with credentials from environment variables.
 
 Reads DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL, and
-DJANGO_SUPERUSER_PASSWORD from the environment. Skips silently
-if any are missing or the username already exists.
+DJANGO_SUPERUSER_PASSWORD from the environment. Creates the user
+if missing, or syncs password and email if the user already exists.
 
 Safe to run on every deploy (idempotent).
 """
@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Create superuser from env vars if none exists (idempotent).'
+    help = 'Ensure superuser from env vars exists with correct credentials.'
 
     def handle(self, *args, **options):
         username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
@@ -30,10 +30,17 @@ class Command(BaseCommand):
             )
             return
 
-        if User.objects.filter(username=username).exists():
-            self.stdout.write(
-                f'Superuser "{username}" already exists, skipping.'
-            )
+        user = User.objects.filter(username=username).first()
+
+        if user:
+            user.set_password(password)
+            user.email = email
+            user.is_staff = True
+            user.is_superuser = True
+            user.save()
+            self.stdout.write(self.style.SUCCESS(
+                f'Superuser "{username}" synced from env vars.'
+            ))
             return
 
         User.objects.create_superuser(
