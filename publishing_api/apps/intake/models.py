@@ -2,8 +2,8 @@
 Intake models for the Sourcebox: URL submission, OG scraping, and triage.
 
 RawSource represents a URL or file submitted for research consideration.
-SuggestedConnection links a RawSource to existing content (essay/field note)
-with a confidence score from the connection engine.
+The connections JSONField stores engine generated connection suggestions
+inline, replacing the former SuggestedConnection model.
 """
 
 from django.db import models
@@ -118,32 +118,3 @@ class RawSource(TimeStampedModel):
     @property
     def is_file(self):
         return self.input_type == self.InputType.FILE
-
-
-class SuggestedConnection(TimeStampedModel):
-    """
-    Engine generated suggestion linking a RawSource to existing content.
-
-    Created by the connection engine management command. Confidence scores
-    range from 0.0 to 1.0. The accepted field is tri state: None (pending),
-    True (accepted), False (rejected).
-    """
-
-    raw_source = models.ForeignKey(
-        RawSource,
-        on_delete=models.CASCADE,
-        related_name="suggested_connections",
-    )
-    content_type = models.CharField(max_length=20)  # essay, field_note
-    content_slug = models.SlugField(max_length=300)
-    content_title = models.CharField(max_length=500, blank=True, default="")
-    confidence = models.FloatField(default=0.0)
-    reason = models.TextField(blank=True, default="")
-    accepted = models.BooleanField(null=True)  # None=pending, True/False=decided
-
-    class Meta:
-        ordering = ["-confidence"]
-
-    def __str__(self):
-        status = {None: "?", True: "+", False: "-"}.get(self.accepted, "?")
-        return f"[{status}] {self.content_slug} ({self.confidence:.0%})"

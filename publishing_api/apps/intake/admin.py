@@ -1,33 +1,22 @@
 from django.contrib import admin
 
-from apps.intake.models import RawSource, SuggestedConnection
-
-
-class SuggestedConnectionInline(admin.TabularInline):
-    model = SuggestedConnection
-    extra = 0
-    readonly_fields = ("content_type", "content_slug", "content_title", "confidence", "reason")
-    fields = ("content_type", "content_slug", "content_title", "confidence", "reason", "accepted")
+from apps.intake.models import RawSource
 
 
 @admin.register(RawSource)
 class RawSourceAdmin(admin.ModelAdmin):
-    list_display = ("display_title", "decision", "og_site_name", "created_at")
-    list_filter = ("decision",)
+    list_display = ("display_title", "phase", "decision", "importance", "og_site_name", "created_at")
+    list_filter = ("phase", "decision", "importance", "scrape_status")
     search_fields = ("url", "og_title", "og_description")
-    readonly_fields = ("og_title", "og_description", "og_image", "og_site_name", "created_at", "updated_at")
-    inlines = [SuggestedConnectionInline]
+    readonly_fields = (
+        "og_title", "og_description", "og_image", "og_site_name",
+        "scrape_status", "created_at", "updated_at",
+    )
 
     fieldsets = (
-        (None, {"fields": ("url", "tags")}),
-        ("OG Metadata", {"fields": ("og_title", "og_description", "og_image", "og_site_name")}),
+        (None, {"fields": ("url", "source_file", "input_type", "phase")}),
+        ("OG Metadata", {"fields": ("og_title", "og_description", "og_image", "og_site_name", "scrape_status")}),
+        ("Enrichment", {"fields": ("importance", "tags", "connections")}),
         ("Triage", {"fields": ("decision", "decision_note", "decided_at", "promoted_source_slug")}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
-
-
-@admin.register(SuggestedConnection)
-class SuggestedConnectionAdmin(admin.ModelAdmin):
-    list_display = ("raw_source", "content_type", "content_slug", "confidence", "accepted")
-    list_filter = ("content_type", "accepted")
-    search_fields = ("content_slug", "content_title", "reason")

@@ -2,7 +2,8 @@
 Management command: match pending RawSources against existing content.
 
 For each pending source, compares tags and keywords against essay and field
-note frontmatter. Creates SuggestedConnection records with confidence scores.
+note frontmatter. Appends connection dicts to the RawSource.connections
+JSONField with confidence scores.
 
 Usage:
     python manage.py run_connection_engine
@@ -16,7 +17,7 @@ from pathlib import Path
 import yaml
 from django.core.management.base import BaseCommand
 
-from apps.intake.models import RawSource, SuggestedConnection
+from apps.intake.models import RawSource
 
 
 class Command(BaseCommand):
@@ -26,7 +27,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--dry-run",
             action="store_true",
-            help="Report matches without creating records.",
+            help="Report matches without saving records.",
         )
         parser.add_argument(
             "--min-confidence",
@@ -64,7 +65,7 @@ class Command(BaseCommand):
         pending = RawSource.objects.filter(decision=RawSource.Decision.PENDING)
         self.stdout.write(f"Found {pending.count()} pending sources")
 
-        created = 0
+        added = 0
         skipped = 0
 
         for source in pending:
@@ -72,12 +73,17 @@ class Command(BaseCommand):
             if not source_terms:
                 continue
 
+            existing_slugs = {
+                c["content_slug"]
+                for c in (source.connections or [])
+                if isinstance(c, dict) and "content_slug" in c
+            }
+            new_connections = list(source.connections or [])
+            source_added = 0
+
             for item in content_items:
-                # Skip if connection already exists
-                if SuggestedConnection.objects.filter(
-                    raw_source=source,
-                    content_slug=item["slug"],
-                ).exists():
+                # Skip if connection already stored
+                if item["slug"] in existing_slugs:
                     skipped += 1
                     continue
 
@@ -86,6 +92,14 @@ class Command(BaseCommand):
                     continue
 
                 reason = self._build_reason(source_terms, item)
+                entry = {
+                    "content_type": item["type"],
+                    "content_slug": item["slug"],
+                    "content_title": item["title"],
+                    "confidence": round(score, 3),
+                    "reason": reason,
+                    "accepted": None,
+                }
 
                 if dry_run:
                     self.stdout.write(
@@ -93,20 +107,22 @@ class Command(BaseCommand):
                         f"{item['type']}:{item['slug']} ({score:.0%})"
                     )
                 else:
-                    SuggestedConnection.objects.create(
-                        raw_source=source,
-                        content_type=item["type"],
-                        content_slug=item["slug"],
-                        content_title=item["title"],
-                        confidence=score,
-                        reason=reason,
-                    )
-                created += 1
+                    new_connections.append(entry)
 
-        action = "Would create" if dry_run else "Created"
+                source_added += 1
+
+            if not dry_run and source_added > 0:
+                # Sort by confidence descending
+                new_connections.sort(key=lambda c: c.get("confidence", 0), reverse=True)
+                source.connections = new_connections
+                source.save(update_fields=["connections", "updated_at"])
+
+            added += source_added
+
+        action = "Would add" if dry_run else "Added"
         self.stdout.write(
             self.style.SUCCESS(
-                f"{action} {created} connections, skipped {skipped} existing"
+                f"{action} {added} connections, skipped {skipped} existing"
             )
         )
 
