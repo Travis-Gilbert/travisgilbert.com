@@ -21,6 +21,7 @@ import CollageHero from '@/components/CollageHero';
 import { computeThreadPairs } from '@/lib/connectionEngine';
 import type { AllContent } from '@/lib/connectionEngine';
 import ThreadLines from '@/components/ThreadLines';
+import ActiveThreads from '@/components/research/ActiveThreads';
 
 export const metadata: Metadata = {
   title: 'Travis Gilbert | Essays, Projects, and Field Notes',
@@ -364,6 +365,16 @@ export default function HomePage() {
           </p>
         </section>
       )}
+
+      {/* ═══════════════════════════════════════════════
+          Currently Researching: Active research threads from the API.
+          Renders nothing if the research API is unreachable or has no
+          active threads, so the homepage degrades gracefully.
+          ═══════════════════════════════════════════════ */}
+      <section className="py-6">
+        <RoughLine label="Currently Researching" labelColor="var(--color-green)" />
+        <ActiveThreads />
+      </section>
 
       {/* ═══════════════════════════════════════════════
           Projects: Grid with role icons and scroll-reveal stagger

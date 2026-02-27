@@ -78,7 +78,7 @@ export default function ResearchTrail({ slug }: ResearchTrailProps) {
         </div>
         <div>
           <h2 className="font-title text-[22px] font-bold text-ink m-0">
-            Research Trail
+            Paper Trail
           </h2>
           <p className="font-body-alt text-[13px] text-ink-light m-0 mt-0.5">
             {trail.sources.length} source{trail.sources.length !== 1 ? 's' : ''}

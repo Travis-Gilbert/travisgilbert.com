@@ -8,6 +8,7 @@ import StudioShortcut from '@/components/StudioShortcut';
 import ArchitectureEasterEgg from '@/components/ArchitectureEasterEgg';
 import DesignLanguageEasterEgg from '@/components/DesignLanguageEasterEgg';
 import ResearchAPIEasterEgg from '@/components/ResearchAPIEasterEgg';
+import SourceGraphEasterEgg from '@/components/SourceGraphEasterEgg';
 import ThemeProvider from '@/components/ThemeProvider';
 import { PersonJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 import { getCollection } from '@/lib/content';
@@ -105,6 +106,7 @@ export default function RootLayout({
           <ArchitectureEasterEgg />
           <DesignLanguageEasterEgg />
           <ResearchAPIEasterEgg />
+          <SourceGraphEasterEgg />
         </ThemeProvider>
       </body>
     </html>

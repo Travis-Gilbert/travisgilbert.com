@@ -87,6 +87,39 @@ export interface TrailResponse {
   approvedSuggestions?: ApprovedSuggestion[];
 }
 
+// Graph types (D3 visualization)
+export interface GraphNode {
+  id: string;
+  type: 'source' | 'essay' | 'field_note';
+  label: string;
+  slug: string;
+  sourceType?: string;
+  creator?: string;
+}
+
+export interface GraphEdge {
+  source: string;
+  target: string;
+  role: string;
+}
+
+export interface GraphResponse {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+// Thread list types (for active threads on homepage)
+// Note: DRF serializer uses snake_case (no camelCase renderer configured)
+export interface ThreadListItem {
+  title: string;
+  slug: string;
+  description: string;
+  status: string;
+  started_date: string;
+  entry_count: number;
+  tags?: string[];
+}
+
 export interface SourceSuggestion {
   title: string;
   url: string;
@@ -107,7 +140,7 @@ export async function fetchResearchTrail(slug: string): Promise<TrailResponse | 
       next: { revalidate: 300 },
     });
     if (!res.ok) return null;
-    return res.json();
+    return await res.json();
   } catch {
     return null;
   }
@@ -119,7 +152,7 @@ export async function fetchApprovedSuggestions(slug: string): Promise<ApprovedSu
       next: { revalidate: 300 },
     });
     if (!res.ok) return [];
-    return res.json();
+    return await res.json();
   } catch {
     return [];
   }
@@ -135,5 +168,33 @@ export async function submitSourceSuggestion(data: SourceSuggestion): Promise<bo
     return res.ok;
   } catch {
     return false;
+  }
+}
+
+export async function fetchSourceGraph(): Promise<GraphResponse | null> {
+  try {
+    const res = await fetch(`${RESEARCH_API}/api/v1/graph/`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchActiveThreads(): Promise<ThreadListItem[]> {
+  try {
+    const res = await fetch(`${RESEARCH_API}/api/v1/threads/?status=active`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return [];
+    const text = await res.text();
+    if (!text) return [];
+    const data = JSON.parse(text);
+    // DRF ListAPIView returns array directly (not paginated here)
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
   }
 }

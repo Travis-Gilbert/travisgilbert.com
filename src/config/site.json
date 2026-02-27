@@ -23,6 +23,7 @@
   },
   "nav": [
     { "label": "Essays on...", "path": "/essays", "icon": "file-text", "visible": true },
+    { "label": "Paper Trail", "path": "/research", "icon": "magnifying-glass", "visible": true },
     { "label": "Field Notes", "path": "/field-notes", "icon": "note-pencil", "visible": true },
     { "label": "Projects", "path": "/projects", "icon": "briefcase", "visible": true },
     { "label": "Toolkit", "path": "/toolkit", "icon": "wrench", "visible": true },
