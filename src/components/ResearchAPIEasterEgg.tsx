@@ -572,11 +572,10 @@ export default function ResearchAPIEasterEgg() {
       onMouseLeave={() => setIsHovered(false)}
       style={{
         position: 'fixed',
-        left: '50%',
-        transform: `translateX(-50%)`,
+        right: 'calc(75% - 28px)',
         ...(isTouchDevice
           ? { bottom: 16, top: 'auto' }
-          : { top: '65vh' }),
+          : { bottom: 'calc(35vh - 72px)' }),
         width: isExpanded ? openW : seedW,
         height: isExpanded ? openH : seedH,
         maxWidth: isExpanded ? 'calc(100vw - 32px)' : undefined,
@@ -640,7 +639,7 @@ export default function ResearchAPIEasterEgg() {
         }}
       />
 
-      {/* Hover label: TRAILS below seed */}
+      {/* Hover label: RESEARCH_API.STRUCTURE below seed */}
       {phase === 'seed' && (
         <div
           className="font-mono"
@@ -659,7 +658,7 @@ export default function ResearchAPIEasterEgg() {
             textTransform: 'uppercase',
           }}
         >
-          TRAILS
+          RESEARCH_API.STRUCTURE
         </div>
       )}
 

@@ -652,7 +652,7 @@ export default function SourceGraphEasterEgg() {
         right: '20vw',
         ...(isTouchDevice
           ? { bottom: 16, top: 'auto' }
-          : { top: '80vh' }),
+          : { bottom: 'calc(20vh - 72px)' }),
         width: isExpanded ? openW : seedW,
         height: isExpanded ? openH : seedH,
         maxWidth: isExpanded ? 'calc(100vw - 32px)' : undefined,
@@ -699,7 +699,7 @@ export default function SourceGraphEasterEgg() {
         }}
       />
 
-      {/* Hover label: SRC.GRAPH below seed */}
+      {/* Hover label: API_ARCHITECTURE below seed */}
       {phase === 'seed' && (
         <div
           className="font-mono"
@@ -718,7 +718,7 @@ export default function SourceGraphEasterEgg() {
             textTransform: 'uppercase',
           }}
         >
-          SRC.GRAPH
+          API_ARCHITECTURE
         </div>
       )}
 
