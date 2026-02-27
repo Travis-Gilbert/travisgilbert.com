@@ -13,7 +13,15 @@ interface NavLink {
   icon: IconName;
 }
 
-const navLinks: NavLink[] = [
+interface TopNavProps {
+  navItems?: Array<{
+    label: string;
+    path: string;
+    icon: string;
+  }>;
+}
+
+const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: '/essays', label: 'Essays on...', icon: 'file-text' },
   { href: '/field-notes', label: 'Field Notes', icon: 'note-pencil' },
   { href: '/projects', label: 'Projects', icon: 'briefcase' },
@@ -22,7 +30,15 @@ const navLinks: NavLink[] = [
   { href: '/connect', label: 'Connect', icon: 'chat-circle' },
 ];
 
-export default function TopNav() {
+export default function TopNav({ navItems }: TopNavProps) {
+  const navLinks: NavLink[] = navItems
+    ? navItems.map((item) => ({
+        href: item.path,
+        label: item.label,
+        icon: item.icon as IconName,
+      }))
+    : DEFAULT_NAV_LINKS;
+
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);

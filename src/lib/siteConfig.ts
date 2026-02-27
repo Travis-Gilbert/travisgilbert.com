@@ -28,7 +28,7 @@ const footerSchema = z.object({
 });
 
 const seoSchema = z.object({
-  titleTemplate: z.string().default('%s | travisgilbert.com'),
+  titleTemplate: z.string().default('%s | Travis Gilbert'),
   description: z.string().default(''),
   ogImageFallback: z.string().optional(),
 });
@@ -89,7 +89,7 @@ const DEFAULT_CONFIG: SiteConfig = {
     links: [],
   },
   seo: {
-    titleTemplate: '%s | travisgilbert.com',
+    titleTemplate: '%s | Travis Gilbert',
     description: 'A creative workbench by Travis Gilbert: essays on design decisions, field notes, projects, and tools.',
   },
   pages: {},

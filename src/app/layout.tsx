@@ -11,31 +11,36 @@ import ResearchAPIEasterEgg from '@/components/ResearchAPIEasterEgg';
 import ThemeProvider from '@/components/ThemeProvider';
 import { PersonJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 import { getCollection } from '@/lib/content';
+import { getSiteConfig, getVisibleNav } from '@/lib/siteConfig';
 import type { Essay, FieldNote, Project } from '@/lib/content';
 import '@/styles/global.css';
 
-export const metadata: Metadata = {
-  title: {
-    default: 'Travis Gilbert',
-    template: '%s | Travis Gilbert',
-  },
-  description:
-    'Exploring how design decisions shape human outcomes. Essays, field notes, and projects on design, policy, and the built environment.',
-  metadataBase: new URL('https://travisgilbert.me'),
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    siteName: 'Travis Gilbert',
-  },
-  twitter: {
-    card: 'summary_large_image',
-  },
-  alternates: {
-    types: {
-      'application/rss+xml': '/rss.xml',
+export async function generateMetadata(): Promise<Metadata> {
+  const config = getSiteConfig();
+  return {
+    title: {
+      default: 'Travis Gilbert',
+      template: config.seo.titleTemplate || '%s | Travis Gilbert',
     },
-  },
-};
+    description:
+      config.seo.description ||
+      'Exploring how design decisions shape human outcomes. Essays, field notes, and projects on design, policy, and the built environment.',
+    metadataBase: new URL('https://travisgilbert.me'),
+    openGraph: {
+      type: 'website',
+      locale: 'en_US',
+      siteName: 'Travis Gilbert',
+    },
+    twitter: {
+      card: 'summary_large_image',
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': '/rss.xml',
+      },
+    },
+  };
+}
 
 // Compute site stats at build time for ConsoleEasterEgg
 const essays = getCollection<Essay>('essays').filter((e) => !e.data.draft);
@@ -45,6 +50,8 @@ const projects = getCollection<Project>('projects').filter((p) => !p.data.draft)
 const latestEssay = essays.sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 )[0];
+
+const visibleNav = getVisibleNav();
 
 export default function RootLayout({
   children,
@@ -79,7 +86,7 @@ export default function RootLayout({
           <a href="#main-content" className="skip-to-content">
             Skip to content
           </a>
-          <TopNav />
+          <TopNav navItems={visibleNav} />
           <main
             id="main-content"
             className="main-content flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8"
