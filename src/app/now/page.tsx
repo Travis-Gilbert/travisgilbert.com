@@ -5,6 +5,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import DrawOnIcon from '@/components/rough/DrawOnIcon';
 import RoughBox from '@/components/rough/RoughBox';
+import PublicationGraph from '@/components/PublicationGraph';
 
 interface NowData {
   updated: string;
@@ -117,6 +118,11 @@ export default function NowPage() {
             </span>
           </RoughBox>
         ))}
+      </div>
+
+      {/* Publication activity scorecard */}
+      <div className="mt-8 max-w-2xl">
+        <PublicationGraph />
       </div>
 
       {data.thinking && (

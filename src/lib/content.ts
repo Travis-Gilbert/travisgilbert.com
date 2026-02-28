@@ -40,6 +40,20 @@ export const essaySchema = z.object({
   })).default([]),
   /** Per-instance visual overrides (heroStyle, overlay, accent, etc.) */
   composition: z.record(z.unknown()).optional(),
+  /** Deep saturated background color for homepage hero when this essay is featured */
+  heroColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  /** Path to composed hero artifact image in /public/hero/ */
+  heroImage: z.string().optional(),
+  /** Central claim or argument of the essay (displayed in hero) */
+  thesis: z.string().optional(),
+  /** Number of sources consulted (displayed as badge in hero) */
+  sourceCount: z.number().optional(),
+  /** ISO date string for when research began */
+  researchStarted: z.string().optional(),
+  /** Number of substantive revisions */
+  revisionCount: z.number().optional(),
+  /** Bullet-point research process notes */
+  researchNotes: z.array(z.string()).optional(),
 });
 
 export const fieldNoteSchema = z.object({
@@ -328,4 +342,61 @@ export function injectConnectionCallouts(
     }
     return injected;
   });
+}
+
+// ─────────────────────────────────────────────────
+// Print Footnote Markers (screen-hidden, print-visible)
+// ─────────────────────────────────────────────────
+
+/**
+ * Inject footnote markers after external links and append a footnote table.
+ *
+ * Scans for `<a href="https://...">` tags that point to external URLs.
+ * Each gets a numbered `<sup class="fn-marker">` after the closing `</a>`.
+ * A `<div class="fn-table">` with the numbered URL list is appended at the end.
+ *
+ * Both `.fn-marker` and `.fn-table` are `display: none` on screen (global.css).
+ * The print stylesheet (print.css) reveals them so printed essays show
+ * traditional footnote references instead of underlined blue links.
+ *
+ * Internal links (starting with `/`) and anchor-only links (`#`) are skipped.
+ * Connection callout links are also skipped (inside `<aside class="connection-callout">`).
+ *
+ * No-op when no external links are found.
+ */
+export function injectFootnoteMarkers(html: string): string {
+  const footnotes: { index: number; url: string }[] = [];
+  let counter = 0;
+
+  // Match <a> tags, but skip internal/anchor links and connection callout links
+  const markedHtml = html.replace(
+    /<a\s+href="([^"]*)"[^>]*>.*?<\/a>/gi,
+    (match, href: string) => {
+      if (
+        href.startsWith('/') ||
+        href.startsWith('#') ||
+        match.includes('connection-callout-link')
+      ) {
+        return match;
+      }
+
+      counter++;
+      footnotes.push({ index: counter, url: href });
+      return `${match}<sup class="fn-marker" aria-hidden="true">[${counter}]</sup>`;
+    },
+  );
+
+  if (footnotes.length === 0) return html;
+
+  // Build the footnote table
+  const rows = footnotes
+    .map(
+      (fn) =>
+        `<div class="fn-row"><span class="fn-num">[${fn.index}]</span> <span class="fn-url">${escapeAttr(fn.url)}</span></div>`,
+    )
+    .join('\n');
+
+  const table = `\n<div class="fn-table" aria-hidden="true">\n<div class="fn-table-title">Links</div>\n${rows}\n</div>`;
+
+  return markedHtml + table;
 }

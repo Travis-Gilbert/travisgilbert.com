@@ -24,6 +24,10 @@ interface ArticleBodyProps {
   articleSlug: string;
   /** Serializable connection data (computed at build time in the Server Component) */
   positionedConnections?: PositionedConnection[];
+  /** When true, ConnectionDots are not rendered (caller handles them externally) */
+  hideConnectionDots?: boolean;
+  /** Optional external ref for the prose container (shared with AnnotatedArticle) */
+  externalProseRef?: RefObject<HTMLDivElement | null>;
 }
 
 export default function ArticleBody({
@@ -32,8 +36,11 @@ export default function ArticleBody({
   contentType,
   articleSlug,
   positionedConnections,
+  hideConnectionDots = false,
+  externalProseRef,
 }: ArticleBodyProps) {
-  const proseRef = useRef<HTMLDivElement>(null);
+  const internalProseRef = useRef<HTMLDivElement>(null);
+  const proseRef = externalProseRef ?? internalProseRef;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const [canHover, setCanHover] = useState(false);
@@ -88,7 +95,7 @@ export default function ArticleBody({
         // Content from trusted local .md files validated by Zod
         dangerouslySetInnerHTML={{ __html: html }}
       />
-      {positionedConnections && positionedConnections.length > 0 && (
+      {!hideConnectionDots && positionedConnections && positionedConnections.length > 0 && (
         <ConnectionDots
           connections={positionedConnections}
           proseRef={proseRef}

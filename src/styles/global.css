@@ -405,6 +405,11 @@ body::after {
   100% { transform: scale(1) rotate(0deg); }
 }
 
+@keyframes stamp-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 @keyframes scatter-out {
   0%   { opacity: var(--scatter-opacity, 0.7); transform: translate(-50%, -50%); }
   100% { opacity: 0; transform: translate(calc(-50% + var(--scatter-x, 0px)), calc(-50% + var(--scatter-y, 0px))); }
@@ -591,6 +596,11 @@ blockquote {
   line-height: 1.75;
   color: var(--color-ink);
   overflow-wrap: break-word;
+  hanging-punctuation: first last;
+  text-wrap: pretty;
+  font-variant-numeric: oldstyle-nums;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .prose h2 {
@@ -599,6 +609,8 @@ blockquote {
   font-weight: 700;
   margin-top: 3rem;
   margin-bottom: 0.75rem;
+  scroll-margin-top: 6rem;
+  hyphens: none;
 }
 
 .prose h3 {
@@ -607,6 +619,8 @@ blockquote {
   font-weight: 600;
   margin-top: 2.25rem;
   margin-bottom: 0.5rem;
+  scroll-margin-top: 6rem;
+  hyphens: none;
 }
 
 .prose p { margin-bottom: 1.25rem; }
@@ -813,6 +827,30 @@ blockquote {
 /* Wrapper that holds both the prose and the absolute note layer */
 .article-body-wrapper {
   position: relative;
+}
+
+/* Annotated article: positioned wrapper for scroll annotations */
+.annotated-article {
+  position: relative;
+}
+
+/* Scroll annotations: hidden on small screens, right-margin on xl+ */
+.scroll-annotation {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .scroll-annotation {
+    display: block;
+    left: calc(100% + 1.5rem);
+    width: min(200px, calc((100vw - 896px) / 2 - 2rem));
+  }
+}
+
+/* Footnote markers: hidden on screen, shown in print (see print.css) */
+.fn-marker,
+.fn-table {
+  display: none;
 }
 
 /* The absolute-positioned layer that floats sticky notes in the margin */
