@@ -8,9 +8,9 @@ tags:
 sources: []
 related: []
 stage: drafting
-draft: false
+draft: true
 ---
 
 When I wrote my first draft it was 2:48 AM currently it's 4:34 AM. I keep telling myself that a few more minutes will make me better and that if I push a little bit more somehow that thing I've been looking for that I can't quite find myself Will make its way to the page.
 
-I think that there are some people in this world who have good thoughts at 2:48 AM God's favorites
+I'm told there are some people in this world who have good thoughts at 2:48 AM God's favorites.
