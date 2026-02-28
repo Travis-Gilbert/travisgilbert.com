@@ -45,11 +45,10 @@ class CaptureForm(forms.Form):
     """
 
     urls = forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": "Paste URLs, drop files, or click to upload...",
+        widget=forms.TextInput(attrs={
+            "placeholder": "Paste a URL and press Enter...",
             "class": INPUT_CLASS,
-            "rows": 1,
-            "style": "resize: none; overflow: hidden;",
+            "autocomplete": "off",
         }),
     )
 
