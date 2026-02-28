@@ -15,6 +15,7 @@ import { getCollection } from '@/lib/content';
 import { getSiteConfig, getVisibleNav } from '@/lib/siteConfig';
 import type { Essay, FieldNote, Project } from '@/lib/content';
 import '@/styles/global.css';
+import '@/styles/print.css';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = getSiteConfig();

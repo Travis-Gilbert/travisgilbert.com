@@ -34,6 +34,10 @@ interface EssayHeroProps {
   summary?: string;
   /** Path to a pre-composited collage image (e.g. `/collage/my-essay.jpg`) */
   collageImage?: string;
+  /** Central claim or argument (displayed below title for cognitive anchoring) */
+  thesis?: string;
+  /** Number of sources consulted (badge next to reading time) */
+  sourceCount?: number;
 }
 
 export default function EssayHero({
@@ -47,6 +51,8 @@ export default function EssayHero({
   tags,
   summary,
   collageImage,
+  thesis,
+  sourceCount,
 }: EssayHeroProps) {
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -170,6 +176,19 @@ export default function EssayHero({
           >
             {readingTime} min read
           </span>
+          {sourceCount != null && sourceCount > 0 && (
+            <span
+              className="font-mono block"
+              style={{
+                fontSize: 9,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'rgba(240, 235, 228, 0.5)',
+              }}
+            >
+              {sourceCount} {sourceCount === 1 ? 'source' : 'sources'}
+            </span>
+          )}
         </div>
 
         {/* Category label: Courier Prime, uppercase, terracotta, short rule */}
@@ -204,6 +223,19 @@ export default function EssayHero({
         >
           {title}
         </h1>
+
+        {/* Thesis: cognitive anchor below title */}
+        {thesis && (
+          <p
+            className="font-body text-base md:text-lg max-w-prose leading-relaxed mb-4 line-clamp-2"
+            style={{
+              color: 'rgba(240, 235, 228, 0.8)',
+              fontStyle: 'italic',
+            }}
+          >
+            {thesis}
+          </p>
+        )}
 
         {/* Summary */}
         {summary && (

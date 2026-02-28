@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import nodePath from 'node:path';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCollection, getEntry, renderMarkdown, injectAnnotations, injectConnectionCallouts, estimateReadingTime } from '@/lib/content';
+import { getCollection, getEntry, renderMarkdown, injectAnnotations, injectConnectionCallouts, injectFootnoteMarkers, estimateReadingTime } from '@/lib/content';
 import type { Essay, FieldNote, ShelfEntry, ContentEntry } from '@/lib/content';
-import ArticleBody from '@/components/ArticleBody';
+import AnnotatedArticle from '@/components/AnnotatedArticle';
 import TagList from '@/components/TagList';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
 import RoughLine from '@/components/rough/RoughLine';
@@ -18,6 +18,8 @@ import EssayHero from '@/components/EssayHero';
 import { computeConnections, positionConnections } from '@/lib/connectionEngine';
 import type { AllContent } from '@/lib/connectionEngine';
 import ResearchTrail from '@/components/research/ResearchTrail';
+import DocumentStamp from '@/components/DocumentStamp';
+import ProcessNotes from '@/components/ProcessNotes';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -117,7 +119,10 @@ export default async function EssayDetailPage({ params }: Props) {
   const positionedConnections = positionConnections(engineConnections, annotatedHtml);
 
   // Inject inline callouts for connections with text mentions
-  const html = injectConnectionCallouts(annotatedHtml, positionedConnections);
+  const calloutHtml = injectConnectionCallouts(annotatedHtml, positionedConnections);
+
+  // Final pipeline step: footnote markers (hidden on screen, shown in print)
+  const html = injectFootnoteMarkers(calloutHtml);
 
   // Only pass fallback connections (no text mention) to margin dots
   const fallbackConnections = positionedConnections.filter((c) => !c.mentionFound);
@@ -133,6 +138,7 @@ export default async function EssayDetailPage({ params }: Props) {
       tags={entry.data.tags}
     />
     <ReadingProgress />
+    <DocumentStamp title={entry.data.title} />
     <article>
       {/* Full-bleed editorial hero header */}
       <EssayHero
@@ -144,6 +150,8 @@ export default async function EssayDetailPage({ params }: Props) {
         category={entry.data.tags[0]}
         summary={entry.data.summary}
         collageImage={collageImage}
+        thesis={entry.data.thesis}
+        sourceCount={entry.data.sourceCount}
         tags={
           <TagList tags={entry.data.tags} tint="terracotta" inverted />
         }
@@ -169,12 +177,13 @@ export default async function EssayDetailPage({ params }: Props) {
         </div>
       )}
 
-      <ArticleBody
+      <AnnotatedArticle
         html={html}
         className="prose prose-essays mt-8"
         contentType="essays"
         articleSlug={slug}
         positionedConnections={fallbackConnections}
+        annotations={entry.data.annotations ?? []}
       />
 
       {(entry.data.sources.length > 0 || shelfStandalone.length > 0) && (
@@ -187,6 +196,14 @@ export default async function EssayDetailPage({ params }: Props) {
           />
         </>
       )}
+
+      {/* Process Notes: research metadata (returns null if all fields empty) */}
+      <ProcessNotes
+        researchStarted={entry.data.researchStarted}
+        revisionCount={entry.data.revisionCount}
+        sourceCount={entry.data.sourceCount}
+        researchNotes={entry.data.researchNotes}
+      />
 
       {/* Research Trail: fetches from research API, renders nothing if empty */}
       <RoughLine />
