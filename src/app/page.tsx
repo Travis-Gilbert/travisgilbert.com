@@ -2,25 +2,18 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { getCollection } from '@/lib/content';
-import type { Essay, FieldNote, ShelfEntry, Project } from '@/lib/content';
+import type { Essay, FieldNote, Project } from '@/lib/content';
 import DateStamp from '@/components/DateStamp';
 import TagList from '@/components/TagList';
 import RoughBox from '@/components/rough/RoughBox';
 import RoughLine from '@/components/rough/RoughLine';
 import RoughCallout from '@/components/rough/RoughCallout';
-import CodeComment from '@/components/CodeComment';
-import EruptingCollage from '@/components/EruptingCollage';
-import type { CollageFragment } from '@/components/EruptingCollage';
 import ScrollReveal from '@/components/ScrollReveal';
 import PipelineCounter from '@/components/PipelineCounter';
-import ProgressTracker, { CompactTracker, ESSAY_STAGES, NOTE_STAGES } from '@/components/ProgressTracker';
-import Image from 'next/image';
-import PatternImage from '@/components/PatternImage';
+import { CompactTracker, NOTE_STAGES } from '@/components/ProgressTracker';
 import NowPreviewCompact from '@/components/NowPreviewCompact';
 import CollageHero from '@/components/CollageHero';
-import { computeThreadPairs } from '@/lib/connectionEngine';
-import type { AllContent } from '@/lib/connectionEngine';
-import ThreadLines from '@/components/ThreadLines';
+import HeroArtifact from '@/components/HeroArtifact';
 import ActiveThreads from '@/components/research/ActiveThreads';
 
 export const metadata: Metadata = {
@@ -46,218 +39,44 @@ export default function HomePage() {
 
   const featured = essays[0];
 
-  // Callout texts: prefer the `callouts` array, fall back to single `callout`
-  const featuredCallouts: string[] = featured
-    ? featured.data.callouts ?? (featured.data.callout ? [featured.data.callout] : [])
-    : [];
-
-  // Thread pairs for connecting cards within the essay section
-  const allFieldNotesForThreads = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft);
-  const allShelfForThreads = getCollection<ShelfEntry>('shelf');
-  const threadContent: AllContent = {
-    essays,
-    fieldNotes: allFieldNotesForThreads,
-    shelf: allShelfForThreads,
-  };
-  const threadPairs = computeThreadPairs(threadContent);
-  const essayThreadPairs = threadPairs.filter((p) => p.type === 'essay');
-
-  // Collage fragments: read from essay composition field (frontmatter).
-  // Each essay can define its own erupting collage via composition.fragments.
-  const featuredComposition = featured?.data.composition as
-    | { heroStyle?: string; fragments?: CollageFragment[] }
-    | undefined;
-  const collageFragments: CollageFragment[] = featuredComposition?.fragments ?? [];
+  // Hero data from the featured essay's frontmatter
+  const heroColor = featured?.data.heroColor ?? '#4A4528';
+  const heroImage = featured?.data.heroImage;
+  const heroAlt = featured ? `Visual artifact for ${featured.data.title}` : 'Hero artifact';
 
   return (
     <div>
       {/* ═══════════════════════════════════════════════
-          Hero: Full-bleed dark collage ground with editorial typography.
+          Hero: Unified dark-ground editorial spread.
+          Identity (name, PipelineCounter), featured essay (title, summary,
+          tags, progress), and composed visual artifact.
           CollageHero breaks out of max-w-4xl to span full viewport width.
-          DotGrid renders cream dots over this dark zone.
+          DotGrid renders cream dots over this dark zone via --hero-height.
           ═══════════════════════════════════════════════ */}
       <CollageHero
         name="Travis Gilbert"
-        latestHref={featured ? `/essays/${featured.slug}` : '/essays'}
         pipelineStatus={<PipelineCounter />}
-        nowPreview={<NowPreviewCompact />}
+        nowPreview={<NowPreviewCompact inverted />}
+        heroColor={heroColor}
+        artifact={
+          <HeroArtifact
+            imageSrc={heroImage}
+            imageAlt={heroAlt}
+            tags={featured?.data.tags}
+            category={featured?.data.tags[0]}
+          />
+        }
+        featured={featured ? {
+          slug: featured.slug,
+          title: featured.data.title,
+          summary: featured.data.summary,
+          date: featured.data.date.toISOString(),
+          tags: featured.data.tags,
+          stage: featured.data.stage,
+          lastAdvanced: featured.data.lastAdvanced?.toISOString(),
+          callouts: featured.data.callouts,
+        } : null}
       />
-
-      {/* ═══════════════════════════════════════════════
-          Essay sections: wrapped in relative container for ThreadLines
-          ═══════════════════════════════════════════════ */}
-      <div className="relative">
-        <ThreadLines pairs={essayThreadPairs} />
-
-      {/* ═══════════════════════════════════════════════
-          Featured Essay: Primary visual anchor.
-          Individual collage fragments (PNGs with transparent backgrounds)
-          erupt above the RoughBox card with hard edges and slight rotations.
-          Card image: YouTube thumbnail or PatternImage fallback.
-          ═══════════════════════════════════════════════ */}
-      {featured && (
-        <section className="md:py-12">
-          <ScrollReveal>
-            <RoughLine label="Writing" labelColor="var(--color-terracotta)" />
-
-            {/* EruptingCollage: Blake Cale editorial collage with overlapping
-                image fragments erupting above a clean card. Reads fragments from
-                essay composition field. Falls back to card-only when no fragments. */}
-            <div data-slug={featured.slug}>
-              <EruptingCollage fragments={collageFragments} hover>
-                <div className="group relative">
-                  {/* Card header image: YouTube thumbnail or generative pattern */}
-                  {featured.data.youtubeId ? (
-                    <div className="w-full h-40 sm:h-48 md:h-72 overflow-hidden">
-                      <img
-                        src={`https://img.youtube.com/vi/${featured.data.youtubeId}/maxresdefault.jpg`}
-                        alt={`Thumbnail for ${featured.data.title}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    <PatternImage seed={featured.slug} height={180} color="var(--color-terracotta)" />
-                  )}
-
-                  <div className="p-6 md:p-8 relative" style={{ backgroundColor: 'var(--color-paper)' }}>
-                    {/* Progress tracker */}
-                    <ProgressTracker
-                      stages={ESSAY_STAGES}
-                      currentStage={featured.data.stage || 'published'}
-                      color="var(--color-terracotta)"
-                      annotationCount={featured.data.annotations?.length}
-                      lastAdvanced={featured.data.lastAdvanced?.toISOString()}
-                    />
-
-                    <div className="mt-4">
-                      <DateStamp date={featured.data.date} />
-                    </div>
-
-                    <h2 className="font-title text-2xl md:text-3xl font-bold mt-2 mb-3 group-hover:text-terracotta transition-colors">
-                      <Link
-                        href={`/essays/${featured.slug}`}
-                        className="no-underline text-ink hover:text-ink after:absolute after:inset-0 after:z-0"
-                      >
-                        {featured.data.title}
-                      </Link>
-                    </h2>
-
-                    <p className="text-ink-secondary text-base md:text-lg mb-4 max-w-prose leading-relaxed">
-                      {featured.data.summary}
-                    </p>
-
-                    <div className="relative z-10">
-                      <TagList tags={featured.data.tags} tint="terracotta" />
-                    </div>
-                  </div>
-
-                  {/* Code-style margin comments: workbench aesthetic */}
-                  {featuredCallouts[0] && (
-                    <CodeComment side="right" tint="terracotta" offsetY={20}>
-                      {featuredCallouts[0]}
-                    </CodeComment>
-                  )}
-                  {featuredCallouts[1] && (
-                    <CodeComment side="left" tint="terracotta" offsetY={100}>
-                      {featuredCallouts[1]}
-                    </CodeComment>
-                  )}
-                </div>
-              </EruptingCollage>
-            </div>
-          </ScrollReveal>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════
-          Secondary essays: compact tracker + PatternImage fallback
-          ═══════════════════════════════════════════════ */}
-      {essays.length > 1 && (
-        <section className="py-6">
-          <div className="space-y-5">
-            {essays.slice(1).map((essay) => {
-              const hasVideo = Boolean(essay.data.youtubeId);
-              const thumbnailUrl = hasVideo
-                ? `https://img.youtube.com/vi/${essay.data.youtubeId}/maxresdefault.jpg`
-                : '';
-
-              return (
-                <div key={essay.slug} data-slug={essay.slug}>
-                <ScrollReveal>
-                  <RoughBox
-                    padding={0}
-                    hover
-                    tint="terracotta"
-                  >
-                    <div className="group">
-                      {/* Image: YouTube > PatternImage fallback */}
-                      {hasVideo ? (
-                        <div className="w-full h-36 sm:h-48 md:h-64 overflow-hidden">
-                          <img
-                            src={thumbnailUrl}
-                            alt={`Thumbnail for ${essay.data.title}`}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                        </div>
-                      ) : (
-                        <PatternImage
-                          seed={essay.slug}
-                          height={100}
-                          color="var(--color-terracotta)"
-                        />
-                      )}
-
-                      <div className="p-5 md:p-6 relative">
-                        <div className="flex justify-between items-center">
-                          <DateStamp date={essay.data.date} />
-                          <CompactTracker
-                            stages={ESSAY_STAGES}
-                            currentStage={essay.data.stage || 'published'}
-                            color="var(--color-terracotta)"
-                          />
-                        </div>
-
-                        <h2 className="font-title text-xl md:text-2xl font-bold mt-2 mb-2 group-hover:text-terracotta transition-colors">
-                          <Link
-                            href={`/essays/${essay.slug}`}
-                            className="no-underline text-ink hover:text-ink after:absolute after:inset-0 after:z-0"
-                          >
-                            {essay.data.title}
-                          </Link>
-                        </h2>
-                        <p className="text-ink-secondary mb-3 max-w-prose">
-                          {essay.data.summary}
-                        </p>
-                        <div className="relative z-10">
-                          <TagList tags={essay.data.tags} tint="terracotta" />
-                        </div>
-                        {essay.data.callout && (
-                          <CodeComment side="right" tint="terracotta" offsetY={8}>
-                            {essay.data.callout}
-                          </CodeComment>
-                        )}
-                      </div>
-                    </div>
-                  </RoughBox>
-                </ScrollReveal>
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="mt-4 text-right">
-            <Link
-              href="/essays"
-              className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
-            >
-              All writing <ArrowRight size={14} weight="bold" />
-            </Link>
-          </p>
-        </section>
-      )}
-      </div>
 
       {/* ═══════════════════════════════════════════════
           Field Notes: Asymmetric grid with compact tracker + callouts

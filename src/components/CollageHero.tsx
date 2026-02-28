@@ -1,93 +1,240 @@
+'use client';
+
 /**
- * CollageHero: Full-bleed parchment header with editorial typography.
- * Used on the homepage.
+ * CollageHero: full-bleed dark-ground homepage hero.
  *
- * Three-column grid (1fr 118px 1fr) aligns the name with the max-w-4xl
- * content area and the spacer with the RoughLine label gap below.
+ * Unified editorial spread containing identity (name, tagline,
+ * PipelineCounter), the featured essay (title, summary, tags,
+ * progress), and a composed visual artifact.
+ *
+ * Two-column grid on desktop (55% text / 45% artifact).
+ * Single-column stack on mobile.
+ *
+ * Reports its height to `--hero-height` on <html> via ResizeObserver
+ * so DotGrid can render cream dots over the dark zone.
  */
 
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
+import TagList from './TagList';
+import { CompactTracker, ESSAY_STAGES } from './ProgressTracker';
+
+interface FeaturedEssay {
+  slug: string;
+  title: string;
+  summary: string;
+  /** ISO date string (Date objects can't cross RSC boundary) */
+  date: string;
+  tags: string[];
+  stage?: string;
+  lastAdvanced?: string;
+  callouts?: string[];
+}
 
 interface CollageHeroProps {
   name: string;
-  /** URL to the newest piece of content (linked via "here" in subtitle) */
-  latestHref: string;
   /** Slot for PipelineCounter component */
   pipelineStatus: React.ReactNode;
   /** Slot for NowPreviewCompact component */
   nowPreview: React.ReactNode;
+  /** Optional artifact component for the right column */
+  artifact?: React.ReactNode;
+  /** Deep saturated hero background color, from essay frontmatter */
+  heroColor?: string;
+  /** Featured essay data (merged into the hero) */
+  featured?: FeaturedEssay | null;
+}
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  const day = d.getDate().toString().padStart(2, '0');
+  const year = d.getFullYear();
+  return `${month} ${day}, ${year}`;
 }
 
 export default function CollageHero({
   name,
-  latestHref,
   pipelineStatus,
   nowPreview,
+  artifact,
+  heroColor = '#4A4528',
+  featured,
 }: CollageHeroProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Report hero height to <html> for DotGrid zone awareness
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        document.documentElement.style.setProperty(
+          '--hero-height',
+          `${entry.contentRect.height}px`,
+        );
+      }
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const latestHref = featured ? `/essays/${featured.slug}` : '/essays';
+
   return (
-    <div
-      className="relative"
-      style={{
-        // Break out of max-w-4xl to span full viewport width
-        marginLeft: 'calc(-50vw + 50%)',
-        marginRight: 'calc(-50vw + 50%)',
-        marginTop: 'calc(-1 * var(--main-pad-y, 1.5rem))',
-        width: '100vw',
-      }}
-    >
-      {/* Typography layer */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
-        <div
-          className="flex flex-col lg:grid lg:items-end py-12 md:py-16 lg:py-20"
-          style={{ gridTemplateColumns: '1fr 118px 1fr' }}
-        >
-          {/* Left: identity */}
-          <div className="flex flex-col justify-end lg:pl-[128px]">
-            <h1
-              className="text-[2.5rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.5rem] m-0"
-              style={{
-                fontFamily: 'var(--font-title)',
-                fontWeight: 700,
-                lineHeight: 1.0,
-                color: 'var(--color-ink)',
-              }}
-            >
-              {name}
-            </h1>
+    <div ref={containerRef}>
+      <div
+        className="relative"
+        style={{
+          marginLeft: 'calc(-50vw + 50%)',
+          marginRight: 'calc(-50vw + 50%)',
+          marginTop: 'calc(-1 * var(--main-pad-y, 1.5rem))',
+          width: '100vw',
+          backgroundColor: heroColor,
+        }}
+      >
+        {/* Content layer */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col lg:grid lg:items-start py-12 md:py-16 lg:py-20 gap-8 lg:gap-12"
+            style={{ gridTemplateColumns: '55% 1fr' }}
+          >
+            {/* Left column: identity + featured essay */}
+            <div className="flex flex-col">
+              {/* Zone A: Identity */}
+              <div>
+                <h1
+                  className="text-[2.5rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.5rem] m-0"
+                  style={{
+                    fontFamily: 'var(--font-title)',
+                    fontWeight: 700,
+                    lineHeight: 1.0,
+                    color: 'var(--color-hero-text)',
+                  }}
+                >
+                  {name}
+                </h1>
 
-            <p
-              className="mt-3 mb-0"
-              style={{
-                fontFamily: 'var(--font-title)',
-                fontWeight: 700,
-                fontSize: 26,
-                background:
-                  'linear-gradient(to right, var(--color-ink-secondary), var(--color-terracotta))',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Hey, I&apos;m working{' '}
-              <Link
-                href={latestHref}
-                className="no-underline hover:opacity-80 transition-opacity"
-              >
-                here
-              </Link>
-            </p>
+                <p
+                  className="mt-3 mb-0"
+                  style={{
+                    fontFamily: 'var(--font-title)',
+                    fontWeight: 700,
+                    fontSize: 26,
+                    color: 'var(--color-hero-text-muted)',
+                  }}
+                >
+                  Hey, I&apos;m working{' '}
+                  <Link
+                    href={latestHref}
+                    className="no-underline transition-colors"
+                    style={{ color: 'var(--color-terracotta-light)' }}
+                  >
+                    here
+                  </Link>
+                </p>
 
-            <div className="mt-4">{pipelineStatus}</div>
-          </div>
+                <div className="mt-4">{pipelineStatus}</div>
+              </div>
 
-          {/* Center spacer: matches the "Essays on ..." label width */}
-          <div className="hidden lg:block" aria-hidden="true" />
+              {/* Zone B: Featured Essay */}
+              {featured && (
+                <div className="mt-8 lg:mt-10">
+                  <span
+                    className="block mb-2"
+                    style={{
+                      fontFamily: 'var(--font-metadata)',
+                      fontSize: 9,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.12em',
+                      color: 'var(--color-terracotta-light)',
+                    }}
+                  >
+                    Currently Writing
+                  </span>
 
-          {/* Right: /now snapshot */}
-          <div className="flex flex-col justify-end mt-6 lg:mt-0">
-            {nowPreview}
+                  <Link
+                    href={`/essays/${featured.slug}`}
+                    className="no-underline block group"
+                  >
+                    <h2
+                      className="text-2xl sm:text-3xl lg:text-4xl m-0 transition-colors"
+                      style={{
+                        fontFamily: 'var(--font-title)',
+                        fontWeight: 700,
+                        lineHeight: 1.15,
+                        color: 'var(--color-hero-text)',
+                      }}
+                    >
+                      <span className="group-hover:text-[var(--color-terracotta-light)] transition-colors">
+                        {featured.title}
+                      </span>
+                    </h2>
+                  </Link>
+
+                  <p
+                    className="mt-3 mb-0 text-base lg:text-lg"
+                    style={{
+                      color: 'var(--color-hero-text-muted)',
+                      lineHeight: 1.6,
+                      maxWidth: '42ch',
+                    }}
+                  >
+                    {featured.summary}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    {/* Inline date (hero-colored, since DateStamp lacks inverted support) */}
+                    <time
+                      dateTime={new Date(featured.date).toISOString()}
+                      className="inline-block font-mono text-[11px] uppercase tracking-widest px-2 py-0.5 rounded select-none"
+                      style={{
+                        color: 'var(--color-terracotta-light)',
+                        background: 'rgba(212, 135, 90, 0.1)',
+                      }}
+                    >
+                      {formatDate(featured.date)}
+                    </time>
+
+                    {featured.stage && (
+                      <CompactTracker
+                        stages={ESSAY_STAGES}
+                        currentStage={featured.stage}
+                        color="var(--color-terracotta-light)"
+                      />
+                    )}
+                  </div>
+
+                  {featured.tags.length > 0 && (
+                    <div className="mt-3">
+                      <TagList tags={featured.tags} tint="terracotta" inverted />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Right column: artifact + /now snapshot */}
+            <div className="flex flex-col gap-6 lg:gap-8">
+              {/* Artifact */}
+              <div className="max-w-sm mx-auto lg:max-w-none lg:mx-0">
+                {artifact}
+              </div>
+
+              {/* /now preview */}
+              <div>{nowPreview}</div>
+            </div>
           </div>
         </div>
+
+        {/* Bottom gradient fade to parchment */}
+        <div
+          style={{
+            height: 56,
+            background: `linear-gradient(to bottom, ${heroColor}, var(--color-bg))`,
+          }}
+        />
       </div>
     </div>
   );

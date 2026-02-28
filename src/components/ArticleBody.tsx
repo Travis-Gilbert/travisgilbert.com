@@ -55,7 +55,7 @@ export default function ArticleBody({
     if (!lineRef.current || !wrapperRef.current) return;
     const rect = wrapperRef.current.getBoundingClientRect();
     lineRef.current.style.top = `${e.clientY - rect.top}px`;
-    lineRef.current.style.opacity = '1';
+    lineRef.current.style.opacity = '0.18';
   }, []);
 
   const onMouseLeave = useCallback(() => {
@@ -77,13 +77,13 @@ export default function ArticleBody({
           aria-hidden="true"
           style={{
             position: 'absolute',
-            left: 0,
-            width: '100%',
+            left: '5%',
+            width: '90%',
             height: 1,
-            background: 'var(--color-ink-muted)',
+            background: 'linear-gradient(to right, transparent, var(--color-ink-muted) 15%, var(--color-ink-muted) 85%, transparent)',
             opacity: 0,
             pointerEvents: 'none',
-            transition: 'opacity 200ms ease',
+            transition: 'opacity 300ms ease',
             zIndex: 5,
           }}
         />

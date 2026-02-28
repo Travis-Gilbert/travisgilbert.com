@@ -55,6 +55,11 @@ Next.js 15 (App Router), React 19, Tailwind CSS v4 (`@tailwindcss/postcss`), rou
 | `research_api/apps/research/recaptcha.py` | reCAPTCHA v3 server-side verification; single `verify_recaptcha()` returning `(passed, score)` tuple |
 | `research_api/apps/research/views.py` | Public submission endpoints (suggest source, suggest connection) with reCAPTCHA + approved suggestions read endpoint |
 | `research_api/apps/research/services.py` | `detect_content_type()` (essay vs field_note heuristic), `get_backlinks()`, `get_all_backlinks()` |
+| `publishing_api/apps/content/models.py` | VideoProject, VideoScene, VideoDeliverable, VideoSession models (alongside Essay, FieldNote, etc.) |
+| `publishing_api/templates/editor/video_edit.html` | Phase-aware video editor (dedicated template, not generic edit.html) |
+| `publishing_api/templates/editor/partials/video_scenes.html` | Scene inline editor with HTMX toggle checkboxes |
+| `publishing_api/templates/editor/partials/video_deliverables.html` | Deliverable management panel |
+| `publishing_api/templates/editor/partials/video_sessions.html` | Session log with start/stop controls |
 
 ## Development Commands
 
@@ -353,6 +358,7 @@ Each content type has a brand color that flows through labels, icons, tags, card
 | On ... / Toolkit | Terracotta (`#B45A2D`) | ON ... / WORKSHOP TOOLS |
 | Field Notes / Connect | Teal (`#2D5F6B`) | FIELD NOTES / OPEN CHANNEL |
 | Projects / Shelf | Gold (`#C49A4A`) | PROJECTS / REFERENCE SHELF |
+| Video | Green (`#5A7A4A`) | VIDEO |
 
 Components: `SectionLabel` (monospace header), `TagList` (tint prop), `SketchIcon` (hand-drawn SVG page icons)
 
@@ -371,6 +377,8 @@ Phases 1 through 4 (Foundation, Micro-interactions, Animations, Polish) are **al
 **Django Studio:** Full site management control panel. Brand component library redesign complete. See `docs/plans/2026-02-25-studio-redesign-design.md` for the design doc and `docs/records/002-publishing-api.md` for the original scaffold. Django check passes (0 issues). Not yet deployed to Railway or tested end-to-end.
 
 **Research API:** Deployed to Railway at research.travisgilbert.me. Source promotion pipeline: Sourcebox triage accept in publishing_api calls research_api's `/api/v1/internal/promote/` endpoint via Bearer token auth. See `docs/records/003-research-api.md`.
+
+**YouTube Production Pipeline:** Batches 1 through 4 complete (models, admin, forms, CRUD views, URLs, sidebar, phase-aware editor template, HTMX inline panels for scenes/deliverables/sessions). Spec: `docs/plan-03-studio-youtube-production.md`. Plan: `.claude/plans/merry-scribbling-noodle.md`. Remaining: Batch 5 (Orchestra API endpoints + research integration), Batch 6 (Next.js frontend stubs).
 
 **Next step:** Deploy publishing_api to Railway, set cross-service env vars (`INTERNAL_API_KEY` on both, `RESEARCH_API_URL`/`RESEARCH_API_KEY` on publishing_api), test promotion pipeline end-to-end, set `NEXT_PUBLIC_STUDIO_URL` in Vercel.
 
@@ -413,6 +421,9 @@ Phases 1 through 4 (Foundation, Micro-interactions, Animations, Polish) are **al
 | StampDot 24-hour window | `isRecent()` checks if `lastAdvanced` is within 24 hours | Stamp animation fires only for freshly advanced content; prevents visual noise on every page load |
 | ConnectionMap synchronous layout | 300 D3 force iterations computed at render time (not animated) | Instant layout without jank; graph is small enough (<50 nodes) that sync computation is cheap |
 | CodeComment over RoughCallout | Static CSS code annotations instead of canvas-drawn callouts for homepage | "Workbench" aesthetic: code comments feel like developer notes; cheaper to render than rough.js canvas |
+| Video phase view | Dedicated `VideoSetPhaseView` (not generic `SetStageView`) | Video phases have lock semantics (permanent locking, sequential-only advancement) that generic view doesn't support |
+| Video editor template | Dedicated `video_edit.html` (not generic `edit.html`) | Phase-dependent panel visibility (8 phases) is unique to videos; generic template can't accommodate it |
+| Video HTMX panel pattern | Single toggle endpoint + field name via `hx-vals` | One `VideoSceneToggleView` handles 5 boolean fields; validates against whitelist set; avoids 5 separate views |
 
 ## Gotchas
 
@@ -464,3 +475,6 @@ Phases 1 through 4 (Foundation, Micro-interactions, Animations, Polish) are **al
 - **ConnectionMap two-layer rendering**: Canvas (behind) for rough.js hand-drawn edges, SVG (front) for colored nodes and hover interactions. Canvas redraws on hover state change
 - **DesignLanguageEasterEgg replaces ArchitectureEasterEgg**: Same 5-phase state machine but renamed. Update layout.tsx import if reverting
 - **JetBrains Mono `--font-code` vs Courier Prime `--font-metadata`**: Code comments use `--font-code` (JetBrains Mono); section labels and metadata use `--font-metadata` (Courier Prime). Don't swap them
+- **VideoScene `unique_together` constraint**: `("project", "order")` means adding a scene must compute `max(order) + 1`. The `VideoSceneAddView` handles this, but manual shell creation must respect it
+- **HTMX CSRF outside `<form>`**: Video partials use standalone buttons (not inside a `<form>`). Wrap the partial in `<div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>`; without this, all HTMX POST requests get 403
+- **VideoProject inherits TimeStampedModel**: Required by DashboardView `.defer()` and AutoSaveView `hasattr` checks. Using bare `models.Model` breaks both
