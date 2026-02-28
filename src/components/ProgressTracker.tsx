@@ -5,7 +5,20 @@
  * Two variants:
  *   full (default): connected dots with labels beneath each stage
  *   compact: dots only with a single label for the current stage
+ *
+ * When `lastAdvanced` is within the last 24 hours, the current stage dot
+ * renders as a StampDot (Client Component) with a brief stamp animation
+ * and scatter micro-dots.
  */
+
+import StampDot from './StampDot';
+
+/** Check if an ISO date string is within the last 24 hours */
+function isRecent(isoDate: string): boolean {
+  const then = new Date(isoDate).getTime();
+  const now = Date.now();
+  return now - then < 24 * 60 * 60 * 1000 && then <= now;
+}
 
 export interface Stage {
   key: string;
@@ -35,6 +48,8 @@ interface ProgressTrackerProps {
   annotationCount?: number;
   /** When true, renders light colors for dark backgrounds (hero zone) */
   inverted?: boolean;
+  /** ISO date when the stage last advanced (fires stamp animation if within 24h) */
+  lastAdvanced?: string;
 }
 
 export default function ProgressTracker({
@@ -43,8 +58,10 @@ export default function ProgressTracker({
   color = 'var(--color-terracotta)',
   annotationCount,
   inverted = false,
+  lastAdvanced,
 }: ProgressTrackerProps) {
   const currentIdx = stages.findIndex((s) => s.key === currentStage);
+  const showStamp = lastAdvanced ? isRecent(lastAdvanced) : false;
 
   return (
     <div className="flex items-center gap-0 mt-2">
@@ -56,17 +73,25 @@ export default function ProgressTracker({
         return (
           <div key={stage.key} className="flex items-center">
             <div className="flex flex-col items-center gap-1">
-              {/* Dot */}
-              <div
-                className="rounded-full transition-all duration-300"
-                style={{
-                  width: 10,
-                  height: 10,
-                  background: isComplete || isCurrent ? color : 'transparent',
-                  border: `2px solid ${isUpcoming ? (inverted ? 'color-mix(in srgb, var(--color-hero-text) 20%, transparent)' : 'var(--color-border)') : color}`,
-                  boxShadow: isCurrent ? `0 0 0 3px color-mix(in srgb, ${color} 13%, transparent)` : 'none',
-                }}
-              />
+              {/* Dot (StampDot for current stage when recently advanced) */}
+              {isCurrent && showStamp ? (
+                <StampDot
+                  size={10}
+                  color={color}
+                  glow={`0 0 0 3px color-mix(in srgb, ${color} 13%, transparent)`}
+                />
+              ) : (
+                <div
+                  className="rounded-full transition-all duration-300"
+                  style={{
+                    width: 10,
+                    height: 10,
+                    background: isComplete || isCurrent ? color : 'transparent',
+                    border: `2px solid ${isUpcoming ? (inverted ? 'color-mix(in srgb, var(--color-hero-text) 20%, transparent)' : 'var(--color-border)') : color}`,
+                    boxShadow: isCurrent ? `0 0 0 3px color-mix(in srgb, ${color} 13%, transparent)` : 'none',
+                  }}
+                />
+              )}
               {/* Label */}
               <span
                 className="font-mono whitespace-nowrap"

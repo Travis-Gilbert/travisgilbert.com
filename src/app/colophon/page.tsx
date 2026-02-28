@@ -33,7 +33,7 @@ const STACK_CATEGORIES: StackCategory[] = [
     items: [
       { key: 'Styling', value: 'Tailwind CSS v4', note: 'CSS custom properties' },
       { key: 'Hand-drawn', value: 'rough.js + rough-notation' },
-      { key: 'Typography', value: '7 fonts via next/font', note: 'Vollkorn, Cabin, IBM Plex Sans, Ysabeau, Courier Prime, Space Mono, Amarna' },
+      { key: 'Typography', value: '7 fonts via next/font', note: 'Vollkorn, Cabin, IBM Plex Sans, Ysabeau, Courier Prime, JetBrains Mono, Amarna' },
       { key: 'Primitives', value: 'Radix UI', note: 'Accordion, Collapsible, Tooltip' },
       { key: 'Icons', value: 'Phosphor + SketchIcon system' },
     ],

@@ -153,6 +153,7 @@ export default async function EssayDetailPage({ params }: Props) {
             currentStage={entry.data.stage || 'published'}
             color="var(--color-terracotta-light)"
             annotationCount={entry.data.annotations?.length}
+            lastAdvanced={entry.data.lastAdvanced?.toISOString()}
             inverted
           />
         }

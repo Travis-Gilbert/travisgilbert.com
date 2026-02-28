@@ -8,11 +8,11 @@ import TagList from '@/components/TagList';
 import RoughBox from '@/components/rough/RoughBox';
 import RoughLine from '@/components/rough/RoughLine';
 import RoughCallout from '@/components/rough/RoughCallout';
-import RoughPivotCallout from '@/components/rough/RoughPivotCallout';
+import CodeComment from '@/components/CodeComment';
 import EruptingCollage from '@/components/EruptingCollage';
 import type { CollageFragment } from '@/components/EruptingCollage';
 import ScrollReveal from '@/components/ScrollReveal';
-import CyclingTagline from '@/components/CyclingTagline';
+import PipelineCounter from '@/components/PipelineCounter';
 import ProgressTracker, { CompactTracker, ESSAY_STAGES, NOTE_STAGES } from '@/components/ProgressTracker';
 import Image from 'next/image';
 import PatternImage from '@/components/PatternImage';
@@ -51,11 +51,6 @@ export default function HomePage() {
     ? featured.data.callouts ?? (featured.data.callout ? [featured.data.callout] : [])
     : [];
 
-  // Content counts for hero counters
-  const totalEssays = essays.length;
-  const totalFieldNotes = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft).length;
-  const totalProjects = getCollection<Project>('projects').filter((p) => !p.data.draft).length;
-
   // Thread pairs for connecting cards within the essay section
   const allFieldNotesForThreads = getCollection<FieldNote>('field-notes').filter((n) => !n.data.draft);
   const allShelfForThreads = getCollection<ShelfEntry>('shelf');
@@ -83,8 +78,7 @@ export default function HomePage() {
           ═══════════════════════════════════════════════ */}
       <CollageHero
         name="Travis Gilbert"
-        countersLabel={`${totalEssays} essay${totalEssays !== 1 ? 's' : ''} · ${totalProjects} project${totalProjects !== 1 ? 's' : ''} · ${totalFieldNotes} field note${totalFieldNotes !== 1 ? 's' : ''}`}
-        tagline={<CyclingTagline />}
+        pipelineStatus={<PipelineCounter />}
         nowPreview={<NowPreviewCompact />}
       />
 
@@ -103,7 +97,7 @@ export default function HomePage() {
       {featured && (
         <section className="md:py-12">
           <ScrollReveal>
-            <RoughLine label="Essays on ..." labelColor="var(--color-terracotta)" />
+            <RoughLine label="Writing" labelColor="var(--color-terracotta)" />
 
             {/* EruptingCollage: Blake Cale editorial collage with overlapping
                 image fragments erupting above a clean card. Reads fragments from
@@ -132,6 +126,7 @@ export default function HomePage() {
                       currentStage={featured.data.stage || 'published'}
                       color="var(--color-terracotta)"
                       annotationCount={featured.data.annotations?.length}
+                      lastAdvanced={featured.data.lastAdvanced?.toISOString()}
                     />
 
                     <div className="mt-4">
@@ -156,30 +151,16 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Pivoted leader-line callouts: exactly 2, staggered on opposite sides */}
+                  {/* Code-style margin comments: workbench aesthetic */}
                   {featuredCallouts[0] && (
-                    <RoughPivotCallout
-                      side="right"
-                      tint="terracotta"
-                      offsetY={20}
-                      totalLength={196}
-                      seed={42}
-                      pivotDown
-                    >
+                    <CodeComment side="right" tint="terracotta" offsetY={20}>
                       {featuredCallouts[0]}
-                    </RoughPivotCallout>
+                    </CodeComment>
                   )}
                   {featuredCallouts[1] && (
-                    <RoughPivotCallout
-                      side="left"
-                      tint="terracotta"
-                      offsetY={100}
-                      totalLength={170}
-                      seed={88}
-                      pivotDown
-                    >
+                    <CodeComment side="left" tint="terracotta" offsetY={100}>
                       {featuredCallouts[1]}
-                    </RoughPivotCallout>
+                    </CodeComment>
                   )}
                 </div>
               </EruptingCollage>
@@ -252,9 +233,9 @@ export default function HomePage() {
                           <TagList tags={essay.data.tags} tint="terracotta" />
                         </div>
                         {essay.data.callout && (
-                          <RoughCallout side="right" tint="terracotta" offsetY={8} seed={42}>
+                          <CodeComment side="right" tint="terracotta" offsetY={8}>
                             {essay.data.callout}
-                          </RoughCallout>
+                          </CodeComment>
                         )}
                       </div>
                     </div>
@@ -270,7 +251,7 @@ export default function HomePage() {
               href="/essays"
               className="inline-flex items-center gap-1 font-mono text-sm text-terracotta hover:text-terracotta-hover no-underline"
             >
-              All essays <ArrowRight size={14} weight="bold" />
+              All writing <ArrowRight size={14} weight="bold" />
             </Link>
           </p>
         </section>
@@ -386,6 +367,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projects.map((project, i) => (
               <ScrollReveal key={project.slug} delay={i * 80}>
+                <div data-cursor="crosshair">
                 <RoughBox padding={20} hover tint="gold">
                   <div className="flex gap-3 items-start">
                     {/* Role icon container */}
@@ -452,6 +434,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </RoughBox>
+                </div>
               </ScrollReveal>
             ))}
           </div>

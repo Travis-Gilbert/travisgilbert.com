@@ -1,4 +1,4 @@
-import { Vollkorn, Cabin, IBM_Plex_Sans, Courier_Prime, Space_Mono, Ysabeau, Caveat } from 'next/font/google';
+import { Vollkorn, Cabin, IBM_Plex_Sans, Courier_Prime, JetBrains_Mono, Ysabeau, Caveat } from 'next/font/google';
 import localFont from 'next/font/local';
 
 export const vollkorn = Vollkorn({
@@ -38,9 +38,9 @@ export const courierPrime = Courier_Prime({
   style: ['normal', 'italic'],
 });
 
-export const spaceMono = Space_Mono({
+export const jetBrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  variable: '--font-space-mono',
+  variable: '--font-jetbrains-mono',
   display: 'swap',
   weight: ['400', '700'],
 });
@@ -64,7 +64,7 @@ export const fontVariableClasses = [
   ibmPlexSans.variable,
   ysabeau.variable,
   courierPrime.variable,
-  spaceMono.variable,
+  jetBrainsMono.variable,
   caveat.variable,
   amarna.variable,
 ].join(' ');

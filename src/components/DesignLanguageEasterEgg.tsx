@@ -133,8 +133,8 @@ const PALETTE = [
 
 const TYPE_SYSTEMS = [
   { name: 'Documentarian', fontClass: 'font-title', stack: 'Vollkorn . Cabin . Courier Prime', usage: '80%' },
-  { name: 'Architect', fontClass: 'font-title-alt', stack: 'Ysabeau . IBM Plex . Space Mono', usage: 'display' },
-  { name: 'Editor', fontClass: 'font-title', stack: 'Vollkorn . IBM Plex . Space Mono', usage: 'investigations' },
+  { name: 'Architect', fontClass: 'font-title-alt', stack: 'Ysabeau . IBM Plex . JetBrains Mono', usage: 'display' },
+  { name: 'Editor', fontClass: 'font-title', stack: 'Vollkorn . IBM Plex . JetBrains Mono', usage: 'investigations' },
 ];
 
 const TOKENS = [

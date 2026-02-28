@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { GitBranch } from '@phosphor-icons/react/dist/ssr';
 import { getSiteConfig } from '@/lib/siteConfig';
 
 export default function Footer() {
@@ -46,6 +47,14 @@ export default function Footer() {
               {link.label}
             </a>
           ))}
+          <Link
+            href="/connections"
+            className="inline-flex items-center gap-1 text-ink-light hover:text-terracotta no-underline"
+            style={{ fontSize: 11 }}
+          >
+            <GitBranch size={12} weight="regular" />
+            Connection Map
+          </Link>
           <span className="text-border-light">|</span>
           <Link
             href="/colophon"

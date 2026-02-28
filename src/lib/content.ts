@@ -29,6 +29,8 @@ export const essaySchema = z.object({
   callouts: z.array(z.string()).optional(),
   /** Essay production stage */
   stage: z.enum(['research', 'drafting', 'production', 'published']).optional(),
+  /** ISO date when stage last advanced (stamp animation fires if within 24h) */
+  lastAdvanced: z.coerce.date().optional(),
   /** Optional hero/card image path */
   image: z.string().optional(),
   /** Handwritten margin annotations keyed to paragraph index */
@@ -51,6 +53,8 @@ export const fieldNoteSchema = z.object({
   callouts: z.array(z.string()).optional(),
   /** Note development status */
   status: z.enum(['observation', 'developing', 'connected']).optional(),
+  /** ISO date when status last advanced (stamp animation fires if within 24h) */
+  lastAdvanced: z.coerce.date().optional(),
   /** Whether this note is featured on the homepage */
   featured: z.boolean().default(false),
   /** Slug of the parent essay this note connects to */

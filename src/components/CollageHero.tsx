@@ -6,20 +6,19 @@
  * content area and the spacer with the RoughLine label gap below.
  */
 
+import RoughUnderline from '@/components/rough/RoughUnderline';
+
 interface CollageHeroProps {
   name: string;
-  /** Content counters line, e.g. "4 essays · 12 projects · 8 field notes" */
-  countersLabel: string;
-  /** Slot for CyclingTagline component */
-  tagline: React.ReactNode;
+  /** Slot for PipelineCounter component */
+  pipelineStatus: React.ReactNode;
   /** Slot for NowPreviewCompact component */
   nowPreview: React.ReactNode;
 }
 
 export default function CollageHero({
   name,
-  countersLabel,
-  tagline,
+  pipelineStatus,
   nowPreview,
 }: CollageHeroProps) {
   return (
@@ -53,19 +52,28 @@ export default function CollageHero({
               {name}
             </h1>
 
-            <div className="mt-2">{tagline}</div>
-
             <p
-              className="font-mono mt-4 mb-0"
+              className="mt-3 mb-0"
               style={{
-                fontSize: 11,
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-                color: 'var(--color-ink-muted)',
+                fontFamily: 'var(--font-title)',
+                fontWeight: 700,
+                fontSize: 26,
+                color: 'var(--color-ink-secondary)',
               }}
             >
-              {countersLabel}
+              Hey, I&apos;m working{' '}
+              <RoughUnderline
+                type="underline"
+                color="var(--color-terracotta)"
+                strokeWidth={2}
+                animate
+                animationDuration={600}
+              >
+                here
+              </RoughUnderline>
             </p>
+
+            <div className="mt-4">{pipelineStatus}</div>
           </div>
 
           {/* Center spacer: matches the "Essays on ..." label width */}

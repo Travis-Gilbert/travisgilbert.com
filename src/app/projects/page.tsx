@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getCollection } from '@/lib/content';
 import type { Project } from '@/lib/content';
 import ProjectColumns from '@/components/ProjectColumns';
+import ParallaxStack from '@/components/ParallaxStack';
 import SectionLabel from '@/components/SectionLabel';
 import DrawOnIcon from '@/components/rough/DrawOnIcon';
 
@@ -28,18 +29,35 @@ export default function ProjectsPage() {
         </p>
       </section>
 
-      <ProjectColumns
-        projects={projects.map((p) => ({
-          slug: p.slug,
-          title: p.data.title,
-          role: p.data.role,
-          date: p.data.date.toISOString(),
-          organization: p.data.organization,
-          description: p.data.description,
-          urls: p.data.urls,
-          tags: p.data.tags,
-        }))}
-      />
+      <ParallaxStack intensity={0.03}>
+        {/* Layer 0: Blueprint grid background */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage:
+              'linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+            opacity: 0.06,
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Layer 1: Project content */}
+        <ProjectColumns
+          projects={projects.map((p) => ({
+            slug: p.slug,
+            title: p.data.title,
+            role: p.data.role,
+            date: p.data.date.toISOString(),
+            organization: p.data.organization,
+            description: p.data.description,
+            urls: p.data.urls,
+            tags: p.data.tags,
+          }))}
+        />
+      </ParallaxStack>
     </>
   );
 }

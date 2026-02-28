@@ -75,6 +75,7 @@ export default function EssaysPage() {
                       currentStage={featured.data.stage || 'published'}
                       color="var(--color-terracotta)"
                       annotationCount={featured.data.annotations?.length}
+                      lastAdvanced={featured.data.lastAdvanced?.toISOString()}
                     />
                     <div className="mt-3">
                       <DateStamp date={featured.data.date} />

@@ -132,6 +132,7 @@ function ProjectCard({
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      data-cursor="crosshair"
       className="rounded-lg cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-current"
       style={{
         background: mix(role.cssVar, bgPct),

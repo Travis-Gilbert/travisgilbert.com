@@ -55,6 +55,8 @@ export default function DotGrid({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
+  /** Ink trail: ring buffer of recent mouse positions with decay */
+  const trailRef = useRef<{ x: number; y: number; age: number }[]>([]);
 
   // Dot state in typed arrays for performance
   const dotsRef = useRef<{
@@ -213,6 +215,23 @@ export default function DotGrid({
 
       ctx!.clearRect(0, 0, w, h);
 
+      // Draw ink trail (underneath grid dots)
+      const trail = trailRef.current;
+      for (let t = trail.length - 1; t >= 0; t--) {
+        trail[t].age++;
+        if (trail[t].age > 60) {
+          trail.splice(t, 1);
+          continue;
+        }
+        const opacity = (1 - trail[t].age / 60) * 0.12;
+        const radius = 1.2 + (trail[t].age / 60) * 0.5;
+        ctx!.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
+        ctx!.beginPath();
+        ctx!.arc(trail[t].x, trail[t].y, radius, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+      if (trail.length > 0) idleFrames = 0;
+
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       const isActive = mouseRef.current.active;
@@ -277,6 +296,12 @@ export default function DotGrid({
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
       mouseRef.current.active = true;
+
+      // Ink trail: push current position (capped at 40 points)
+      const trail = trailRef.current;
+      trail.push({ x: e.clientX, y: e.clientY, age: 0 });
+      if (trail.length > 40) trail.shift();
+
       startAnimation();
     }
 

@@ -11,7 +11,7 @@
  * dangerouslySetInnerHTML here is equivalent to the same usage in page.tsx.
  */
 
-import { useRef, type RefObject } from 'react';
+import { useRef, useCallback, useEffect, useState, type RefObject } from 'react';
 import ArticleComments from '@/components/ArticleComments';
 import ConnectionDots from '@/components/ConnectionDots';
 import type { ContentType } from '@/lib/comments';
@@ -34,9 +34,53 @@ export default function ArticleBody({
   positionedConnections,
 }: ArticleBodyProps) {
   const proseRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const [canHover, setCanHover] = useState(false);
+
+  useEffect(() => {
+    const hasHover = window.matchMedia('(hover: hover)').matches;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setCanHover(hasHover && !prefersReduced);
+  }, []);
+
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!lineRef.current || !wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
+    lineRef.current.style.top = `${e.clientY - rect.top}px`;
+    lineRef.current.style.opacity = '1';
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    if (!lineRef.current) return;
+    lineRef.current.style.opacity = '0';
+  }, []);
 
   return (
-    <div className="article-body-wrapper" style={{ position: 'relative' }}>
+    <div
+      ref={wrapperRef}
+      className="article-body-wrapper"
+      style={{ position: 'relative' }}
+      onMouseMove={canHover ? onMouseMove : undefined}
+      onMouseLeave={canHover ? onMouseLeave : undefined}
+    >
+      {canHover && (
+        <div
+          ref={lineRef}
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: 0,
+            width: '100%',
+            height: 1,
+            background: 'var(--color-ink-muted)',
+            opacity: 0,
+            pointerEvents: 'none',
+            transition: 'opacity 200ms ease',
+            zIndex: 5,
+          }}
+        />
+      )}
       <div
         id="article-prose"
         ref={proseRef}
