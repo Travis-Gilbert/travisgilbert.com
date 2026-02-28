@@ -352,6 +352,17 @@ body::after {
   }
 }
 
+/* Hero artifact: subtle scale on hover, disabled for reduced-motion */
+.hero-artifact:hover {
+  transform: rotate(-1.5deg) scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-artifact:hover {
+    transform: rotate(-1.5deg);
+  }
+}
+
 /* ─────────────────────────────────────────────────
    Main Content: Padding Custom Property
    Hero components use --main-pad-y to negate main's
