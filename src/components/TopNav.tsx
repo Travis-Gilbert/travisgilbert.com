@@ -23,7 +23,7 @@ interface TopNavProps {
 
 const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: '/essays', label: 'Works in Progress', icon: 'file-text' },
-  { href: '/research', label: 'Paper Trail', icon: 'magnifying-glass' },
+  { href: '/research', label: 'Paper Trails', icon: 'magnifying-glass' },
   { href: '/field-notes', label: 'Field Notes', icon: 'note-pencil' },
   { href: '/projects', label: 'Projects', icon: 'briefcase' },
   { href: '/toolkit', label: 'Toolkit', icon: 'wrench' },

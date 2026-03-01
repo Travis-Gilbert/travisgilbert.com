@@ -48,12 +48,12 @@ export default function Footer() {
             </a>
           ))}
           <Link
-            href="/connections"
+            href="/research"
             className="inline-flex items-center gap-1 text-ink-light hover:text-terracotta no-underline"
             style={{ fontSize: 11 }}
           >
             <GitBranch size={12} weight="regular" />
-            Connection Map
+            Paper Trails
           </Link>
           <span className="text-border-light">|</span>
           <Link

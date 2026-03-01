@@ -842,9 +842,9 @@ export default function SourceGraphEasterEgg() {
             <SansText x={68} y={127}>RawSource model</SansText>
             <SansText x={68} y={140}>Triage dashboard</SansText>
 
-            {/* /connections/ sub-box */}
+            {/* /research/ sub-box */}
             <RoughRect x={54} y={186} w={228} h={78} stroke={T.terracotta} strokeWidth={0.8} seed={220} jitter={1.2} dash="4 3" fill="rgba(180,90,45,0.015)" />
-            <Mono x={62} y={200} size={8} weight={700} color={T.terracotta}>/connections/</Mono>
+            <Mono x={62} y={200} size={8} weight={700} color={T.terracotta}>/research/</Mono>
             <SansText x={68} y={214}>SuggestedConn.</SansText>
             <SansText x={68} y={227}>Approve / dismiss</SansText>
 

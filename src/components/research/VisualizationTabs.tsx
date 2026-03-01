@@ -1,11 +1,14 @@
 'use client';
 
 /**
- * VisualizationTabs: tab switcher for the Paper Trail /research page.
+ * VisualizationTabs: tab switcher for the Paper Trails /research page.
  *
  * Renders a row of tab buttons and mounts the selected visualization.
  * Only the active visualization is mounted at any time to keep
  * DOM weight and D3 simulation costs down.
+ *
+ * The "Connections" tab renders the content relationship graph
+ * (ConnectionMap) with server-computed node/edge data passed as props.
  */
 
 import { useState } from 'react';
@@ -14,8 +17,9 @@ import ResearchTimeline from './ResearchTimeline';
 import SourceConstellation from './SourceConstellation';
 import ActivityHeatmap from './ActivityHeatmap';
 import SourceSankey from './SourceSankey';
+import ConnectionMap from '@/components/ConnectionMap';
 
-type TabId = 'graph' | 'timeline' | 'constellation' | 'activity' | 'sankey';
+type TabId = 'graph' | 'connections' | 'timeline' | 'constellation' | 'activity' | 'sankey';
 
 interface Tab {
   id: TabId;
@@ -28,6 +32,11 @@ const TABS: Tab[] = [
     id: 'graph',
     label: 'Network',
     description: 'Force-directed graph of sources and content. Drag to rearrange, click for details.',
+  },
+  {
+    id: 'connections',
+    label: 'Connections',
+    description: 'How essays, field notes, projects, and shelf items relate to each other across the site.',
   },
   {
     id: 'timeline',
@@ -51,7 +60,35 @@ const TABS: Tab[] = [
   },
 ];
 
-export default function VisualizationTabs() {
+/** Node shape expected by ConnectionMap (server-computed) */
+interface ConnectionNode {
+  id: string;
+  slug: string;
+  title: string;
+  type: 'essay' | 'field-note' | 'project' | 'shelf';
+  connectionCount: number;
+  href: string;
+}
+
+/** Edge shape expected by ConnectionMap (server-computed) */
+interface ConnectionEdge {
+  source: string;
+  target: string;
+  type: string;
+  strokeWidth: number;
+}
+
+interface VisualizationTabsProps {
+  /** Pre-computed connection graph nodes (from connectionEngine) */
+  connectionNodes?: ConnectionNode[];
+  /** Pre-computed connection graph edges (from connectionEngine) */
+  connectionEdges?: ConnectionEdge[];
+}
+
+export default function VisualizationTabs({
+  connectionNodes = [],
+  connectionEdges = [],
+}: VisualizationTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>('graph');
 
   const currentTab = TABS.find((t) => t.id === activeTab)!;
@@ -87,6 +124,9 @@ export default function VisualizationTabs() {
       {/* Active visualization */}
       <div className="min-h-[400px]">
         {activeTab === 'graph' && <SourceGraph />}
+        {activeTab === 'connections' && (
+          <ConnectionMap nodes={connectionNodes} edges={connectionEdges} />
+        )}
         {activeTab === 'timeline' && <ResearchTimeline />}
         {activeTab === 'constellation' && <SourceConstellation />}
         {activeTab === 'activity' && <ActivityHeatmap />}
