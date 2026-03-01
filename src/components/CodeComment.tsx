@@ -1,6 +1,6 @@
 /**
  * CodeComment: Static code-style annotation for card margins.
- * Renders as `// comment text` in JetBrains Mono with a dimmed prefix.
+ * Renders as `# comment text` in JetBrains Mono with a dimmed hash prefix.
  *
  * Server Component (no canvas, no rough.js, pure CSS positioning).
  * Replaces RoughCallout/RoughPivotCallout for homepage cards where the
@@ -67,7 +67,7 @@ export default function CodeComment({
             style={{ fontSize: 14, opacity: 0.5, marginRight: 8 }}
             aria-hidden="true"
           >
-            //
+            #
           </span>
           {children}
         </p>
