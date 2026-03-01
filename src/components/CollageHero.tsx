@@ -82,7 +82,7 @@ export default function CollageHero({
                     fontFamily: 'var(--font-title)',
                     fontWeight: 700,
                     lineHeight: 1.0,
-                    color: 'var(--color-hero-text)',
+                    color: 'var(--color-ink)',
                   }}
                 >
                   {name}
@@ -94,7 +94,7 @@ export default function CollageHero({
                     fontFamily: 'var(--font-title)',
                     fontWeight: 700,
                     fontSize: 26,
-                    background: 'linear-gradient(to right, var(--color-hero-text), var(--color-terracotta))',
+                    background: 'linear-gradient(to right, var(--color-ink), var(--color-terracotta))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
@@ -138,7 +138,7 @@ export default function CollageHero({
                         fontFamily: 'var(--font-title)',
                         fontWeight: 700,
                         lineHeight: 1.15,
-                        color: 'var(--color-hero-text)',
+                        color: 'var(--color-ink)',
                       }}
                     >
                       <span className="group-hover:text-[var(--color-terracotta)] transition-colors">
@@ -150,7 +150,7 @@ export default function CollageHero({
                   <p
                     className="mt-3 mb-0 text-base lg:text-lg"
                     style={{
-                      color: 'var(--color-hero-text-muted)',
+                      color: 'var(--color-ink-secondary)',
                       lineHeight: 1.6,
                       maxWidth: '42ch',
                     }}
@@ -182,6 +182,32 @@ export default function CollageHero({
                   {featured.tags.length > 0 && (
                     <div className="mt-3">
                       <TagList tags={featured.tags} tint="terracotta" />
+                    </div>
+                  )}
+
+                  {/* Callouts: CodeComment style workbench annotations */}
+                  {featured.callouts && featured.callouts.length > 0 && (
+                    <div className="mt-4 flex flex-col gap-2">
+                      {featured.callouts.map((callout, i) => (
+                        <p
+                          key={i}
+                          className="m-0 leading-snug select-none"
+                          style={{
+                            fontFamily: 'var(--font-code)',
+                            fontSize: 12,
+                            color: 'var(--color-terracotta)',
+                            opacity: 0.7,
+                          }}
+                        >
+                          <span
+                            style={{ fontSize: 14, opacity: 0.5, marginRight: 6 }}
+                            aria-hidden="true"
+                          >
+                            #
+                          </span>
+                          {callout}
+                        </p>
+                      ))}
                     </div>
                   )}
                 </div>

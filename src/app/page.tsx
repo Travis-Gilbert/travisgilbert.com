@@ -55,7 +55,7 @@ export default function HomePage() {
       <CollageHero
         name="Travis Gilbert"
         pipelineStatus={<PipelineCounter />}
-        nowPreview={<NowPreviewCompact inverted />}
+        nowPreview={<NowPreviewCompact />}
         artifact={
           <HeroArtifact
             imageSrc={heroImage}
