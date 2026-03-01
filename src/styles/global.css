@@ -12,7 +12,7 @@
   --color-bg-alt: #E8E0D6;
   --color-card: #FAF6F1;           /* alias → surface */
   --color-code: #E8E0D6;           /* alias → bg-alt */
-  --color-nav-bg: #F0EBE4;         /* nav: matches paper in light, hero-ground in dark */
+  --color-nav-bg: #1E1620;         /* nav: dusty purple, blends into hero gradient */
 
   /* Text */
   --color-ink: #2A2420;
@@ -97,7 +97,7 @@
 html[data-theme="dark"] {
   /* Backgrounds: warm charcoal, not blue-gray */
   --color-paper: #1A1816;
-  --color-nav-bg: #141210;
+  --color-nav-bg: #1E1620;
   --color-surface: #222018;
   --color-bg-alt: #2E2A26;
   --color-card: #222018;
@@ -110,10 +110,10 @@ html[data-theme="dark"] {
   --color-ink-secondary: #A89E92;
   --color-ink-faint: #7A7268;
 
-  /* Accent: Terracotta (lifted for dark backgrounds) */
-  --color-terracotta: #D4875A;
-  --color-terracotta-hover: #E89A6A;
-  --color-terracotta-light: #F0B08A;
+  /* Accent: Terracotta (warmed for dark backgrounds, retaining brown-red richness) */
+  --color-terracotta: #C46A3A;
+  --color-terracotta-hover: #D47A4A;
+  --color-terracotta-light: #E0956A;
 
   /* Secondary: Teal (lifted) */
   --color-teal: #3A8898;

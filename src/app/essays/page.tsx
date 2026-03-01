@@ -15,7 +15,7 @@ import type { AllContent } from '@/lib/connectionEngine';
 import ThreadLines from '@/components/ThreadLines';
 
 export const metadata: Metadata = {
-  title: 'Essays on ...',
+  title: 'Works in Progress',
   description:
     'Video essays exploring how design decisions shape human outcomes.',
 };
@@ -36,10 +36,10 @@ export default function EssaysPage() {
   return (
     <>
       <section className="py-8">
-        <SectionLabel color="terracotta">Essays</SectionLabel>
+        <SectionLabel color="terracotta">Works in Progress</SectionLabel>
         <h1 className="font-title text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
           <DrawOnIcon name="file-text" size={32} color="var(--color-terracotta)" />
-          Essays on ...
+          Works in Progress
         </h1>
         <p className="text-ink-secondary mb-8">
           Long form examinations of how design decisions reshape cities, systems, and daily life.

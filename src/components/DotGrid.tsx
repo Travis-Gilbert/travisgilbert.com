@@ -11,7 +11,9 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useThemeVersion, readCssVar, hexToRgb } from '@/hooks/useThemeColor';
 
 // Viewport inversion gradient: charcoal fades in at top, dots invert to cream
-const INVERSION_DEPTH = 0.35; // fraction of viewport height
+const INVERSION_DEPTH = 0.35; // fraction of viewport height (light mode)
+const DARK_INVERSION_DEPTH = 0.25; // shallower in dark mode (less intense)
+const GRADIENT_TAIL = 0.08; // fraction of viewport for soft fade-out below gradient
 
 interface DotGridProps {
   dotRadius?: number;
@@ -72,29 +74,46 @@ export default function DotGrid({
     count: number;
   } | null>(null);
 
-  // Pre-compute elliptical radial fade per dot
+  // Pre-compute kite-shaped fade per dot:
+  // Full width at top, sides taper starting ~40% down, rounded bottom
   const computeFade = useCallback((
     gx: Float32Array, gy: Float32Array, fade: Float32Array,
     count: number, w: number, h: number,
   ) => {
     const cx = w / 2;
-    const cy = h / 2;
+    // Vertical position where side tapering begins (fraction of height)
+    const taperStart = 0.35;
+    // Bottom fade zone (fraction of height from bottom)
+    const bottomFade = 0.15;
 
     for (let i = 0; i < count; i++) {
-      const dx = (gx[i] - cx) / cx;
-      const dy = (gy[i] - cy) / cy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const nx = gx[i] / w;       // 0..1 horizontal
+      const ny = gy[i] / h;       // 0..1 vertical
+      const dx = Math.abs(nx - 0.5) * 2; // 0 at center, 1 at edge
 
-      if (dist <= fadeStart) {
-        fade[i] = 1;
-      } else if (dist >= fadeEnd) {
-        fade[i] = 0;
-      } else {
-        const t = (dist - fadeStart) / (fadeEnd - fadeStart);
-        fade[i] = 1 - (t * t * (3 - 2 * t)); // Hermite smoothstep
+      // Side fade: no horizontal fade above taperStart, increasing below
+      let sideFade = 1;
+      if (ny > taperStart) {
+        const taperProgress = (ny - taperStart) / (1 - taperStart);
+        // How far inward the fade reaches (0 at taperStart, 0.5 at bottom)
+        const fadeWidth = taperProgress * 0.5;
+        const edgeStart = 1 - fadeWidth / fadeStart;
+        if (dx > edgeStart) {
+          const t = Math.min((dx - edgeStart) / (1 - edgeStart), 1);
+          sideFade = 1 - (t * t * (3 - 2 * t));
+        }
       }
+
+      // Bottom fade: smoothstep from (1 - bottomFade) to 1
+      let bottomAlpha = 1;
+      if (ny > (1 - bottomFade)) {
+        const t = (ny - (1 - bottomFade)) / bottomFade;
+        bottomAlpha = 1 - (t * t * (3 - 2 * t));
+      }
+
+      fade[i] = sideFade * bottomAlpha;
     }
-  }, [fadeStart, fadeEnd]);
+  }, [fadeStart]);
 
   const initDots = useCallback((w: number, h: number) => {
     const cols = Math.ceil(w / spacing) + 1;
@@ -180,6 +199,12 @@ export default function DotGrid({
     const resolvedHex = readCssVar('--color-rough-light');
     const rgb = resolvedHex ? hexToRgb(resolvedHex) : dotColor;
 
+    // Resolve nav background for purple band at top of gradient
+    const navBgHex = readCssVar('--color-nav-bg');
+    const navBgRgb: [number, number, number] = navBgHex
+      ? hexToRgb(navBgHex)
+      : [30, 22, 32];
+
     // Resolve inversion colors from CSS (theme-aware)
     const charcoalHex = readCssVar('--color-hero-ground');
     const charcoalRgb: [number, number, number] = charcoalHex
@@ -198,14 +223,32 @@ export default function DotGrid({
 
     // Dark mode: invert gradient direction and dot inversion color
     const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-    const gradTopRgb: [number, number, number] = isDarkMode ? creamRgb : charcoalRgb;
+    // Dark mode uses warmer, slightly darker cream for the gradient
+    const darkCreamRgb: [number, number, number] = [225, 218, 206];
+    const effectiveCreamRgb = isDarkMode ? darkCreamRgb : creamRgb;
+    const gradTopRgb: [number, number, number] = isDarkMode ? effectiveCreamRgb : charcoalRgb;
     const gradBottomRgb: [number, number, number] = isDarkMode ? charcoalRgb : paperRgb;
-    const invertedDotRgb: [number, number, number] = isDarkMode ? charcoalRgb : creamRgb;
+    const invertedDotRgb: [number, number, number] = isDarkMode ? charcoalRgb : effectiveCreamRgb;
+    const inversionDepth = isDarkMode ? DARK_INVERSION_DEPTH : INVERSION_DEPTH;
 
-    /** Paint Hermite-eased gradient over the top portion of the canvas */
+    /** Paint purple band + Hermite-eased gradient over the top portion + soft tail zone */
     function drawInversionGradient() {
-      const gradEnd = Math.round(h * INVERSION_DEPTH);
-      const grad = ctx!.createLinearGradient(0, 0, 0, gradEnd);
+      const gradEnd = Math.round(h * inversionDepth);
+      const tailLength = Math.round(h * GRADIENT_TAIL);
+
+      // Purple band: nav color fades into charcoal/gradTop over top ~7% of viewport
+      const purpleBandEnd = Math.round(h * 0.07);
+      if (purpleBandEnd > 0) {
+        const purpleGrad = ctx!.createLinearGradient(0, 0, 0, purpleBandEnd);
+        purpleGrad.addColorStop(0, `rgb(${navBgRgb[0]},${navBgRgb[1]},${navBgRgb[2]})`);
+        purpleGrad.addColorStop(1, `rgb(${gradTopRgb[0]},${gradTopRgb[1]},${gradTopRgb[2]})`);
+        ctx!.fillStyle = purpleGrad;
+        ctx!.fillRect(0, 0, w, purpleBandEnd);
+      }
+
+      // Main gradient: charcoal easing to paper (starts where purple band ends)
+      const mainGradStart = purpleBandEnd;
+      const grad = ctx!.createLinearGradient(0, mainGradStart, 0, gradEnd);
       const stops = [0, 0.15, 0.35, 0.55, 0.75, 0.90, 1.0];
       for (let i = 0; i < stops.length; i++) {
         const t = stops[i];
@@ -216,16 +259,34 @@ export default function DotGrid({
         grad.addColorStop(t, `rgb(${r},${g},${b})`);
       }
       ctx!.fillStyle = grad;
-      ctx!.fillRect(0, 0, w, gradEnd);
+      ctx!.fillRect(0, mainGradStart, w, gradEnd - mainGradStart);
+
+      // Tail zone: gradBottomRgb fades to transparent below the main gradient
+      if (tailLength > 0) {
+        const tailGrad = ctx!.createLinearGradient(0, gradEnd, 0, gradEnd + tailLength);
+        tailGrad.addColorStop(0, `rgba(${gradBottomRgb[0]},${gradBottomRgb[1]},${gradBottomRgb[2]},1)`);
+        tailGrad.addColorStop(0.5, `rgba(${gradBottomRgb[0]},${gradBottomRgb[1]},${gradBottomRgb[2]},0.3)`);
+        tailGrad.addColorStop(1, `rgba(${gradBottomRgb[0]},${gradBottomRgb[1]},${gradBottomRgb[2]},0)`);
+        ctx!.fillStyle = tailGrad;
+        ctx!.fillRect(0, gradEnd, w, tailLength);
+      }
     }
 
-    /** Returns 1.0 at y=0 (full inversion), 0.0 at/below gradient end */
+    /** Returns 1.0 at y=0 (full inversion), fades through tail zone to 0.0 */
     function getInversionFactor(baseY: number): number {
-      const gradEnd = h * INVERSION_DEPTH;
-      if (baseY >= gradEnd) return 0;
+      const gradEnd = h * inversionDepth;
+      const tailEnd = gradEnd + h * GRADIENT_TAIL;
       if (baseY <= 0) return 1;
-      const t = baseY / gradEnd;
-      return 1 - (t * t * (3 - 2 * t)); // Hermite smoothstep
+      if (baseY < gradEnd) {
+        const t = baseY / gradEnd;
+        return 1 - (t * t * (3 - 2 * t)); // Hermite smoothstep
+      }
+      // Tail zone: smooth fade from residual value to 0
+      if (baseY < tailEnd) {
+        const t = (baseY - gradEnd) / (tailEnd - gradEnd);
+        return (1 - (t * t * (3 - 2 * t))) * 0.15; // subtle residual inversion
+      }
+      return 0;
     }
 
     function drawDot(
