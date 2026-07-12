@@ -41,6 +41,46 @@ export async function invoke<T>(
   return bridge.invoke(cmd, args) as Promise<T>;
 }
 
+/* ── Markdown reader ────────────────────────────────────────── */
+
+export interface ReadDocumentResult {
+  path: string;
+  content: string;
+  isDir: boolean;
+  insideWorkspace: boolean;
+  okfBundleCandidate: boolean;
+}
+
+export interface KeepDocumentInput {
+  path: string;
+  content: string;
+  relevance: 'memory' | 'file';
+  title?: string;
+  kind?: string;
+  summary?: string;
+  tags?: string[];
+  links?: string[];
+}
+
+export interface KeepDocumentReceipt {
+  status: string;
+  action: string;
+  docId: string;
+  kind: string;
+  title: string;
+  sourceRef: string;
+  agentRelevant: boolean;
+  raw: unknown;
+}
+
+export const readerReady = () => invoke<string[]>('reader_ready');
+
+export const readDocument = (path: string) =>
+  invoke<ReadDocumentResult>('read_document', { input: { path } });
+
+export const keepDocument = (input: KeepDocumentInput) =>
+  invoke<KeepDocumentReceipt>('keep_document', { input });
+
 /* ── Receiver (local agent execution) ───────────────────────────── */
 
 export interface ReceiverStatus {

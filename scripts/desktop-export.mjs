@@ -21,17 +21,17 @@ import {
 import { join } from 'node:path';
 
 const APP = 'src/app';
-const PARK = 'src/app/_parked';
+const PARK = '.desktop-export-parked';
 const NEXT_BIN = 'node_modules/.bin/next';
 
 // Kept in the export: the CommonPlace surface + the shared root scaffold.
 const KEEP = new Set([
   '(commonplace)',
+  '(reader)',
   'layout.tsx',
   'globals.css',
   'fonts.ts',
   'not-found.tsx',
-  '_parked',
 ]);
 
 function park() {
