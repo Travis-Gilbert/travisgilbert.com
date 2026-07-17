@@ -1,37 +1,40 @@
+// SOURCING: none: server data assembly for StackGraph, no upstream component applies
+/**
+ * /toolkit: the workspace graph.
+ *
+ * The stack list was a claim; this is evidence, extracted from the
+ * workspaces by cargo-atlas. The server loads the artifact and computes
+ * heat; StackGraph renders and handles interaction.
+ */
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getCollection, renderMarkdown } from '@/lib/content';
-import type { ToolkitEntry } from '@/lib/content';
-import SectionLabel from '@/components/SectionLabel';
-import ToolkitAccordion from '@/components/ToolkitAccordion';
-import DrawOnIcon from '@/components/rough/DrawOnIcon';
 import { ArrowRight } from 'iconoir-react';
+import SectionLabel from '@/components/SectionLabel';
+import DrawOnIcon from '@/components/rough/DrawOnIcon';
+import StackGraph from '@/components/StackGraph';
+import { atlasHeat, loadAtlas } from '@/lib/workspace-graph';
 
 export const metadata: Metadata = {
   title: 'Toolkit',
-  description: 'How I work: tools, processes, and philosophy.',
+  description: 'The workspace graph: what exists, what depends on what, and where the recent work is.',
 };
 
-const categories = [
-  { key: 'production', label: 'Production Workflow' },
-  { key: 'tools', label: 'Tools I Use' },
-  { key: 'philosophy', label: 'How I Think About Design' },
-  { key: 'automation', label: 'AI & Automation' },
-] as const;
+export const revalidate = 3600;
 
 export default async function ToolkitPage() {
-  const toolkitItems = getCollection<ToolkitEntry>('toolkit').sort(
-    (a, b) => a.data.order - b.data.order
-  );
+  const atlas = await loadAtlas();
+  const heat = Object.fromEntries(atlasHeat(atlas, new Date()));
 
-  // Pre-render all markdown content
-  const renderedItems = await Promise.all(
-    toolkitItems.map(async (item) => ({
-      slug: item.slug,
-      title: item.data.title,
-      category: item.data.category,
-      html: await renderMarkdown(item.body),
-    }))
+  const lastTouched: Record<string, string> = {};
+  for (const event of atlas.events) {
+    if (!lastTouched[event.object] || event.at > lastTouched[event.object]) {
+      lastTouched[event.object] = event.at;
+    }
+  }
+
+  const hrefs = Object.fromEntries(
+    atlas.objects.map((object) => [object.id, `/toolkit/${encodeURIComponent(object.id)}`]),
   );
 
   return (
@@ -42,26 +45,29 @@ export default async function ToolkitPage() {
           <DrawOnIcon name="wrench" size={32} color="var(--color-terracotta)" />
           Toolkit
         </h1>
-        <p className="text-ink-secondary mb-8">
-          How I work: tools, processes, and philosophy.
+        <p className="text-ink-secondary mb-2">
+          The machine, drawn from evidence: every crate and package in the
+          workspaces, extracted by{' '}
+          <a
+            href="https://github.com/Travis-Gilbert/cargo-atlas"
+            className="text-gold hover:text-gold/80 transition-colors"
+          >
+            cargo-atlas
+          </a>
+          . Click a node to trace what it needs and what breaks without it.
+          Recent work glows.
         </p>
       </section>
 
-      {categories.map((cat) => {
-        const items = renderedItems.filter(
-          (item) => item.category === cat.key
-        );
-        if (items.length === 0) return null;
-
-        return (
-          <section key={cat.key} className="mb-6 sm:mb-12">
-            <h2 className="font-title-alt text-2xl font-semibold mb-6">
-              {cat.label}
-            </h2>
-            <ToolkitAccordion items={items} />
-          </section>
-        );
-      })}
+      <section className="mb-12">
+        <StackGraph
+          objects={atlas.objects}
+          edges={atlas.edges}
+          heat={heat}
+          lastTouched={lastTouched}
+          hrefs={hrefs}
+        />
+      </section>
 
       <section className="mb-12 border-t border-border pt-8">
         <h2 className="font-title-alt text-2xl font-semibold mb-3">

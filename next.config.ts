@@ -50,6 +50,13 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        // Keep the workspace-graph API on this app. Rewrites run before
+        // dynamic routes, so without this self-rewrite the '/api/:path*'
+        // catch-all below would swallow /api/graph/node/[id].
+        source: '/api/graph/:path*',
+        destination: '/api/graph/:path*',
+      },
+      {
         source: '/act/gemma-2-2b-it-q4f16_1-ctx4k_cs1k-webgpu.wasm',
         destination: actMlcModelLibUrl,
       },

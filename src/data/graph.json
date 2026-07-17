@@ -1,0 +1,4507 @@
+{
+  "version": "1",
+  "generated_at": "2026-07-16T23:53:14Z",
+  "source_commit": {
+    "Theorem": "87ef890",
+    "travisgilbert.me": "1454ae5"
+  },
+  "objects": [
+    {
+      "id": "blake3",
+      "kind": "crate",
+      "workspace": "external",
+      "version": "1.8.2",
+      "summary": "the BLAKE3 hash function",
+      "public": true
+    },
+    {
+      "id": "d3",
+      "kind": "package",
+      "workspace": "external",
+      "public": true
+    },
+    {
+      "id": "next",
+      "kind": "package",
+      "workspace": "external",
+      "public": true
+    },
+    {
+      "id": "react",
+      "kind": "package",
+      "workspace": "external",
+      "public": true
+    },
+    {
+      "id": "rustyred-code-embedding",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-hipporag",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-membrane",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-plugin",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-proxy",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-rerank",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-a2a-client",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-adapters",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-affordances",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-agentfs",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-behavior-ir",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-binformat",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-catalog",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-checkpoint",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-code",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-compat-server",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-connectors",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-core",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-datawave",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-datawave-harness",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-derivation",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-derive",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-disasm",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-episode-supply-chain",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-fractal",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-fuse",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-geotemporal",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-graph-lisp",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-graphblas",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-intake",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-kvcache",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-lift",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-mcp",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-memory",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-ml",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-nlp",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-offload",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-okf",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-pg-server",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-programmable-graph",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-reconstruct",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-reconstruct-fact",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-reconstruct-harness",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-resolve",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-resp-server",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-thg-server",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-web",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyred-web-compat",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "rustyredcore_thg",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "scene-contract",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "scene-os-core",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "scene-os-web",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-acp",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-agentd",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-bayes",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-blocks",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-browser-agent",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-capability-registry",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-copresence",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-dispatch",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-env-core",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-evolve",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-exec-sandbox",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-harness",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-harness-core",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-harness-runtime",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-localmodel",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-policy",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-prompt",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-receiver",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-som",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-tensor-block",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "theorem-worlds",
+      "kind": "crate",
+      "workspace": "Theorem",
+      "public": false
+    },
+    {
+      "id": "travisgilbert-website",
+      "kind": "package",
+      "workspace": "travisgilbert.me",
+      "version": "1.0.0",
+      "path": ".",
+      "loc": 176779,
+      "public": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "rustyred-hipporag",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-hipporag",
+      "to": "rustyred-membrane",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-hipporag",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-membrane",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-membrane",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-plugin",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-plugin",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-proxy",
+      "to": "theorem-agentd",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-rerank",
+      "to": "rustyred-membrane",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-a2a-client",
+      "to": "rustyred-thg-affordances",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-a2a-client",
+      "to": "rustyred-thg-connectors",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-adapters",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-adapters",
+      "to": "rustyred-thg-ml",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-affordances",
+      "to": "rustyred-code-embedding",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-affordances",
+      "to": "rustyred-plugin",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-affordances",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-affordances",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-affordances",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-agentfs",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-binformat",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-catalog",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-checkpoint",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-checkpoint",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-code-embedding",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-membrane",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-rerank",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-thg-behavior-ir",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-thg-datawave",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-code",
+      "to": "rustyred-thg-offload",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-compat-server",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-connectors",
+      "to": "rustyred-plugin",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-connectors",
+      "to": "rustyred-thg-affordances",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-connectors",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-core",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-core",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-datawave",
+      "to": "rustyred-thg-checkpoint",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-datawave",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-datawave",
+      "to": "rustyred-thg-reconstruct-fact",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-datawave-harness",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-datawave-harness",
+      "to": "rustyred-thg-datawave",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-derivation",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-derive",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-disasm",
+      "to": "rustyred-thg-binformat",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-disasm",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-episode-supply-chain",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-episode-supply-chain",
+      "to": "rustyred-thg-datawave",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-episode-supply-chain",
+      "to": "rustyred-web",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-episode-supply-chain",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fractal",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fractal",
+      "to": "rustyred-hipporag",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fractal",
+      "to": "rustyred-membrane",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fractal",
+      "to": "rustyred-rerank",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fractal",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fractal",
+      "to": "rustyred-web",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-fuse",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-geotemporal",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-intake",
+      "to": "rustyred-thg-affordances",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-intake",
+      "to": "rustyred-thg-connectors",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-intake",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-intake",
+      "to": "rustyred-web",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-kvcache",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-kvcache",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-lift",
+      "to": "rustyred-thg-binformat",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-lift",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-lift",
+      "to": "rustyred-thg-disasm",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-affordances",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-checkpoint",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-code",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-connectors",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-datawave",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-datawave-harness",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-derivation",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-intake",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-ml",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-offload",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-programmable-graph",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-reconstruct-fact",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-reconstruct-harness",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-thg-resolve",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "rustyred-web",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "theorem-blocks",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "theorem-capability-registry",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-mcp",
+      "to": "theorem-harness-runtime",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-memory",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-memory",
+      "to": "rustyred-thg-derivation",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-memory",
+      "to": "rustyred-thg-nlp",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-ml",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-nlp",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-nlp",
+      "to": "rustyred-thg-resolve",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-offload",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-okf",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-okf",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-okf",
+      "to": "theorem-harness-runtime",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-pg-server",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-programmable-graph",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-programmable-graph",
+      "to": "rustyred-thg-derivation",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-programmable-graph",
+      "to": "rustyred-thg-graph-lisp",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-programmable-graph",
+      "to": "theorem-blocks",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-programmable-graph",
+      "to": "theorem-evolve",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-behavior-ir",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-binformat",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-code",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-disasm",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-lift",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct",
+      "to": "rustyred-thg-reconstruct-fact",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-fact",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-fact",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-harness",
+      "to": "rustyred-thg-binformat",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-harness",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-harness",
+      "to": "rustyred-thg-disasm",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-harness",
+      "to": "rustyred-thg-lift",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-reconstruct-harness",
+      "to": "rustyred-thg-reconstruct",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-resolve",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-resolve",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-resolve",
+      "to": "rustyred-thg-datawave",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-resolve",
+      "to": "rustyred-thg-offload",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-resp-server",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-hipporag",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-membrane",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-rerank",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-adapters",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-affordances",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-connectors",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-datawave-harness",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-derive",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-fractal",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-mcp",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-memory",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-thg-offload",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-web",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "rustyred-web-compat",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "theorem-acp",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "theorem-browser-agent",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "theorem-dispatch",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-thg-server",
+      "to": "theorem-harness-runtime",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web",
+      "to": "blake3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web",
+      "to": "rustyred-hipporag",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web",
+      "to": "rustyred-membrane",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web",
+      "to": "rustyred-rerank",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web",
+      "to": "rustyred-thg-datawave",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyred-web-compat",
+      "to": "rustyred-web",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyredcore_thg",
+      "to": "rustyred-thg-adapters",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyredcore_thg",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "rustyredcore_thg",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "scene-os-web",
+      "to": "scene-os-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-acp",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-acp",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-acp",
+      "to": "theorem-copresence",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-acp",
+      "to": "theorem-dispatch",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-acp",
+      "to": "theorem-receiver",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-agentd",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-agentd",
+      "to": "scene-contract",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-agentd",
+      "to": "scene-os-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-agentd",
+      "to": "theorem-copresence",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-agentd",
+      "to": "theorem-receiver",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-blocks",
+      "to": "rustyred-plugin",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-blocks",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-blocks",
+      "to": "rustyred-thg-okf",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-blocks",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-browser-agent",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-copresence",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-copresence",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-dispatch",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-env-core",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-env-core",
+      "to": "rustyred-thg-episode-supply-chain",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-env-core",
+      "to": "rustyred-thg-ml",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-env-core",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-evolve",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-evolve",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-evolve",
+      "to": "theorem-env-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-evolve",
+      "to": "theorem-worlds",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness",
+      "to": "theorem-harness-runtime",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-core",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "rustyred-thg-affordances",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "rustyred-thg-agentfs",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "rustyred-thg-nlp",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "rustyred-thg-offload",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-harness-runtime",
+      "to": "theorem-prompt",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-localmodel",
+      "to": "theorem-receiver",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-prompt",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-receiver",
+      "to": "theorem-dispatch",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-receiver",
+      "to": "theorem-exec-sandbox",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-receiver",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-som",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-tensor-block",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-worlds",
+      "to": "rustyred-thg-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-worlds",
+      "to": "rustyred-thg-ml",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-worlds",
+      "to": "theorem-bayes",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-worlds",
+      "to": "theorem-env-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "theorem-worlds",
+      "to": "theorem-harness-core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "travisgilbert-website",
+      "to": "d3",
+      "kind": "depends_on"
+    },
+    {
+      "from": "travisgilbert-website",
+      "to": "next",
+      "kind": "depends_on"
+    },
+    {
+      "from": "travisgilbert-website",
+      "to": "react",
+      "kind": "depends_on"
+    }
+  ],
+  "events": [
+    {
+      "object": "theorem-exec-sandbox",
+      "at": "2026-07-14T14:52:49-04:00",
+      "kind": "commit",
+      "sha": "655402a5"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-14T14:52:49-04:00",
+      "kind": "commit",
+      "sha": "655402a5"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-14T14:28:32-04:00",
+      "kind": "commit",
+      "sha": "2a47ed90"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-14T14:28:32-04:00",
+      "kind": "commit",
+      "sha": "2a47ed90"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-14T13:25:58-04:00",
+      "kind": "commit",
+      "sha": "44ed8338"
+    },
+    {
+      "object": "theorem-harness",
+      "at": "2026-07-14T13:25:58-04:00",
+      "kind": "commit",
+      "sha": "44ed8338"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-14T13:19:42-04:00",
+      "kind": "commit",
+      "sha": "e08475d3"
+    },
+    {
+      "object": "theorem-agentd",
+      "at": "2026-07-14T13:19:42-04:00",
+      "kind": "commit",
+      "sha": "e08475d3"
+    },
+    {
+      "object": "theorem-harness",
+      "at": "2026-07-14T12:44:42-04:00",
+      "kind": "commit",
+      "sha": "7c4d8bc7"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-14T12:44:42-04:00",
+      "kind": "commit",
+      "sha": "7c4d8bc7"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-14T12:28:26-04:00",
+      "kind": "commit",
+      "sha": "3af6b0f0"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-14T12:28:26-04:00",
+      "kind": "commit",
+      "sha": "3af6b0f0"
+    },
+    {
+      "object": "rustyred-hipporag",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "rustyred-membrane",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "rustyred-thg-checkpoint",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "rustyred-thg-fractal",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "rustyred-web",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "theorem-exec-sandbox",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-14T11:35:55-04:00",
+      "kind": "commit",
+      "sha": "8c3501e2"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-14T10:16:43-04:00",
+      "kind": "commit",
+      "sha": "7da8190f"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-14T06:24:10-04:00",
+      "kind": "commit",
+      "sha": "ca01e2d2"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-14T03:04:33-04:00",
+      "kind": "commit",
+      "sha": "087d7eb7"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-14T02:01:53-04:00",
+      "kind": "commit",
+      "sha": "e28999dc"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-14T01:15:22-04:00",
+      "kind": "commit",
+      "sha": "57d0447d"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-14T00:33:33-04:00",
+      "kind": "commit",
+      "sha": "9a2e1e95"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-14T00:33:33-04:00",
+      "kind": "commit",
+      "sha": "9a2e1e95"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-14T00:24:52-04:00",
+      "kind": "commit",
+      "sha": "55bb2951"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-14T00:24:52-04:00",
+      "kind": "commit",
+      "sha": "55bb2951"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "031377f0"
+    },
+    {
+      "object": "theorem-capability-registry",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "031377f0"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "064e8bf6"
+    },
+    {
+      "object": "theorem-capability-registry",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "064e8bf6"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "0dfc642a"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "30732912"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "30732912"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "30732912"
+    },
+    {
+      "object": "theorem-capability-registry",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "30732912"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "50b84038"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "50b84038"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "50b84038"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "6b7536a5"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "6b7536a5"
+    },
+    {
+      "object": "theorem-capability-registry",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "6b7536a5"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "8606a356"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "a34a1379"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-13T23:34:05-04:00",
+      "kind": "commit",
+      "sha": "a34a1379"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-13T22:56:28-04:00",
+      "kind": "commit",
+      "sha": "f6b12836"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-13T22:50:08-04:00",
+      "kind": "commit",
+      "sha": "27e78799"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-13T22:43:44-04:00",
+      "kind": "commit",
+      "sha": "58bdea33"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-13T22:43:44-04:00",
+      "kind": "commit",
+      "sha": "c1b99b1f"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T22:43:44-04:00",
+      "kind": "commit",
+      "sha": "e6138b5b"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-13T22:40:58-04:00",
+      "kind": "commit",
+      "sha": "ca09c79b"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T22:32:50-04:00",
+      "kind": "commit",
+      "sha": "f0e461a8"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-13T22:32:50-04:00",
+      "kind": "commit",
+      "sha": "f0e461a8"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T21:37:41-04:00",
+      "kind": "commit",
+      "sha": "5ea472f2"
+    },
+    {
+      "object": "rustyred-thg-programmable-graph",
+      "at": "2026-07-13T21:37:41-04:00",
+      "kind": "commit",
+      "sha": "5ea472f2"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-13T21:37:41-04:00",
+      "kind": "commit",
+      "sha": "5ea472f2"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T21:37:41-04:00",
+      "kind": "commit",
+      "sha": "5ea472f2"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T21:23:10-04:00",
+      "kind": "commit",
+      "sha": "aaeda70c"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-13T21:23:10-04:00",
+      "kind": "commit",
+      "sha": "aaeda70c"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-13T21:03:48-04:00",
+      "kind": "commit",
+      "sha": "36beff91"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-fractal",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-13T21:03:46-04:00",
+      "kind": "commit",
+      "sha": "3fa11dfe"
+    },
+    {
+      "object": "rustyred-thg-behavior-ir",
+      "at": "2026-07-13T20:28:33-04:00",
+      "kind": "commit",
+      "sha": "7aef24ec"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-13T20:28:33-04:00",
+      "kind": "commit",
+      "sha": "7aef24ec"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-13T20:28:33-04:00",
+      "kind": "commit",
+      "sha": "7aef24ec"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T20:28:33-04:00",
+      "kind": "commit",
+      "sha": "7aef24ec"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-13T18:34:42-04:00",
+      "kind": "commit",
+      "sha": "c5ef0bd9"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-13T18:34:42-04:00",
+      "kind": "commit",
+      "sha": "c5ef0bd9"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T18:34:42-04:00",
+      "kind": "commit",
+      "sha": "c5ef0bd9"
+    },
+    {
+      "object": "rustyred-thg-graph-lisp",
+      "at": "2026-07-13T16:40:39-04:00",
+      "kind": "commit",
+      "sha": "c5d8dbd8"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T16:40:39-04:00",
+      "kind": "commit",
+      "sha": "c5d8dbd8"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-13T00:27:12-04:00",
+      "kind": "commit",
+      "sha": "955b4fd5"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T23:55:02-04:00",
+      "kind": "commit",
+      "sha": "c682a302"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T23:55:02-04:00",
+      "kind": "commit",
+      "sha": "c682a302"
+    },
+    {
+      "object": "theorem-tensor-block",
+      "at": "2026-07-12T23:55:02-04:00",
+      "kind": "commit",
+      "sha": "c682a302"
+    },
+    {
+      "object": "theorem-tensor-block",
+      "at": "2026-07-12T23:05:10-04:00",
+      "kind": "commit",
+      "sha": "da6b68cc"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "1048f787"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "11be8bc1"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "847eec5c"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "847eec5c"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "847eec5c"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "847eec5c"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "847eec5c"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "e8b9da5f"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-12T22:54:27-04:00",
+      "kind": "commit",
+      "sha": "ef250add"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T22:49:27-04:00",
+      "kind": "commit",
+      "sha": "a29606fc"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T22:49:27-04:00",
+      "kind": "commit",
+      "sha": "a29606fc"
+    },
+    {
+      "object": "rustyred-thg-affordances",
+      "at": "2026-07-12T22:37:00-04:00",
+      "kind": "commit",
+      "sha": "b2329ecc"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-12T22:37:00-04:00",
+      "kind": "commit",
+      "sha": "b2329ecc"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T22:37:00-04:00",
+      "kind": "commit",
+      "sha": "b2329ecc"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-12T22:37:00-04:00",
+      "kind": "commit",
+      "sha": "b2329ecc"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T22:37:00-04:00",
+      "kind": "commit",
+      "sha": "b2329ecc"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T22:13:25-04:00",
+      "kind": "commit",
+      "sha": "58d06db0"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T22:13:25-04:00",
+      "kind": "commit",
+      "sha": "58d06db0"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T21:57:08-04:00",
+      "kind": "commit",
+      "sha": "57c471ba"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T21:57:08-04:00",
+      "kind": "commit",
+      "sha": "57c471ba"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T21:48:24-04:00",
+      "kind": "commit",
+      "sha": "90198b7d"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T21:48:24-04:00",
+      "kind": "commit",
+      "sha": "90198b7d"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T20:38:13-04:00",
+      "kind": "commit",
+      "sha": "35c14bbf"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T20:30:54-04:00",
+      "kind": "commit",
+      "sha": "f8c83877"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T20:30:54-04:00",
+      "kind": "commit",
+      "sha": "f8c83877"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T20:16:39-04:00",
+      "kind": "commit",
+      "sha": "04002096"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T20:16:39-04:00",
+      "kind": "commit",
+      "sha": "04002096"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T20:16:39-04:00",
+      "kind": "commit",
+      "sha": "04002096"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-12T20:16:39-04:00",
+      "kind": "commit",
+      "sha": "04002096"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T20:16:39-04:00",
+      "kind": "commit",
+      "sha": "04002096"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T17:43:32-04:00",
+      "kind": "commit",
+      "sha": "b3847031"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T16:44:26-04:00",
+      "kind": "commit",
+      "sha": "1947ebaf"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-12T16:16:07-04:00",
+      "kind": "commit",
+      "sha": "c73b66ad"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T15:09:20-04:00",
+      "kind": "commit",
+      "sha": "8cc6bf6a"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T14:47:11-04:00",
+      "kind": "commit",
+      "sha": "029bab4a"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T14:38:14-04:00",
+      "kind": "commit",
+      "sha": "75918f49"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T14:27:03-04:00",
+      "kind": "commit",
+      "sha": "cec98aa9"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T14:27:03-04:00",
+      "kind": "commit",
+      "sha": "cec98aa9"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-12T14:27:03-04:00",
+      "kind": "commit",
+      "sha": "cec98aa9"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T14:27:03-04:00",
+      "kind": "commit",
+      "sha": "cec98aa9"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T13:57:20-04:00",
+      "kind": "commit",
+      "sha": "676a5b0c"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T13:37:41-04:00",
+      "kind": "commit",
+      "sha": "c88718fc"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-12T13:37:41-04:00",
+      "kind": "commit",
+      "sha": "c88718fc"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T13:37:41-04:00",
+      "kind": "commit",
+      "sha": "c88718fc"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-12T13:37:41-04:00",
+      "kind": "commit",
+      "sha": "c88718fc"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-12T13:37:41-04:00",
+      "kind": "commit",
+      "sha": "c88718fc"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T13:22:35-04:00",
+      "kind": "commit",
+      "sha": "ac240fdd"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T13:20:02-04:00",
+      "kind": "commit",
+      "sha": "0548c984"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-12T13:20:02-04:00",
+      "kind": "commit",
+      "sha": "0548c984"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-12T13:19:56-04:00",
+      "kind": "commit",
+      "sha": "ef5c70c5"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T13:19:49-04:00",
+      "kind": "commit",
+      "sha": "74736079"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T13:11:02-04:00",
+      "kind": "commit",
+      "sha": "06173309"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-12T13:11:02-04:00",
+      "kind": "commit",
+      "sha": "06173309"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T10:25:06-04:00",
+      "kind": "commit",
+      "sha": "53f53b3d"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T10:19:19-04:00",
+      "kind": "commit",
+      "sha": "84295add"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T09:59:48-04:00",
+      "kind": "commit",
+      "sha": "7365d54a"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T09:52:51-04:00",
+      "kind": "commit",
+      "sha": "e3386c62"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-12T09:29:19-04:00",
+      "kind": "commit",
+      "sha": "f7cc3a0c"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T09:29:19-04:00",
+      "kind": "commit",
+      "sha": "f7cc3a0c"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T09:26:58-04:00",
+      "kind": "commit",
+      "sha": "7be2e98f"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T09:26:58-04:00",
+      "kind": "commit",
+      "sha": "7be2e98f"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-12T09:26:58-04:00",
+      "kind": "commit",
+      "sha": "7be2e98f"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-12T09:25:11-04:00",
+      "kind": "commit",
+      "sha": "37e2bbef"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T09:25:11-04:00",
+      "kind": "commit",
+      "sha": "37e2bbef"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-12T09:25:11-04:00",
+      "kind": "commit",
+      "sha": "37e2bbef"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T09:25:11-04:00",
+      "kind": "commit",
+      "sha": "37e2bbef"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T09:19:31-04:00",
+      "kind": "commit",
+      "sha": "f70bfe3d"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T08:41:25-04:00",
+      "kind": "commit",
+      "sha": "4058f26a"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T08:41:25-04:00",
+      "kind": "commit",
+      "sha": "4058f26a"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T08:20:01-04:00",
+      "kind": "commit",
+      "sha": "4b38ea15"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T07:44:53-04:00",
+      "kind": "commit",
+      "sha": "fa20d3e1"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T07:44:53-04:00",
+      "kind": "commit",
+      "sha": "fa20d3e1"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T06:30:08-04:00",
+      "kind": "commit",
+      "sha": "6a731d95"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T06:20:56-04:00",
+      "kind": "commit",
+      "sha": "f24a7054"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T06:20:56-04:00",
+      "kind": "commit",
+      "sha": "f24a7054"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T06:00:12-04:00",
+      "kind": "commit",
+      "sha": "e815293b"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T06:00:12-04:00",
+      "kind": "commit",
+      "sha": "e815293b"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T05:31:42-04:00",
+      "kind": "commit",
+      "sha": "6ab7b2ae"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T05:13:30-04:00",
+      "kind": "commit",
+      "sha": "88651c6c"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T05:06:36-04:00",
+      "kind": "commit",
+      "sha": "31cf86f9"
+    },
+    {
+      "object": "rustyred-thg-adapters",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyred-thg-fuse",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "theorem-env-core",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T04:56:47-04:00",
+      "kind": "commit",
+      "sha": "293e94be"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T04:46:51-04:00",
+      "kind": "commit",
+      "sha": "473344ea"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T04:35:57-04:00",
+      "kind": "commit",
+      "sha": "66b95965"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T04:35:57-04:00",
+      "kind": "commit",
+      "sha": "66b95965"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T04:27:25-04:00",
+      "kind": "commit",
+      "sha": "aefed6ed"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T04:27:25-04:00",
+      "kind": "commit",
+      "sha": "aefed6ed"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T04:18:30-04:00",
+      "kind": "commit",
+      "sha": "9b4aafdb"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T04:18:30-04:00",
+      "kind": "commit",
+      "sha": "9b4aafdb"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T04:08:07-04:00",
+      "kind": "commit",
+      "sha": "dd3255b7"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T03:56:35-04:00",
+      "kind": "commit",
+      "sha": "c0747f18"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T03:50:39-04:00",
+      "kind": "commit",
+      "sha": "58e4c190"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T03:42:21-04:00",
+      "kind": "commit",
+      "sha": "8dbfe9eb"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T03:42:21-04:00",
+      "kind": "commit",
+      "sha": "8dbfe9eb"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T03:22:54-04:00",
+      "kind": "commit",
+      "sha": "842b7818"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T03:22:54-04:00",
+      "kind": "commit",
+      "sha": "842b7818"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T03:09:53-04:00",
+      "kind": "commit",
+      "sha": "2494139b"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T03:09:53-04:00",
+      "kind": "commit",
+      "sha": "2494139b"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-12T02:48:35-04:00",
+      "kind": "commit",
+      "sha": "03e750a8"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T02:48:35-04:00",
+      "kind": "commit",
+      "sha": "03e750a8"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T02:28:38-04:00",
+      "kind": "commit",
+      "sha": "d212ddcb"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T02:18:53-04:00",
+      "kind": "commit",
+      "sha": "e4105783"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T02:10:31-04:00",
+      "kind": "commit",
+      "sha": "56336722"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:54:06-04:00",
+      "kind": "commit",
+      "sha": "175ffd7a"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:45:16-04:00",
+      "kind": "commit",
+      "sha": "0b7705e6"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T01:45:16-04:00",
+      "kind": "commit",
+      "sha": "0b7705e6"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:36:56-04:00",
+      "kind": "commit",
+      "sha": "350de30d"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:31:46-04:00",
+      "kind": "commit",
+      "sha": "02fdd993"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:27:08-04:00",
+      "kind": "commit",
+      "sha": "028f1c46"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T01:22:02-04:00",
+      "kind": "commit",
+      "sha": "cb265de3"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:22:02-04:00",
+      "kind": "commit",
+      "sha": "cb265de3"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T01:10:16-04:00",
+      "kind": "commit",
+      "sha": "fa37dc2e"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T01:10:16-04:00",
+      "kind": "commit",
+      "sha": "fa37dc2e"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T01:01:00-04:00",
+      "kind": "commit",
+      "sha": "5f50185f"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T00:56:06-04:00",
+      "kind": "commit",
+      "sha": "ea81f3e6"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-12T00:47:30-04:00",
+      "kind": "commit",
+      "sha": "4f5a7f27"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T00:47:30-04:00",
+      "kind": "commit",
+      "sha": "4f5a7f27"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T00:34:39-04:00",
+      "kind": "commit",
+      "sha": "1a1b73b0"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T00:25:55-04:00",
+      "kind": "commit",
+      "sha": "a934aef5"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T00:19:07-04:00",
+      "kind": "commit",
+      "sha": "e788530c"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T00:19:07-04:00",
+      "kind": "commit",
+      "sha": "e788530c"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-12T00:09:20-04:00",
+      "kind": "commit",
+      "sha": "d3c052f5"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T00:09:20-04:00",
+      "kind": "commit",
+      "sha": "d3c052f5"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-12T00:04:48-04:00",
+      "kind": "commit",
+      "sha": "74d77506"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-12T00:03:56-04:00",
+      "kind": "commit",
+      "sha": "1179c906"
+    },
+    {
+      "object": "rustyred-thg-resolve",
+      "at": "2026-07-12T00:03:56-04:00",
+      "kind": "commit",
+      "sha": "1179c906"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-12T00:03:56-04:00",
+      "kind": "commit",
+      "sha": "1179c906"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T23:46:37-04:00",
+      "kind": "commit",
+      "sha": "9f18547b"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-11T23:42:13-04:00",
+      "kind": "commit",
+      "sha": "7ab86ba8"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T23:42:13-04:00",
+      "kind": "commit",
+      "sha": "7ab86ba8"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-11T23:35:03-04:00",
+      "kind": "commit",
+      "sha": "af4dde74"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T23:35:03-04:00",
+      "kind": "commit",
+      "sha": "af4dde74"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T23:35:03-04:00",
+      "kind": "commit",
+      "sha": "af4dde74"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-11T23:17:05-04:00",
+      "kind": "commit",
+      "sha": "c55f6b5a"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T23:17:05-04:00",
+      "kind": "commit",
+      "sha": "c55f6b5a"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-11T22:54:15-04:00",
+      "kind": "commit",
+      "sha": "58d157c0"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T22:54:15-04:00",
+      "kind": "commit",
+      "sha": "58d157c0"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-11T22:42:31-04:00",
+      "kind": "commit",
+      "sha": "f2d7f536"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-11T22:42:31-04:00",
+      "kind": "commit",
+      "sha": "f2d7f536"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T22:42:31-04:00",
+      "kind": "commit",
+      "sha": "f2d7f536"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-11T22:41:01-04:00",
+      "kind": "commit",
+      "sha": "f2c648d5"
+    },
+    {
+      "object": "rustyred-web",
+      "at": "2026-07-11T22:41:01-04:00",
+      "kind": "commit",
+      "sha": "f2c648d5"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-11T21:56:06-04:00",
+      "kind": "commit",
+      "sha": "a21696ea"
+    },
+    {
+      "object": "rustyred-thg-nlp",
+      "at": "2026-07-11T21:56:06-04:00",
+      "kind": "commit",
+      "sha": "a21696ea"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T21:56:06-04:00",
+      "kind": "commit",
+      "sha": "a21696ea"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-11T21:56:06-04:00",
+      "kind": "commit",
+      "sha": "a21696ea"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-11T21:45:35-04:00",
+      "kind": "commit",
+      "sha": "a7ddf59e"
+    },
+    {
+      "object": "theorem-evolve",
+      "at": "2026-07-11T21:45:35-04:00",
+      "kind": "commit",
+      "sha": "a7ddf59e"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T21:53:34Z",
+      "kind": "commit",
+      "sha": "dce18323"
+    },
+    {
+      "object": "theorem-copresence",
+      "at": "2026-07-11T21:53:34Z",
+      "kind": "commit",
+      "sha": "dce18323"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-11T15:35:47-04:00",
+      "kind": "commit",
+      "sha": "4e5dc009"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-11T15:35:47-04:00",
+      "kind": "commit",
+      "sha": "4e5dc009"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T15:35:47-04:00",
+      "kind": "commit",
+      "sha": "4e5dc009"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T19:32:32Z",
+      "kind": "commit",
+      "sha": "8c5e40a7"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-11T15:02:16-04:00",
+      "kind": "commit",
+      "sha": "03fa3791"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T15:02:16-04:00",
+      "kind": "commit",
+      "sha": "03fa3791"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T14:34:32-04:00",
+      "kind": "commit",
+      "sha": "2089ce77"
+    },
+    {
+      "object": "theorem-evolve",
+      "at": "2026-07-11T14:34:32-04:00",
+      "kind": "commit",
+      "sha": "2089ce77"
+    },
+    {
+      "object": "theorem-tensor-block",
+      "at": "2026-07-11T14:34:32-04:00",
+      "kind": "commit",
+      "sha": "2089ce77"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T13:56:51-04:00",
+      "kind": "commit",
+      "sha": "3c612ffd"
+    },
+    {
+      "object": "theorem-policy",
+      "at": "2026-07-11T13:56:51-04:00",
+      "kind": "commit",
+      "sha": "3c612ffd"
+    },
+    {
+      "object": "theorem-som",
+      "at": "2026-07-11T13:56:51-04:00",
+      "kind": "commit",
+      "sha": "3c612ffd"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T13:42:49-04:00",
+      "kind": "commit",
+      "sha": "75c5c459"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T13:42:36-04:00",
+      "kind": "commit",
+      "sha": "4e5cbfc8"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T13:42:29-04:00",
+      "kind": "commit",
+      "sha": "d6c4ae5c"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "rustyred-thg-compat-server",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "theorem-copresence",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "theorem-env-core",
+      "at": "2026-07-11T13:16:20-04:00",
+      "kind": "commit",
+      "sha": "b1bd4441"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-11T10:12:48-04:00",
+      "kind": "commit",
+      "sha": "3610c143"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T10:12:48-04:00",
+      "kind": "commit",
+      "sha": "3610c143"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-11T09:20:28-04:00",
+      "kind": "commit",
+      "sha": "22db7947"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T09:20:28-04:00",
+      "kind": "commit",
+      "sha": "22db7947"
+    },
+    {
+      "object": "rustyred-plugin",
+      "at": "2026-07-11T09:19:18-04:00",
+      "kind": "commit",
+      "sha": "03802716"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-11T09:19:18-04:00",
+      "kind": "commit",
+      "sha": "03802716"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-11T09:19:18-04:00",
+      "kind": "commit",
+      "sha": "03802716"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-11T09:19:18-04:00",
+      "kind": "commit",
+      "sha": "03802716"
+    },
+    {
+      "object": "theorem-blocks",
+      "at": "2026-07-11T09:19:18-04:00",
+      "kind": "commit",
+      "sha": "03802716"
+    },
+    {
+      "object": "rustyred-thg-intake",
+      "at": "2026-07-10T16:32:58-04:00",
+      "kind": "commit",
+      "sha": "558d89ce"
+    },
+    {
+      "object": "theorem-blocks",
+      "at": "2026-07-10T16:32:58-04:00",
+      "kind": "commit",
+      "sha": "558d89ce"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-10T16:04:24-04:00",
+      "kind": "commit",
+      "sha": "df196853"
+    },
+    {
+      "object": "theorem-blocks",
+      "at": "2026-07-10T16:04:24-04:00",
+      "kind": "commit",
+      "sha": "df196853"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-10T15:14:44-04:00",
+      "kind": "commit",
+      "sha": "25d019f9"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-09T22:08:35-04:00",
+      "kind": "commit",
+      "sha": "13029f8e"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T22:03:24-04:00",
+      "kind": "commit",
+      "sha": "b96f7e73"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-09T21:52:26-04:00",
+      "kind": "commit",
+      "sha": "a6deee9f"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T21:52:26-04:00",
+      "kind": "commit",
+      "sha": "a6deee9f"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "theorem-bayes",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "theorem-copresence",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "theorem-worlds",
+      "at": "2026-07-09T13:56:48-04:00",
+      "kind": "commit",
+      "sha": "67326a71"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "theorem-worlds",
+      "at": "2026-07-09T12:46:32-04:00",
+      "kind": "commit",
+      "sha": "57019a5c"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "theorem-bayes",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "theorem-copresence",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-09T12:16:53-04:00",
+      "kind": "commit",
+      "sha": "8b325656"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-09T11:53:35-04:00",
+      "kind": "commit",
+      "sha": "64a3db74"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T11:53:35-04:00",
+      "kind": "commit",
+      "sha": "64a3db74"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-derivation",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-derive",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-reconstruct-fact",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "scene-os-core",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "theorem-worlds",
+      "at": "2026-07-09T03:32:10-04:00",
+      "kind": "commit",
+      "sha": "c24b3b5b"
+    },
+    {
+      "object": "rustyred-thg-derive",
+      "at": "2026-07-09T03:31:01-04:00",
+      "kind": "commit",
+      "sha": "10872265"
+    },
+    {
+      "object": "rustyred-thg-derivation",
+      "at": "2026-07-09T00:16:16-04:00",
+      "kind": "commit",
+      "sha": "59b052b1"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-09T00:16:16-04:00",
+      "kind": "commit",
+      "sha": "59b052b1"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-09T00:16:16-04:00",
+      "kind": "commit",
+      "sha": "59b052b1"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-09T02:21:38Z",
+      "kind": "commit",
+      "sha": "29c50d9c"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-09T02:21:38Z",
+      "kind": "commit",
+      "sha": "29c50d9c"
+    },
+    {
+      "object": "rustyred-thg-a2a-client",
+      "at": "2026-07-08T21:46:32-04:00",
+      "kind": "commit",
+      "sha": "591b576a"
+    },
+    {
+      "object": "rustyred-thg-affordances",
+      "at": "2026-07-08T21:46:32-04:00",
+      "kind": "commit",
+      "sha": "591b576a"
+    },
+    {
+      "object": "rustyred-thg-connectors",
+      "at": "2026-07-08T21:46:32-04:00",
+      "kind": "commit",
+      "sha": "591b576a"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-08T21:46:32-04:00",
+      "kind": "commit",
+      "sha": "591b576a"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-07T13:03:03-04:00",
+      "kind": "commit",
+      "sha": "3fc8a05d"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-07T13:01:34-04:00",
+      "kind": "commit",
+      "sha": "6e44b09f"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-derivation",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-derive",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-memory",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-reconstruct",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-reconstruct-fact",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "scene-os-core",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "theorem-worlds",
+      "at": "2026-07-07T12:39:02-04:00",
+      "kind": "commit",
+      "sha": "e49952a3"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-07T00:40:07-04:00",
+      "kind": "commit",
+      "sha": "5be196b8"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-07T00:40:07-04:00",
+      "kind": "commit",
+      "sha": "5be196b8"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-06T23:35:45-04:00",
+      "kind": "commit",
+      "sha": "8a934e2d"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-06T23:35:45-04:00",
+      "kind": "commit",
+      "sha": "8a934e2d"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-06T23:35:45-04:00",
+      "kind": "commit",
+      "sha": "8a934e2d"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-06T23:05:06-04:00",
+      "kind": "commit",
+      "sha": "91daacac"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-06T23:05:06-04:00",
+      "kind": "commit",
+      "sha": "91daacac"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-06T23:05:06-04:00",
+      "kind": "commit",
+      "sha": "91daacac"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-06T22:56:24-04:00",
+      "kind": "commit",
+      "sha": "7d1c2015"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-06T22:47:38-04:00",
+      "kind": "commit",
+      "sha": "a48f02b7"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-06T22:41:56-04:00",
+      "kind": "commit",
+      "sha": "57e7e1f3"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-06T22:41:56-04:00",
+      "kind": "commit",
+      "sha": "57e7e1f3"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-06T22:41:56-04:00",
+      "kind": "commit",
+      "sha": "57e7e1f3"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-06T22:24:43-04:00",
+      "kind": "commit",
+      "sha": "c0d10509"
+    },
+    {
+      "object": "theorem-env-core",
+      "at": "2026-07-06T22:24:43-04:00",
+      "kind": "commit",
+      "sha": "c0d10509"
+    },
+    {
+      "object": "theorem-worlds",
+      "at": "2026-07-06T22:24:43-04:00",
+      "kind": "commit",
+      "sha": "c0d10509"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-06T22:08:55-04:00",
+      "kind": "commit",
+      "sha": "5bced9e3"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-06T21:22:39-04:00",
+      "kind": "commit",
+      "sha": "8c3c44f3"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-06T21:22:39-04:00",
+      "kind": "commit",
+      "sha": "8c3c44f3"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-06T21:22:39-04:00",
+      "kind": "commit",
+      "sha": "8c3c44f3"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-06T21:22:39-04:00",
+      "kind": "commit",
+      "sha": "8c3c44f3"
+    },
+    {
+      "object": "rustyred-thg-kvcache",
+      "at": "2026-07-06T13:34:10-04:00",
+      "kind": "commit",
+      "sha": "8cf18ff9"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-06T13:34:10-04:00",
+      "kind": "commit",
+      "sha": "8cf18ff9"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-06T01:46:33-04:00",
+      "kind": "commit",
+      "sha": "f52cd28a"
+    },
+    {
+      "object": "rustyred-thg-episode-supply-chain",
+      "at": "2026-07-06T01:15:23-04:00",
+      "kind": "commit",
+      "sha": "3912145b"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-06T01:15:23-04:00",
+      "kind": "commit",
+      "sha": "3912145b"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-06T01:15:23-04:00",
+      "kind": "commit",
+      "sha": "3912145b"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-06T01:15:23-04:00",
+      "kind": "commit",
+      "sha": "3912145b"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-06T00:15:23-04:00",
+      "kind": "commit",
+      "sha": "97a793d4"
+    },
+    {
+      "object": "rustyred-thg-agentfs",
+      "at": "2026-07-06T00:11:11-04:00",
+      "kind": "commit",
+      "sha": "ce637c54"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-06T00:11:11-04:00",
+      "kind": "commit",
+      "sha": "ce637c54"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-06T00:11:11-04:00",
+      "kind": "commit",
+      "sha": "ce637c54"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-05T23:40:54-04:00",
+      "kind": "commit",
+      "sha": "dadf126e"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-05T23:40:54-04:00",
+      "kind": "commit",
+      "sha": "dadf126e"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-05T23:40:54-04:00",
+      "kind": "commit",
+      "sha": "dadf126e"
+    },
+    {
+      "object": "rustyred-thg-okf",
+      "at": "2026-07-05T22:30:39-04:00",
+      "kind": "commit",
+      "sha": "d9b601c6"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-05T22:30:39-04:00",
+      "kind": "commit",
+      "sha": "d9b601c6"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-05T15:59:47-04:00",
+      "kind": "commit",
+      "sha": "960103f5"
+    },
+    {
+      "object": "rustyred-thg-derive",
+      "at": "2026-07-05T14:55:35-04:00",
+      "kind": "commit",
+      "sha": "a4b2f22b"
+    },
+    {
+      "object": "rustyred-thg-intake",
+      "at": "2026-07-05T14:55:35-04:00",
+      "kind": "commit",
+      "sha": "a4b2f22b"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-05T14:55:35-04:00",
+      "kind": "commit",
+      "sha": "a4b2f22b"
+    },
+    {
+      "object": "rustyred-web",
+      "at": "2026-07-05T14:55:35-04:00",
+      "kind": "commit",
+      "sha": "a4b2f22b"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-05T14:55:35-04:00",
+      "kind": "commit",
+      "sha": "a4b2f22b"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-05T13:01:00-04:00",
+      "kind": "commit",
+      "sha": "909855fd"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-05T13:01:00-04:00",
+      "kind": "commit",
+      "sha": "909855fd"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-05T12:14:24-04:00",
+      "kind": "commit",
+      "sha": "636763d3"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-05T12:14:24-04:00",
+      "kind": "commit",
+      "sha": "636763d3"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-05T11:44:02-04:00",
+      "kind": "commit",
+      "sha": "f24aae7f"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-05T11:44:02-04:00",
+      "kind": "commit",
+      "sha": "f24aae7f"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-05T00:18:00-04:00",
+      "kind": "commit",
+      "sha": "7c94d088"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-05T00:16:31-04:00",
+      "kind": "commit",
+      "sha": "6fbcf923"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-05T00:16:31-04:00",
+      "kind": "commit",
+      "sha": "6fbcf923"
+    },
+    {
+      "object": "rustyred-thg-affordances",
+      "at": "2026-07-04T23:32:29-04:00",
+      "kind": "commit",
+      "sha": "5451994e"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-04T23:32:29-04:00",
+      "kind": "commit",
+      "sha": "5451994e"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-04T23:32:29-04:00",
+      "kind": "commit",
+      "sha": "5451994e"
+    },
+    {
+      "object": "theorem-bayes",
+      "at": "2026-07-04T23:32:29-04:00",
+      "kind": "commit",
+      "sha": "5451994e"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-04T23:32:29-04:00",
+      "kind": "commit",
+      "sha": "5451994e"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-04T22:14:17-04:00",
+      "kind": "commit",
+      "sha": "bd0c1069"
+    },
+    {
+      "object": "rustyred-thg-affordances",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "theorem-bayes",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-04T21:58:22-04:00",
+      "kind": "commit",
+      "sha": "0475e742"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-04T12:54:50-04:00",
+      "kind": "commit",
+      "sha": "15cb40c5"
+    },
+    {
+      "object": "rustyred-web",
+      "at": "2026-07-04T12:54:50-04:00",
+      "kind": "commit",
+      "sha": "15cb40c5"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-04T03:37:34-04:00",
+      "kind": "commit",
+      "sha": "5e077ea2"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-04T03:37:34-04:00",
+      "kind": "commit",
+      "sha": "5e077ea2"
+    },
+    {
+      "object": "rustyred-thg-intake",
+      "at": "2026-07-04T03:37:34-04:00",
+      "kind": "commit",
+      "sha": "5e077ea2"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-04T03:37:34-04:00",
+      "kind": "commit",
+      "sha": "5e077ea2"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-04T03:37:34-04:00",
+      "kind": "commit",
+      "sha": "5e077ea2"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-04T03:37:34-04:00",
+      "kind": "commit",
+      "sha": "5e077ea2"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-04T03:30:37-04:00",
+      "kind": "commit",
+      "sha": "736eb962"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-04T03:30:37-04:00",
+      "kind": "commit",
+      "sha": "736eb962"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-04T03:18:43-04:00",
+      "kind": "commit",
+      "sha": "d6e88e4d"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-04T03:18:43-04:00",
+      "kind": "commit",
+      "sha": "d6e88e4d"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-04T03:18:43-04:00",
+      "kind": "commit",
+      "sha": "d6e88e4d"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-04T03:18:43-04:00",
+      "kind": "commit",
+      "sha": "d6e88e4d"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-04T03:18:43-04:00",
+      "kind": "commit",
+      "sha": "d6e88e4d"
+    },
+    {
+      "object": "rustyred-thg-code",
+      "at": "2026-07-04T02:58:47-04:00",
+      "kind": "commit",
+      "sha": "b0a48c78"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-04T02:58:47-04:00",
+      "kind": "commit",
+      "sha": "b0a48c78"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "rustyred-thg-intake",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-04T02:58:16-04:00",
+      "kind": "commit",
+      "sha": "a5dc68a1"
+    },
+    {
+      "object": "theorem-harness-runtime",
+      "at": "2026-07-04T02:53:47-04:00",
+      "kind": "commit",
+      "sha": "d31c3211"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-03T22:35:36-04:00",
+      "kind": "commit",
+      "sha": "e503a51a"
+    },
+    {
+      "object": "rustyred-web-compat",
+      "at": "2026-07-03T22:35:36-04:00",
+      "kind": "commit",
+      "sha": "e503a51a"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T22:35:36-04:00",
+      "kind": "commit",
+      "sha": "e503a51a"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-03T22:12:37-04:00",
+      "kind": "commit",
+      "sha": "4f49eb15"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T21:19:11-04:00",
+      "kind": "commit",
+      "sha": "00453537"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-03T21:19:11-04:00",
+      "kind": "commit",
+      "sha": "00453537"
+    },
+    {
+      "object": "scene-contract",
+      "at": "2026-07-03T21:06:01-04:00",
+      "kind": "commit",
+      "sha": "d0d54786"
+    },
+    {
+      "object": "scene-os-core",
+      "at": "2026-07-03T21:06:01-04:00",
+      "kind": "commit",
+      "sha": "d0d54786"
+    },
+    {
+      "object": "theorem-agentd",
+      "at": "2026-07-03T21:06:01-04:00",
+      "kind": "commit",
+      "sha": "d0d54786"
+    },
+    {
+      "object": "rustyred-thg-a2a-client",
+      "at": "2026-07-03T18:50:21-04:00",
+      "kind": "commit",
+      "sha": "a159435d"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T18:50:21-04:00",
+      "kind": "commit",
+      "sha": "a159435d"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-03T18:50:21-04:00",
+      "kind": "commit",
+      "sha": "a159435d"
+    },
+    {
+      "object": "rustyred-thg-checkpoint",
+      "at": "2026-07-03T15:42:29-04:00",
+      "kind": "commit",
+      "sha": "c68ced04"
+    },
+    {
+      "object": "rustyred-thg-datawave",
+      "at": "2026-07-03T15:42:29-04:00",
+      "kind": "commit",
+      "sha": "c68ced04"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-03T15:42:29-04:00",
+      "kind": "commit",
+      "sha": "c68ced04"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T15:42:29-04:00",
+      "kind": "commit",
+      "sha": "c68ced04"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-03T15:42:29-04:00",
+      "kind": "commit",
+      "sha": "c68ced04"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-03T09:28:11-04:00",
+      "kind": "commit",
+      "sha": "ae8c6833"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T09:28:11-04:00",
+      "kind": "commit",
+      "sha": "ae8c6833"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T00:27:06-04:00",
+      "kind": "commit",
+      "sha": "20267073"
+    },
+    {
+      "object": "scene-contract",
+      "at": "2026-07-03T00:27:06-04:00",
+      "kind": "commit",
+      "sha": "20267073"
+    },
+    {
+      "object": "theorem-agentd",
+      "at": "2026-07-03T00:27:06-04:00",
+      "kind": "commit",
+      "sha": "20267073"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-03T00:13:22-04:00",
+      "kind": "commit",
+      "sha": "619b701a"
+    },
+    {
+      "object": "scene-contract",
+      "at": "2026-07-03T00:13:22-04:00",
+      "kind": "commit",
+      "sha": "619b701a"
+    },
+    {
+      "object": "theorem-agentd",
+      "at": "2026-07-03T00:13:22-04:00",
+      "kind": "commit",
+      "sha": "619b701a"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-02T22:34:22-04:00",
+      "kind": "commit",
+      "sha": "cfedaf61"
+    },
+    {
+      "object": "rustyred-thg-intake",
+      "at": "2026-07-02T22:34:22-04:00",
+      "kind": "commit",
+      "sha": "cfedaf61"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-02T22:34:22-04:00",
+      "kind": "commit",
+      "sha": "cfedaf61"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-02T22:34:22-04:00",
+      "kind": "commit",
+      "sha": "cfedaf61"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-02T22:28:40-04:00",
+      "kind": "commit",
+      "sha": "1a7a1c6a"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-02T22:28:40-04:00",
+      "kind": "commit",
+      "sha": "1a7a1c6a"
+    },
+    {
+      "object": "rustyred-thg-affordances",
+      "at": "2026-07-02T22:02:01-04:00",
+      "kind": "commit",
+      "sha": "bb8c3511"
+    },
+    {
+      "object": "rustyred-thg-offload",
+      "at": "2026-07-02T22:02:01-04:00",
+      "kind": "commit",
+      "sha": "bb8c3511"
+    },
+    {
+      "object": "theorem-harness-core",
+      "at": "2026-07-02T22:02:01-04:00",
+      "kind": "commit",
+      "sha": "bb8c3511"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-02T20:37:38-04:00",
+      "kind": "commit",
+      "sha": "fbcf9963"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-02T20:37:38-04:00",
+      "kind": "commit",
+      "sha": "fbcf9963"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-02T20:37:38-04:00",
+      "kind": "commit",
+      "sha": "fbcf9963"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-02T20:16:38-04:00",
+      "kind": "commit",
+      "sha": "91d369e7"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-02T20:16:38-04:00",
+      "kind": "commit",
+      "sha": "91d369e7"
+    },
+    {
+      "object": "rustyred-thg-server",
+      "at": "2026-07-02T20:16:38-04:00",
+      "kind": "commit",
+      "sha": "91d369e7"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-02T20:08:57-04:00",
+      "kind": "commit",
+      "sha": "3f691f14"
+    },
+    {
+      "object": "rustyred-thg-mcp",
+      "at": "2026-07-02T20:04:26-04:00",
+      "kind": "commit",
+      "sha": "76dcd1ab"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-02T17:15:03-04:00",
+      "kind": "commit",
+      "sha": "aed0b9ca"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-02T16:59:19-04:00",
+      "kind": "commit",
+      "sha": "538f7f84"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-02T16:59:19-04:00",
+      "kind": "commit",
+      "sha": "538f7f84"
+    },
+    {
+      "object": "theorem-acp",
+      "at": "2026-07-02T14:06:56-04:00",
+      "kind": "commit",
+      "sha": "ccd69699"
+    },
+    {
+      "object": "rustyredcore_thg",
+      "at": "2026-07-02T11:57:13-04:00",
+      "kind": "commit",
+      "sha": "4c779f29"
+    },
+    {
+      "object": "theorem-agentd",
+      "at": "2026-07-02T11:57:13-04:00",
+      "kind": "commit",
+      "sha": "4c779f29"
+    },
+    {
+      "object": "theorem-receiver",
+      "at": "2026-07-02T11:57:13-04:00",
+      "kind": "commit",
+      "sha": "4c779f29"
+    },
+    {
+      "object": "rustyred-thg-core",
+      "at": "2026-07-02T02:28:00-04:00",
+      "kind": "commit",
+      "sha": "8a75cee6"
+    },
+    {
+      "object": "rustyred-thg-intake",
+      "at": "2026-07-02T02:28:00-04:00",
+      "kind": "commit",
+      "sha": "8a75cee6"
+    }
+  ]
+}
