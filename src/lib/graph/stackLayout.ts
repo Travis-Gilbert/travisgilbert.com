@@ -30,16 +30,21 @@ export interface StackLayout {
   height: number;
 }
 
-export const NODE_H = 30;
-const MAX_ROW_W = 1040;
-const H_GAP = 10;
-const V_GAP = 8;
-const BAND_GAP = 64;
-const MARGIN = 16;
-const CHAR_W = 7.2;
-const PAD_X = 12;
+export const NODE_H = 44;
+const H_GAP = 12;
+const V_GAP = 10;
+const BAND_GAP = 76;
+const MARGIN = 20;
+const CHAR_W = 9;
+const PAD_X = 16;
 
-export function stackLayout(atlas: Atlas): StackLayout {
+export interface StackLayoutOptions {
+  /** Wrap width for a band's rows; pass the measured container width. */
+  maxRowW?: number;
+}
+
+export function stackLayout(atlas: Atlas, options: StackLayoutOptions = {}): StackLayout {
+  const maxRowW = options.maxRowW ?? 1120;
   const ids = atlas.objects.map((o) => o.id);
   const index = new Map(ids.map((id, i) => [id, i]));
   const workspaceOf = new Map(atlas.objects.map((o) => [o.id, o.workspace]));
@@ -98,8 +103,8 @@ export function stackLayout(atlas: Atlas): StackLayout {
   }
 
   // Bands top to bottom: dependents (max layer) first, foundations last.
-  // Nodes flow left to right within a band and wrap at MAX_ROW_W.
-  const nodeW = (id: string) => Math.max(60, id.length * CHAR_W + PAD_X * 2);
+  // Nodes flow left to right within a band and wrap at maxRowW.
+  const nodeW = (id: string) => Math.max(76, id.length * CHAR_W + PAD_X * 2);
   const nodes: StackNode[] = [];
   let yCursor = MARGIN;
   let width = 0;
@@ -110,7 +115,7 @@ export function stackLayout(atlas: Atlas): StackLayout {
     for (const v of layers[l]) {
       const id = ids[v];
       const w = nodeW(id);
-      if (x > MARGIN && x + w > MAX_ROW_W) {
+      if (x > MARGIN && x + w > maxRowW) {
         x = MARGIN;
         rowTop = bandBottom + V_GAP;
       }

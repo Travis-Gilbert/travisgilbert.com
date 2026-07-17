@@ -1,17 +1,16 @@
 // SOURCING: none: server data assembly for StackGraph, no upstream component applies
 /**
- * /toolkit: the workspace graph.
+ * /toolkit: the workspace graph, full-bleed.
  *
- * The stack list was a claim; this is evidence, extracted from the
- * workspaces by cargo-atlas. The server loads the artifact and computes
- * heat; StackGraph renders and handles interaction.
+ * The page is the graph. No header block, no framing box: the stack list
+ * was a claim, this is evidence, extracted by cargo-atlas. The graph
+ * breaks out of the main column to use the whole screen and the page
+ * scrolls down the stack.
  */
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'iconoir-react';
-import SectionLabel from '@/components/SectionLabel';
-import DrawOnIcon from '@/components/rough/DrawOnIcon';
 import StackGraph from '@/components/StackGraph';
 import { atlasHeat, loadAtlas } from '@/lib/workspace-graph';
 
@@ -39,27 +38,10 @@ export default async function ToolkitPage() {
 
   return (
     <>
-      <section className="py-4 sm:py-8" data-pagefind-ignore>
-        <SectionLabel color="terracotta">Workshop Tools</SectionLabel>
-        <h1 className="font-title-alt text-3xl md:text-4xl font-semibold mb-2 flex items-center gap-3">
-          <DrawOnIcon name="wrench" size={32} color="var(--color-terracotta)" />
-          Toolkit
-        </h1>
-        <p className="text-ink-secondary mb-2">
-          The machine, drawn from evidence: every crate and package in the
-          workspaces, extracted by{' '}
-          <a
-            href="https://github.com/Travis-Gilbert/cargo-atlas"
-            className="text-gold hover:text-gold/80 transition-colors"
-          >
-            cargo-atlas
-          </a>
-          . Click a node to trace what it needs and what breaks without it.
-          Recent work glows.
-        </p>
-      </section>
-
-      <section className="mb-12">
+      <section
+        className="relative left-1/2 w-screen -translate-x-1/2 py-4 sm:py-6"
+        data-pagefind-ignore
+      >
         <StackGraph
           objects={atlas.objects}
           edges={atlas.edges}

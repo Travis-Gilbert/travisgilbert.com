@@ -1,20 +1,21 @@
-// SOURCING: @xyflow/react (React Flow 12): canvas, pan/zoom, node and edge
-// rendering. Layout stays deterministic in stackLayout (positions are
-// computed, not force-directed); React Flow renders and handles interaction.
+// SOURCING: @xyflow/react (React Flow 12): node and edge rendering. Viewport
+// is pinned at zoom 1 with pan/zoom disabled: the page itself scrolls the
+// graph. Layout stays deterministic in stackLayout.
 'use client';
 
 /**
- * StackGraph: the workspace dependency graph on /toolkit.
+ * StackGraph: the workspace dependency graph, full-bleed on /toolkit.
  *
- * Mirrors ConnectionMap's contract: the server computes objects, edges,
- * heat, and hrefs and passes them down; the client renders. Layout is the
- * same layered algorithm as cargo-atlas's published SVG, oriented
- * vertically for the page.
+ * The graph is the page: no framing box, no zoom controls. Nodes are sized
+ * to be read at natural scale and the page scrolls down the stack, from
+ * dependents at the top to foundations at the bottom. Workspace labels sit
+ * stacked in the left margin (sticky) on wide screens.
  *
  * Interaction (Clew's click-to-path):
  *   Click a node    highlight its ancestors (what it needs) in Teal and its
  *                   descendants (what breaks without it) in Gold, animate
- *                   those edges, and dim the rest to 0.15 opacity.
+ *                   those edges, and dim the rest to 0.15 opacity. A fixed
+ *                   bar at the bottom shows the selected object's facts.
  *   Pane click/Esc  clear.
  *   Hover/focus     tooltip with summary, version, dependent count.
  *   Arrow keys      walk edges from the focused node (down: dependency,
@@ -24,10 +25,9 @@
  * disables the pulse and the edge animation.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
-  Controls,
   Handle,
   Position,
   ReactFlow,
@@ -38,7 +38,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { AtlasEdge, AtlasObject } from '@/lib/graph/atlas';
 import { atlasNeighborhood } from '@/lib/graph/atlas';
-import { stackLayout } from '@/lib/graph/stackLayout';
+import { NODE_H, stackLayout } from '@/lib/graph/stackLayout';
 
 const GOLD = '#C49A4A';
 const TEAL = '#2D5F6B';
@@ -71,15 +71,15 @@ function AtlasFlowNode({ data }: NodeProps) {
   const d = data as AtlasNodeData;
   const border =
     d.state === 'selected' ? TERRACOTTA : d.state === 'ancestor' ? TEAL : GOLD;
-  const borderWidth = d.state === 'selected' ? 2.5 : 1 + d.heat;
+  const borderWidth = d.state === 'selected' ? 3 : 1.25 + d.heat * 1.25;
   const fill = `rgba(196, 154, 74, ${d.state === 'dimmed' ? 0.05 : 0.12 + d.heat * 0.55})`;
   return (
     <div
       className={`atlas-node ${d.heat > 0.7 && d.state !== 'dimmed' ? 'atlas-hot' : ''}`}
       style={{
         width: d.width,
-        height: 30,
-        borderRadius: 7,
+        height: NODE_H,
+        borderRadius: 9,
         border: `${borderWidth}px solid ${border}`,
         background: fill,
         opacity: d.state === 'dimmed' ? 0.15 : 1,
@@ -87,7 +87,7 @@ function AtlasFlowNode({ data }: NodeProps) {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: 'var(--font-metadata, ui-monospace, monospace)',
-        fontSize: 12.5,
+        fontSize: 15,
         color: 'var(--color-ink, #2A2620)',
         cursor: 'pointer',
       }}
@@ -106,12 +106,29 @@ function AtlasFlowNode({ data }: NodeProps) {
 }
 
 const nodeTypes = { atlas: AtlasFlowNode };
+const STATIC_VIEWPORT = { x: 0, y: 0, zoom: 1 };
 
 export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }: StackGraphProps) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [graphWidth, setGraphWidth] = useState(1120);
+  const graphRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = graphRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width && width > 320) setGraphWidth(width);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const atlas = useMemo(() => ({ objects, edges, events: [] }), [objects, edges]);
-  const layout = useMemo(() => stackLayout(atlas), [atlas]);
+  const layout = useMemo(
+    () => stackLayout(atlas, { maxRowW: graphWidth }),
+    [atlas, graphWidth],
+  );
   const objectById = useMemo(() => new Map(objects.map((o) => [o.id, o])), [objects]);
   const dependents = useMemo(() => {
     const counts = new Map<string, number>();
@@ -183,7 +200,7 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
           style: {
             stroke: state === 'descendant' ? GOLD : TEAL,
             strokeOpacity: state === 'dimmed' ? 0.05 : state === 'idle' ? 0.3 : 0.9,
-            strokeWidth: highlighted ? 1.8 : 1,
+            strokeWidth: highlighted ? 2 : 1.2,
           },
         };
       }),
@@ -245,24 +262,24 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
       <style>{`
         @keyframes atlas-pulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(196, 154, 74, 0.35); }
-          50% { box-shadow: 0 0 10px 2px rgba(196, 154, 74, 0.18); }
+          50% { box-shadow: 0 0 12px 3px rgba(196, 154, 74, 0.18); }
         }
         .atlas-hot { animation: atlas-pulse 3.2s ease-in-out infinite; }
         .atlas-node .atlas-tip { display: none; }
         .atlas-node:hover .atlas-tip, .react-flow__node:focus .atlas-tip {
           display: block;
           position: absolute;
-          bottom: calc(100% + 8px);
+          bottom: calc(100% + 10px);
           left: 50%;
           transform: translateX(-50%);
-          min-width: 200px;
-          max-width: 300px;
-          padding: 8px 10px;
-          border-radius: 6px;
+          min-width: 220px;
+          max-width: 320px;
+          padding: 9px 12px;
+          border-radius: 7px;
           border: 1px solid ${GOLD};
           background: var(--color-paper, #F3EBDD);
           color: var(--color-ink, #2A2620);
-          font-size: 11.5px;
+          font-size: 12.5px;
           line-height: 1.45;
           z-index: 30;
           pointer-events: none;
@@ -272,45 +289,80 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
         .atlas-tip-sub { color: ${TERRACOTTA}; margin-bottom: 2px; }
         .react-flow__node:focus { outline: none; }
         .react-flow__node:focus .atlas-node { border-color: ${TERRACOTTA} !important; }
+        .react-flow__attribution { background: transparent; }
         @media (prefers-reduced-motion: reduce) {
           .atlas-hot { animation: none; }
           .react-flow__edge-path { animation: none !important; }
         }
       `}</style>
-      <div
-        className="mb-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs font-semibold tracking-widest"
-        style={{ color: TERRACOTTA }}
-      >
-        {workspaces.map((ws) => (
-          <span key={ws}>{ws.toUpperCase()}</span>
-        ))}
-      </div>
-      <div
-        className="relative h-[78vh] min-h-[520px] rounded-lg border border-border"
-        data-pagefind-ignore
-        aria-label="Workspace dependency graph. Click a node to trace what it needs and what breaks without it."
-      >
-        <ReactFlow
-          nodes={flowNodes}
-          edges={flowEdges}
-          nodeTypes={nodeTypes}
-          fitView
-          minZoom={0.2}
-          maxZoom={2.5}
-          nodesDraggable={false}
-          nodesConnectable={false}
-          edgesFocusable={false}
-          onNodeClick={(_, node) =>
-            setSelected((current) => (current === node.id ? null : node.id))
-          }
-          onPaneClick={() => setSelected(null)}
-        >
-          <Controls showInteractive={false} />
-        </ReactFlow>
+      <div className="flex gap-2">
+        <aside className="hidden lg:block w-44 shrink-0 pl-4">
+          <div className="sticky top-24 font-mono text-xs">
+            <div
+              className="flex flex-col gap-2 font-semibold tracking-widest"
+              style={{ color: TERRACOTTA }}
+            >
+              {workspaces.map((ws) => (
+                <span key={ws}>{ws.toUpperCase()}</span>
+              ))}
+            </div>
+            <p className="mt-6 text-ink-secondary leading-relaxed">
+              Click a node to trace what it needs and what breaks without it.
+              Recent work glows.
+            </p>
+            <p className="mt-3">
+              <a
+                href="https://github.com/Travis-Gilbert/cargo-atlas"
+                className="text-gold hover:text-gold/80 transition-colors"
+              >
+                cargo-atlas
+              </a>
+            </p>
+          </div>
+        </aside>
+        <div className="min-w-0 flex-1">
+          <div
+            className="mb-4 flex flex-wrap gap-x-5 gap-y-1 px-4 font-mono text-xs font-semibold tracking-widest lg:hidden"
+            style={{ color: TERRACOTTA }}
+          >
+            {workspaces.map((ws) => (
+              <span key={ws}>{ws.toUpperCase()}</span>
+            ))}
+          </div>
+          <div
+            ref={graphRef}
+            style={{ height: layout.height }}
+            data-pagefind-ignore
+            aria-label="Workspace dependency graph. Click a node to trace what it needs and what breaks without it."
+          >
+            <ReactFlow
+              nodes={flowNodes}
+              edges={flowEdges}
+              nodeTypes={nodeTypes}
+              viewport={STATIC_VIEWPORT}
+              zoomOnScroll={false}
+              zoomOnPinch={false}
+              zoomOnDoubleClick={false}
+              panOnDrag={false}
+              panOnScroll={false}
+              preventScrolling={false}
+              nodesDraggable={false}
+              nodesConnectable={false}
+              edgesFocusable={false}
+              onNodeClick={(_, node) =>
+                setSelected((current) => (current === node.id ? null : node.id))
+              }
+              onPaneClick={() => setSelected(null)}
+            />
+          </div>
+        </div>
       </div>
       {selectedObject && selectedNeighborhood && (
-        <div className="mt-4 border-t border-border pt-4 font-mono text-sm">
-          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-border"
+          style={{ background: 'var(--color-paper, #F3EBDD)' }}
+        >
+          <div className="mx-auto flex max-w-5xl flex-wrap items-baseline gap-x-4 gap-y-1 px-4 py-3 font-mono text-sm">
             <span className="font-semibold" style={{ color: TERRACOTTA }}>
               {selectedObject.id}
             </span>
