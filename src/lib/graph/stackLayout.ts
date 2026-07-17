@@ -1,11 +1,15 @@
 // SOURCING: none: pure logic, no upstream component applies
 /**
- * Deterministic layered (Sugiyama) layout for the workspace graph.
+ * Deterministic layered (Sugiyama) layout for the workspace graph, oriented
+ * vertically: dependents at the top, foundations at the bottom, so the page
+ * scrolls the way the stack reads. Layer assignment and within-layer
+ * ordering mirror cargo-atlas's SVG renderer (longest path from sinks,
+ * median heuristic, lexicographic tie-breaks); only the orientation
+ * differs, per user feedback that horizontal was hard to interact with.
  *
- * Mirrors cargo-atlas's SVG renderer exactly: longest-path-from-sinks
- * layering, median-heuristic ordering, lexicographic tie-breaks: so the
- * site and the published SVG agree on shape. Not force-directed: force
- * reshuffles on every run and the two surfaces would drift apart.
+ * Wide layers wrap into multiple rows inside their band so the graph stays
+ * near page width instead of sprawling sideways. Not force-directed: force
+ * reshuffles on every run.
  */
 
 import type { Atlas } from '@/lib/graph/atlas';
@@ -26,13 +30,14 @@ export interface StackLayout {
   height: number;
 }
 
-export const NODE_H = 26;
-const ROW_GAP = 14;
-const COL_GAP = 70;
-const MARGIN = 24;
-const HEADER_H = 34;
-const CHAR_W = 6.9;
-const PAD_X = 10;
+export const NODE_H = 30;
+const MAX_ROW_W = 1040;
+const H_GAP = 10;
+const V_GAP = 8;
+const BAND_GAP = 64;
+const MARGIN = 16;
+const CHAR_W = 7.2;
+const PAD_X = 12;
 
 export function stackLayout(atlas: Atlas): StackLayout {
   const ids = atlas.objects.map((o) => o.id);
@@ -92,39 +97,39 @@ export function stackLayout(atlas: Atlas): StackLayout {
     }
   }
 
-  const nodeW = (id: string) => Math.max(56, id.length * CHAR_W + PAD_X * 2);
-  const colW = layers.map((row) => row.reduce((w, v) => Math.max(w, nodeW(ids[v])), 56));
-  const tallest = layers.reduce((t, row) => Math.max(t, row.length), 1);
-  const innerH = tallest * NODE_H + (tallest - 1) * ROW_GAP;
-  const height = innerH + HEADER_H + MARGIN * 2;
-
-  // Foundations (layer 0) leftmost, dependents rightward: the graph reads
-  // left-to-right as "built on", and the dense hub columns lead.
-  const colX = new Array<number>(maxLayer + 1).fill(0);
-  let xCursor = MARGIN;
-  for (let l = 0; l <= maxLayer; l += 1) {
-    colX[l] = xCursor;
-    xCursor += colW[l] + COL_GAP;
-  }
-  const width = xCursor - COL_GAP + MARGIN;
-
+  // Bands top to bottom: dependents (max layer) first, foundations last.
+  // Nodes flow left to right within a band and wrap at MAX_ROW_W.
+  const nodeW = (id: string) => Math.max(60, id.length * CHAR_W + PAD_X * 2);
   const nodes: StackNode[] = [];
-  layers.forEach((row, l) => {
-    const blockH = row.length * NODE_H + (row.length - 1) * ROW_GAP;
-    const y0 = HEADER_H + MARGIN + (innerH - blockH) / 2;
-    row.forEach((v, r) => {
+  let yCursor = MARGIN;
+  let width = 0;
+  for (let l = maxLayer; l >= 0; l -= 1) {
+    let x = MARGIN;
+    let rowTop = yCursor;
+    let bandBottom = yCursor;
+    for (const v of layers[l]) {
       const id = ids[v];
+      const w = nodeW(id);
+      if (x > MARGIN && x + w > MAX_ROW_W) {
+        x = MARGIN;
+        rowTop = bandBottom + V_GAP;
+      }
       nodes.push({
         id,
         workspace: workspaceOf.get(id) ?? '',
         layer: l,
-        x: colX[l] + (colW[l] - nodeW(id)) / 2,
-        y: y0 + r * (NODE_H + ROW_GAP),
-        w: nodeW(id),
+        x,
+        y: rowTop,
+        w,
         h: NODE_H,
       });
-    });
-  });
+      bandBottom = Math.max(bandBottom, rowTop + NODE_H);
+      width = Math.max(width, x + w + MARGIN);
+      x += w + H_GAP;
+    }
+    yCursor = bandBottom + BAND_GAP;
+  }
+  const height = yCursor - BAND_GAP + MARGIN;
 
   return { nodes, width, height };
 }

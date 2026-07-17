@@ -1,6 +1,6 @@
-// SOURCING: hand-roll: deterministic layered SVG over shared stackLayout; no
-// library models a Sugiyama dependency graph with click-to-path semantics.
-// Reuses GraphTooltip; d3 deliberately not used (no force simulation here).
+// SOURCING: @xyflow/react (React Flow 12): canvas, pan/zoom, node and edge
+// rendering. Layout stays deterministic in stackLayout (positions are
+// computed, not force-directed); React Flow renders and handles interaction.
 'use client';
 
 /**
@@ -8,32 +8,43 @@
  *
  * Mirrors ConnectionMap's contract: the server computes objects, edges,
  * heat, and hrefs and passes them down; the client renders. Layout is the
- * same layered algorithm as cargo-atlas's published SVG, so the site and
- * the profile README agree on shape.
+ * same layered algorithm as cargo-atlas's published SVG, oriented
+ * vertically for the page.
  *
  * Interaction (Clew's click-to-path):
  *   Click a node    highlight its ancestors (what it needs) in Teal and its
- *                   descendants (what breaks without it) in Gold; dim the
- *                   rest to 0.15 opacity.
- *   Background/Esc  clear.
- *   Hover           tooltip with summary, version, dependent count.
- *   Arrow keys      walk edges from the selected node (left: dependent,
- *                   right: dependency, up/down: siblings). Enter selects.
+ *                   descendants (what breaks without it) in Gold, animate
+ *                   those edges, and dim the rest to 0.15 opacity.
+ *   Pane click/Esc  clear.
+ *   Hover/focus     tooltip with summary, version, dependent count.
+ *   Arrow keys      walk edges from the focused node (down: dependency,
+ *                   up: dependent, left/right: siblings). Enter selects.
  *
- * Heat scales node opacity and stroke weight; hot nodes carry a slow pulse
- * that prefers-reduced-motion disables.
+ * Heat scales node fill and stroke; hot nodes pulse slowly. Reduced motion
+ * disables the pulse and the edge animation.
  */
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
+import {
+  Controls,
+  Handle,
+  Position,
+  ReactFlow,
+  type Edge as FlowEdge,
+  type Node as FlowNode,
+  type NodeProps,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import type { AtlasEdge, AtlasObject } from '@/lib/graph/atlas';
 import { atlasNeighborhood } from '@/lib/graph/atlas';
-import { NODE_H, stackLayout, type StackNode } from '@/lib/graph/stackLayout';
-import GraphTooltip from '@/components/GraphTooltip';
+import { stackLayout } from '@/lib/graph/stackLayout';
 
 const GOLD = '#C49A4A';
 const TEAL = '#2D5F6B';
 const TERRACOTTA = '#B45A2D';
+
+type NodeState = 'idle' | 'selected' | 'ancestor' | 'descendant' | 'dimmed';
 
 export interface StackGraphProps {
   objects: AtlasObject[];
@@ -46,24 +57,61 @@ export interface StackGraphProps {
   hrefs: Record<string, string>;
 }
 
-interface Tooltip {
-  id: string;
-  x: number;
-  y: number;
+interface AtlasNodeData extends Record<string, unknown> {
+  label: string;
+  sub: string;
+  summary?: string;
+  dependents: number;
+  state: NodeState;
+  heat: number;
+  width: number;
 }
+
+function AtlasFlowNode({ data }: NodeProps) {
+  const d = data as AtlasNodeData;
+  const border =
+    d.state === 'selected' ? TERRACOTTA : d.state === 'ancestor' ? TEAL : GOLD;
+  const borderWidth = d.state === 'selected' ? 2.5 : 1 + d.heat;
+  const fill = `rgba(196, 154, 74, ${d.state === 'dimmed' ? 0.05 : 0.12 + d.heat * 0.55})`;
+  return (
+    <div
+      className={`atlas-node ${d.heat > 0.7 && d.state !== 'dimmed' ? 'atlas-hot' : ''}`}
+      style={{
+        width: d.width,
+        height: 30,
+        borderRadius: 7,
+        border: `${borderWidth}px solid ${border}`,
+        background: fill,
+        opacity: d.state === 'dimmed' ? 0.15 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'var(--font-metadata, ui-monospace, monospace)',
+        fontSize: 12.5,
+        color: 'var(--color-ink, #2A2620)',
+        cursor: 'pointer',
+      }}
+    >
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none' }} />
+      <span className="truncate px-1">{d.label}</span>
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none' }} />
+      <div className="atlas-tip" role="tooltip">
+        <div className="atlas-tip-title">{d.label}</div>
+        <div className="atlas-tip-sub">{d.sub}</div>
+        {d.summary && <div className="atlas-tip-line">{d.summary}</div>}
+        <div className="atlas-tip-line">{d.dependents} direct dependents</div>
+      </div>
+    </div>
+  );
+}
+
+const nodeTypes = { atlas: AtlasFlowNode };
 
 export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }: StackGraphProps) {
   const [selected, setSelected] = useState<string | null>(null);
-  const [tooltip, setTooltip] = useState<Tooltip | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const nodeRefs = useRef(new Map<string, SVGGElement>());
 
   const atlas = useMemo(() => ({ objects, edges, events: [] }), [objects, edges]);
   const layout = useMemo(() => stackLayout(atlas), [atlas]);
-  const nodeById = useMemo(
-    () => new Map(layout.nodes.map((n) => [n.id, n])),
-    [layout],
-  );
   const objectById = useMemo(() => new Map(objects.map((o) => [o.id, o])), [objects]);
   const dependents = useMemo(() => {
     const counts = new Map<string, number>();
@@ -78,7 +126,7 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
   }, [atlas, selected]);
 
   const nodeState = useCallback(
-    (id: string): 'idle' | 'selected' | 'ancestor' | 'descendant' | 'dimmed' => {
+    (id: string): NodeState => {
       if (!selected || !neighborhood) return 'idle';
       if (id === selected) return 'selected';
       if (neighborhood.ancestors.has(id)) return 'ancestor';
@@ -88,28 +136,74 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
     [selected, neighborhood],
   );
 
-  const edgeState = useCallback(
-    (edge: AtlasEdge): 'idle' | 'ancestor' | 'descendant' | 'dimmed' => {
-      if (!selected || !neighborhood) return 'idle';
-      const inAncestry = (id: string) => id === selected || neighborhood.ancestors.has(id);
-      const inDescent = (id: string) => id === selected || neighborhood.descendants.has(id);
-      if (inAncestry(edge.from) && inAncestry(edge.to)) return 'ancestor';
-      if (inDescent(edge.from) && inDescent(edge.to)) return 'descendant';
-      return 'dimmed';
-    },
-    [selected, neighborhood],
+  const flowNodes = useMemo<FlowNode[]>(
+    () =>
+      layout.nodes.map((node) => {
+        const object = objectById.get(node.id);
+        return {
+          id: node.id,
+          type: 'atlas',
+          position: { x: node.x, y: node.y },
+          draggable: false,
+          connectable: false,
+          data: {
+            label: node.id,
+            sub: object?.version
+              ? `${object.kind} · v${object.version} · ${node.workspace}`
+              : `${object?.kind ?? 'object'} · ${node.workspace}`,
+            summary: object?.summary,
+            dependents: dependents.get(node.id) ?? 0,
+            state: nodeState(node.id),
+            heat: heat[node.id] ?? 0,
+            width: node.w,
+          } satisfies AtlasNodeData,
+        };
+      }),
+    [layout, objectById, dependents, nodeState, heat],
   );
 
-  const focusNode = useCallback((id: string) => {
-    nodeRefs.current.get(id)?.focus();
+  const flowEdges = useMemo<FlowEdge[]>(
+    () =>
+      edges.map((edge) => {
+        let state: 'idle' | 'ancestor' | 'descendant' | 'dimmed' = 'idle';
+        if (selected && neighborhood) {
+          const inAncestry = (id: string) => id === selected || neighborhood.ancestors.has(id);
+          const inDescent = (id: string) => id === selected || neighborhood.descendants.has(id);
+          if (inAncestry(edge.from) && inAncestry(edge.to)) state = 'ancestor';
+          else if (inDescent(edge.from) && inDescent(edge.to)) state = 'descendant';
+          else state = 'dimmed';
+        }
+        const highlighted = state === 'ancestor' || state === 'descendant';
+        return {
+          id: `${edge.from}->${edge.to}`,
+          source: edge.from,
+          target: edge.to,
+          animated: highlighted,
+          focusable: false,
+          style: {
+            stroke: state === 'descendant' ? GOLD : TEAL,
+            strokeOpacity: state === 'dimmed' ? 0.05 : state === 'idle' ? 0.3 : 0.9,
+            strokeWidth: highlighted ? 1.8 : 1,
+          },
+        };
+      }),
+    [edges, selected, neighborhood],
+  );
+
+  const focusFlowNode = useCallback((id: string) => {
+    const el = document.querySelector<HTMLElement>(`.react-flow__node[data-id="${CSS.escape(id)}"]`);
+    el?.focus();
   }, []);
 
   const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent, id: string) => {
+    (event: React.KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelected(null);
         return;
       }
+      const focused = (event.target as HTMLElement).closest('.react-flow__node');
+      const id = focused?.getAttribute('data-id');
+      if (!id) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         setSelected((current) => (current === id ? null : id));
@@ -118,32 +212,25 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
       const walk = (next: string | undefined) => {
         if (!next) return;
         event.preventDefault();
-        focusNode(next);
+        focusFlowNode(next);
         if (selected) setSelected(next);
       };
-      if (event.key === 'ArrowRight') {
+      if (event.key === 'ArrowDown') {
         walk(edges.find((e) => e.from === id)?.to);
-      } else if (event.key === 'ArrowLeft') {
+      } else if (event.key === 'ArrowUp') {
         walk(edges.find((e) => e.to === id)?.from);
-      } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-        const node = nodeById.get(id);
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        const node = layout.nodes.find((n) => n.id === id);
         if (!node) return;
-        const column = layout.nodes
+        const siblings = layout.nodes
           .filter((n) => n.layer === node.layer)
-          .sort((a, b) => a.y - b.y);
-        const at = column.findIndex((n) => n.id === id);
-        const next = column[event.key === 'ArrowDown' ? at + 1 : at - 1];
-        walk(next?.id);
+          .sort((a, b) => a.y - b.y || a.x - b.x);
+        const at = siblings.findIndex((n) => n.id === id);
+        walk(siblings[event.key === 'ArrowRight' ? at + 1 : at - 1]?.id);
       }
     },
-    [edges, focusNode, layout.nodes, nodeById, selected],
+    [edges, focusFlowNode, layout.nodes, selected],
   );
-
-  const showTooltip = useCallback((node: StackNode) => {
-    setTooltip({ id: node.id, x: node.x + node.w / 2, y: node.y - 10 });
-  }, []);
-
-  const tooltipObject = tooltip ? objectById.get(tooltip.id) : undefined;
 
   const workspaces = useMemo(
     () => [...new Set(objects.map((o) => o.workspace))].sort(),
@@ -154,139 +241,72 @@ export default function StackGraph({ objects, edges, heat, lastTouched, hrefs }:
   const selectedNeighborhood = selected ? atlasNeighborhood(atlas, selected) : null;
 
   return (
-    <div>
+    <div onKeyDown={handleKeyDown}>
       <style>{`
-        @keyframes stack-graph-pulse {
-          0%, 100% { stroke-opacity: 1; }
-          50% { stroke-opacity: 0.55; }
+        @keyframes atlas-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(196, 154, 74, 0.35); }
+          50% { box-shadow: 0 0 10px 2px rgba(196, 154, 74, 0.18); }
         }
-        .stack-graph-hot { animation: stack-graph-pulse 3.2s ease-in-out infinite; }
+        .atlas-hot { animation: atlas-pulse 3.2s ease-in-out infinite; }
+        .atlas-node .atlas-tip { display: none; }
+        .atlas-node:hover .atlas-tip, .react-flow__node:focus .atlas-tip {
+          display: block;
+          position: absolute;
+          bottom: calc(100% + 8px);
+          left: 50%;
+          transform: translateX(-50%);
+          min-width: 200px;
+          max-width: 300px;
+          padding: 8px 10px;
+          border-radius: 6px;
+          border: 1px solid ${GOLD};
+          background: var(--color-paper, #F3EBDD);
+          color: var(--color-ink, #2A2620);
+          font-size: 11.5px;
+          line-height: 1.45;
+          z-index: 30;
+          pointer-events: none;
+          text-align: left;
+        }
+        .atlas-tip-title { font-weight: 700; }
+        .atlas-tip-sub { color: ${TERRACOTTA}; margin-bottom: 2px; }
+        .react-flow__node:focus { outline: none; }
+        .react-flow__node:focus .atlas-node { border-color: ${TERRACOTTA} !important; }
         @media (prefers-reduced-motion: reduce) {
-          .stack-graph-hot { animation: none; }
+          .atlas-hot { animation: none; }
+          .react-flow__edge-path { animation: none !important; }
         }
-        .stack-graph-node:focus { outline: none; }
-        .stack-graph-node:focus rect { stroke-width: 2.5; stroke: ${TERRACOTTA}; }
       `}</style>
-      <div ref={containerRef} className="relative overflow-x-auto" data-pagefind-ignore>
-        <svg
-          viewBox={`0 0 ${layout.width} ${layout.height}`}
-          width={layout.width}
-          height={layout.height}
-          role="application"
-          aria-label="Workspace dependency graph. Click a node to trace what it needs and what breaks without it."
-          onClick={() => setSelected(null)}
+      <div
+        className="mb-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs font-semibold tracking-widest"
+        style={{ color: TERRACOTTA }}
+      >
+        {workspaces.map((ws) => (
+          <span key={ws}>{ws.toUpperCase()}</span>
+        ))}
+      </div>
+      <div
+        className="relative h-[78vh] min-h-[520px] rounded-lg border border-border"
+        data-pagefind-ignore
+        aria-label="Workspace dependency graph. Click a node to trace what it needs and what breaks without it."
+      >
+        <ReactFlow
+          nodes={flowNodes}
+          edges={flowEdges}
+          nodeTypes={nodeTypes}
+          fitView
+          minZoom={0.2}
+          maxZoom={2.5}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          edgesFocusable={false}
+          onNodeClick={(_, node) =>
+            setSelected((current) => (current === node.id ? null : node.id))
+          }
+          onPaneClick={() => setSelected(null)}
         >
-          <g fill="none">
-            {edges.map((edge) => {
-              const from = nodeById.get(edge.from);
-              const to = nodeById.get(edge.to);
-              if (!from || !to) return null;
-              const x1 = to.x + to.w;
-              const y1 = to.y + NODE_H / 2;
-              const x2 = from.x;
-              const y2 = from.y + NODE_H / 2;
-              const dx = Math.max(18, (x2 - x1) / 2);
-              const state = edgeState(edge);
-              const stroke = state === 'descendant' ? GOLD : TEAL;
-              const opacity = state === 'dimmed' ? 0.06 : state === 'idle' ? 0.35 : 0.85;
-              return (
-                <path
-                  key={`${edge.from}->${edge.to}`}
-                  d={`M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}`}
-                  stroke={stroke}
-                  strokeOpacity={opacity}
-                  strokeWidth={state === 'idle' || state === 'dimmed' ? 1 : 1.6}
-                />
-              );
-            })}
-          </g>
-          <g
-            fontSize={12}
-            fontWeight={600}
-            fill={TERRACOTTA}
-            letterSpacing="0.08em"
-            fontFamily="var(--font-metadata, ui-monospace, monospace)"
-          >
-            {workspaces.map((ws, i) => (
-              <text key={ws} x={24 + i * 180} y={22}>
-                {ws.toUpperCase()}
-              </text>
-            ))}
-          </g>
-          <g fontSize={11.5} fontFamily="var(--font-metadata, ui-monospace, monospace)">
-            {layout.nodes.map((node) => {
-              const state = nodeState(node.id);
-              const nodeHeat = heat[node.id] ?? 0;
-              const dimmed = state === 'dimmed';
-              const stroke =
-                state === 'ancestor' ? TEAL : state === 'descendant' ? GOLD : GOLD;
-              const fillOpacity = dimmed ? 0.05 : 0.12 + nodeHeat * 0.55;
-              const opacity = dimmed ? 0.15 : 1;
-              return (
-                <g
-                  key={node.id}
-                  ref={(el) => {
-                    if (el) nodeRefs.current.set(node.id, el);
-                    else nodeRefs.current.delete(node.id);
-                  }}
-                  className={`stack-graph-node ${nodeHeat > 0.7 ? 'stack-graph-hot' : ''}`}
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={state === 'selected'}
-                  aria-label={`${node.id}, ${objectById.get(node.id)?.kind ?? 'object'} in ${node.workspace}`}
-                  opacity={opacity}
-                  style={{ cursor: 'pointer' }}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setSelected((current) => (current === node.id ? null : node.id));
-                  }}
-                  onKeyDown={(event) => handleKeyDown(event, node.id)}
-                  onMouseEnter={() => showTooltip(node)}
-                  onMouseLeave={() => setTooltip(null)}
-                  onFocus={() => showTooltip(node)}
-                  onBlur={() => setTooltip(null)}
-                >
-                  <rect
-                    x={node.x}
-                    y={node.y}
-                    width={node.w}
-                    height={node.h}
-                    rx={6}
-                    fill={GOLD}
-                    fillOpacity={fillOpacity}
-                    stroke={state === 'selected' ? TERRACOTTA : stroke}
-                    strokeWidth={state === 'selected' ? 2.5 : 1 + nodeHeat}
-                  />
-                  <text
-                    x={node.x + node.w / 2}
-                    y={node.y + NODE_H / 2 + 4}
-                    textAnchor="middle"
-                    fill="var(--color-ink, #2A2620)"
-                    fillOpacity={dimmed ? 0.5 : 0.65 + nodeHeat * 0.35}
-                  >
-                    {node.id}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
-        </svg>
-        {tooltip && tooltipObject && (
-          <GraphTooltip
-            title={tooltipObject.id}
-            subtitle={
-              tooltipObject.version
-                ? `${tooltipObject.kind} · v${tooltipObject.version}`
-                : tooltipObject.kind
-            }
-            lines={[
-              ...(tooltipObject.summary ? [tooltipObject.summary] : []),
-              `${dependents.get(tooltipObject.id) ?? 0} direct dependents`,
-            ]}
-            position={{ x: tooltip.x, y: tooltip.y }}
-            visible
-          />
-        )}
+          <Controls showInteractive={false} />
+        </ReactFlow>
       </div>
       {selectedObject && selectedNeighborhood && (
         <div className="mt-4 border-t border-border pt-4 font-mono text-sm">

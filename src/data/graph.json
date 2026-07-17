@@ -1,11 +1,120 @@
 {
   "version": "1",
-  "generated_at": "2026-07-16T23:53:14Z",
+  "generated_at": "2026-07-17T00:56:48Z",
   "source_commit": {
-    "Theorem": "87ef890",
-    "travisgilbert.me": "1454ae5"
+    "Theorem": "9e4eee2",
+    "Theseus": "c381a06",
+    "travisgilbert.me": "1b54676"
   },
   "objects": [
+    {
+      "id": "apps.anti_misinfo_algo",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.api",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.causal",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.comments",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.core",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.corpus_surface",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.epistemic_federation",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.federation",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.mentions",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.notebook",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.observability",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.orchestrate",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.paper_trail",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.plugins",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.public_verbs",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.publisher",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.research",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
+    {
+      "id": "apps.user_model",
+      "kind": "app",
+      "workspace": "Theseus",
+      "public": false
+    },
     {
       "id": "blake3",
       "kind": "crate",
@@ -476,11 +585,281 @@
       "workspace": "travisgilbert.me",
       "version": "1.0.0",
       "path": ".",
-      "loc": 176779,
+      "loc": 177688,
       "public": true
     }
   ],
   "edges": [
+    {
+      "from": "apps.anti_misinfo_algo",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.api",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.api",
+      "to": "apps.mentions",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.api",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.api",
+      "to": "apps.research",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.causal",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.causal",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.causal",
+      "to": "apps.observability",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.comments",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.comments",
+      "to": "apps.research",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.corpus_surface",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.corpus_surface",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.epistemic_federation",
+      "to": "apps.causal",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.epistemic_federation",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.epistemic_federation",
+      "to": "apps.corpus_surface",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.epistemic_federation",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.epistemic_federation",
+      "to": "apps.observability",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.epistemic_federation",
+      "to": "apps.plugins",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.federation",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.federation",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.mentions",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.api",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.causal",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.corpus_surface",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.epistemic_federation",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.federation",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.observability",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.orchestrate",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.plugins",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.research",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.notebook",
+      "to": "apps.user_model",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.observability",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.orchestrate",
+      "to": "apps.api",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.orchestrate",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.orchestrate",
+      "to": "apps.plugins",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.paper_trail",
+      "to": "apps.api",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.paper_trail",
+      "to": "apps.mentions",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.paper_trail",
+      "to": "apps.research",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.plugins",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.plugins",
+      "to": "apps.orchestrate",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.public_verbs",
+      "to": "apps.causal",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.public_verbs",
+      "to": "apps.corpus_surface",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.public_verbs",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.publisher",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.publisher",
+      "to": "apps.mentions",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.publisher",
+      "to": "apps.research",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.research",
+      "to": "apps.api",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.research",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.research",
+      "to": "apps.mentions",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.research",
+      "to": "apps.notebook",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.research",
+      "to": "apps.publisher",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.user_model",
+      "to": "apps.core",
+      "kind": "depends_on"
+    },
+    {
+      "from": "apps.user_model",
+      "to": "apps.observability",
+      "kind": "depends_on"
+    },
     {
       "from": "rustyred-hipporag",
       "to": "blake3",
@@ -1503,6 +1882,12 @@
     }
   ],
   "events": [
+    {
+      "object": "travisgilbert-website",
+      "at": "2026-07-16T20:39:52-04:00",
+      "kind": "commit",
+      "sha": "1b54676"
+    },
     {
       "object": "theorem-exec-sandbox",
       "at": "2026-07-14T14:52:49-04:00",
@@ -4493,12 +4878,6 @@
     },
     {
       "object": "rustyred-thg-core",
-      "at": "2026-07-02T02:28:00-04:00",
-      "kind": "commit",
-      "sha": "8a75cee6"
-    },
-    {
-      "object": "rustyred-thg-intake",
       "at": "2026-07-02T02:28:00-04:00",
       "kind": "commit",
       "sha": "8a75cee6"
