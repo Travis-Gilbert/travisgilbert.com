@@ -2,7 +2,7 @@
 
 Personal creative workbench: a living record of work, interests, and thinking. Studio-journal aesthetic with hand-drawn visual elements. Not a traditional portfolio or resume.
 
-**Live site:** [travisgilbert.com](https://travisgilbert.com)
+**Public site extract:** `public-site/` is the standalone travisgilbert.me app (markdown + Next.js, no studio stack).
 
 ## Tech Stack
 
