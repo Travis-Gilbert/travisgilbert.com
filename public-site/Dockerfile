@@ -12,6 +12,7 @@ RUN npm ci
 COPY next.config.ts tsconfig.json postcss.config.mjs next-env.d.ts ./
 COPY src ./src
 COPY content ./content
+COPY public ./public
 
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
