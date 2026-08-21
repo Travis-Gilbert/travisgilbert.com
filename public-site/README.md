@@ -58,6 +58,9 @@ To refresh content later, copy `src/content/` over `public-site/content/` again,
 - `/connect` : Profile links
 - `/shelf` : `content/shelf/`
 - `/toolkit` : `content/toolkit/`
+- `/research` : Paper Trails (static list of published writing; no D3 / Index API graph)
+- `/experiments` : Experiments listing
+- `/readme` : README.md about page
 - `/tags` and `/tags/[tag]` : topic index used by TagList
 
 The homepage gold "Install" box from the old fat app is omitted because `/install` is not a public-site route.
