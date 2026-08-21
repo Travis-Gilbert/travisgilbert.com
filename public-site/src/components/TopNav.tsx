@@ -28,6 +28,7 @@ const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: '/projects',    label: 'Projects',      icon: 'briefcase' },
   { href: '/toolkit',     label: 'Toolkit',       icon: 'wrench' },
   { href: '/shelf',       label: 'Shelf',         icon: 'book-open' },
+  { href: '/experiments', label: 'Experiments',   icon: 'gears' },
   { href: '/connect',     label: 'Connect',       icon: 'chat-circle' },
 ];
 

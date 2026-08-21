@@ -77,12 +77,15 @@ const DEFAULT_CONFIG: SiteConfig = {
     },
   },
   nav: [
-    { label: 'Essays on...', path: '/essays', icon: 'file-text', visible: true },
+    { label: 'WIP', path: '/essays', icon: 'file-text', visible: true },
     { label: 'Field Notes', path: '/field-notes', icon: 'note-pencil', visible: true },
+    { label: 'Paper Trails', path: '/research', icon: 'magnifying-glass', visible: true },
     { label: 'Projects', path: '/projects', icon: 'briefcase', visible: true },
     { label: 'Toolkit', path: '/toolkit', icon: 'wrench', visible: true },
     { label: 'Shelf', path: '/shelf', icon: 'book-open', visible: true },
+    { label: 'Experiments', path: '/experiments', icon: 'gears', visible: true },
     { label: 'Connect', path: '/connect', icon: 'chat-circle', visible: true },
+    { label: 'README', path: '/readme', icon: 'file-text', visible: true },
   ],
   footer: {
     tagline: 'A living record of work, interests, and thinking.',
