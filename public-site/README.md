@@ -22,7 +22,25 @@ npm install
 npm run build
 ```
 
-The build writes a static export to `out/`. You can preview it with any static file server (`npx serve out`). There is no Vercel, Railway, Fly, or Docker config here on purpose.
+The build writes a static export to `out/`. You can preview it with any static file server (`npx serve out`).
+
+## Deploy (Fly.io)
+
+This folder is the only thing that should go to Fly. The repo-root Next app (Theseus, CommonPlace, Studio) stays undeployed.
+
+First time only (the previous empty `travisgilbert-me` app was destroyed):
+
+```bash
+fly apps create travisgilbert-me
+```
+
+Then, always from this folder:
+
+```bash
+cd public-site && fly deploy
+```
+
+Use `fly deploy --ha=false` on the first deploy if you want a single shared-cpu-1x machine (256mb). No secrets are required. This PR does not point DNS at Fly.
 
 ## Content
 

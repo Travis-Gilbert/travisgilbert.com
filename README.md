@@ -2,7 +2,7 @@
 
 Personal creative workbench: a living record of work, interests, and thinking. Studio-journal aesthetic with hand-drawn visual elements. Not a traditional portfolio or resume.
 
-**Public site extract:** `public-site/` is the standalone travisgilbert.me app (markdown + Next.js, no studio stack).
+**Public site extract:** `public-site/` is the standalone travisgilbert.me app (markdown + Next.js, no studio stack). Deploy only that folder to Fly (`cd public-site && fly deploy`); do not deploy the repo-root Next app.
 
 ## Tech Stack
 
