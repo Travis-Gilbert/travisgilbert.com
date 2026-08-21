@@ -1,74 +1,486 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from 'fs';
+import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
-import remarkGfm from 'remark-gfm';
 import remarkHtml from 'remark-html';
+import remarkGfm from 'remark-gfm';
+import { z } from 'zod';
+import type { PositionedConnection } from './connectionEngine';
 
-export type CollectionName = 'essays' | 'field-notes' | 'projects' | 'shelf' | 'toolkit';
+// ─────────────────────────────────────────────────
+// Zod Schemas
+// ─────────────────────────────────────────────────
 
-export interface SourceRef {
-  title: string;
-  url: string;
+export const essaySchema = z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  summary: z.string().max(500),
+  youtubeId: z.string().default(''),
+  thumbnail: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  sources: z.array(z.object({
+    title: z.string(),
+    url: z.string().url(),
+  })).default([]),
+  related: z.array(z.string()).default([]),
+  draft: z.boolean().default(false),
+  callout: z.string().optional(),
+  /** Array of callouts for featured cards (pivoted leader-line treatment) */
+  callouts: z.array(z.string()).optional(),
+  /** Essay production stage */
+  stage: z.enum(['research', 'drafting', 'production', 'published']).optional(),
+  /** ISO date when stage last advanced (stamp animation fires if within 24h) */
+  lastAdvanced: z.coerce.date().optional(),
+  /** Optional hero/card image path */
+  image: z.string().optional(),
+  /** Handwritten margin annotations keyed to paragraph index */
+  annotations: z.array(z.object({
+    paragraph: z.number(),
+    text: z.string(),
+  })).default([]),
+  /** Per-instance visual overrides (heroStyle, overlay, accent, etc.) */
+  composition: z.record(z.unknown()).optional(),
+  /** Deep saturated background color for homepage hero when this essay is featured */
+  heroColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  /** Path to composed hero artifact image in /public/hero/ */
+  heroImage: z.string().optional(),
+  /** Central claim or argument of the essay (displayed in hero) */
+  thesis: z.string().optional(),
+  /** Number of sources consulted (displayed as badge in hero) */
+  sourceCount: z.number().optional(),
+  /** ISO date string for when research began */
+  researchStarted: z.string().optional(),
+  /** Number of substantive revisions */
+  revisionCount: z.number().optional(),
+  /** Bullet-point research process notes */
+  researchNotes: z.array(z.string()).optional(),
+  /** Human-readable summary of source types (e.g., "3 academic papers, 2 interviews") */
+  sourceSummary: z.string().optional(),
+  /** Content types this essay connects to (e.g., ["field-note", "project"]) */
+  connectedTypes: z.array(z.string()).optional(),
+  /** Summary of how this essay relates to other content */
+  connectionSummary: z.string().optional(),
+  /** Per-connection research notes for ResearchDropdown in ConnectionDots */
+  connectionNotes: z.array(z.object({ slug: z.string(), note: z.string() })).optional(),
+});
+
+export const fieldNoteSchema = z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  tags: z.array(z.string()).default([]),
+  excerpt: z.string().max(300).optional(),
+  draft: z.boolean().default(false),
+  callout: z.string().optional(),
+  /** Array of callouts for featured cards */
+  callouts: z.array(z.string()).optional(),
+  /** Note development status */
+  status: z.enum(['observation', 'developing', 'connected']).optional(),
+  /** ISO date when status last advanced (stamp animation fires if within 24h) */
+  lastAdvanced: z.coerce.date().optional(),
+  /** Whether this note is featured on the homepage */
+  featured: z.boolean().default(false),
+  /** Slug of the parent essay this note connects to */
+  connectedTo: z.string().optional(),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
+});
+
+export const shelfSchema = z.object({
+  title: z.string(),
+  creator: z.string(),
+  type: z.enum(['book', 'video', 'podcast', 'article', 'tool', 'album', 'other']),
+  annotation: z.string(),
+  url: z.string().url().optional(),
+  date: z.coerce.date(),
+  tags: z.array(z.string()).default([]),
+  /** Essay slug this source relates to */
+  connectedEssay: z.string().optional(),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
+});
+
+export const toolkitSchema = z.object({
+  title: z.string(),
+  category: z.enum(['production', 'tools', 'philosophy', 'automation']),
+  order: z.number().default(0),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
+});
+
+export const projectSchema = z.object({
+  title: z.string(),
+  role: z.string(),
+  description: z.string().max(300),
+  year: z.coerce.number(),
+  date: z.coerce.date(),
+  organization: z.string().optional(),
+  urls: z.array(z.object({
+    label: z.string(),
+    url: z.string().url(),
+  })).default([]),
+  tags: z.array(z.string()).default([]),
+  featured: z.boolean().default(false),
+  draft: z.boolean().default(false),
+  order: z.number().default(0),
+  callout: z.string().optional(),
+  /** Per-instance visual overrides */
+  composition: z.record(z.unknown()).optional(),
+});
+
+// ─────────────────────────────────────────────────
+// Type exports
+// ─────────────────────────────────────────────────
+
+export type Essay = z.infer<typeof essaySchema>;
+export type FieldNote = z.infer<typeof fieldNoteSchema>;
+export type ShelfEntry = z.infer<typeof shelfSchema>;
+export type ToolkitEntry = z.infer<typeof toolkitSchema>;
+export type Project = z.infer<typeof projectSchema>;
+
+// ─────────────────────────────────────────────────
+// Content loading
+// ─────────────────────────────────────────────────
+
+type CollectionName = 'essays' | 'field-notes' | 'projects' | 'shelf' | 'toolkit';
+
+const schemaMap: Record<CollectionName, z.ZodSchema> = {
+  essays: essaySchema,
+  'field-notes': fieldNoteSchema,
+  projects: projectSchema,
+  shelf: shelfSchema,
+  toolkit: toolkitSchema,
+};
+
+export interface ContentEntry<T> {
+  slug: string;
+  data: T;
+  body: string;
 }
 
-export interface ProjectUrl {
-  label: string;
-  url: string;
+export function getCollection<T>(name: CollectionName): ContentEntry<T>[] {
+  const dir = path.join(process.cwd(), 'content', name);
+
+  if (!fs.existsSync(dir)) return [];
+
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md'));
+  const schema = schemaMap[name];
+
+  return files.map(file => {
+    const raw = fs.readFileSync(path.join(dir, file), 'utf-8');
+    const { data, content } = matter(raw);
+    const validated = schema.parse(data);
+    return {
+      slug: file.replace(/\.md$/, ''),
+      data: validated as T,
+      body: content,
+    };
+  });
 }
 
-export interface EssayData {
-  title: string;
-  date: Date;
-  summary: string;
-  youtubeId?: string;
-  tags: string[];
-  sources: SourceRef[];
-  related: string[];
-  draft: boolean;
-  stage?: string;
-  thesis?: string;
+export function getEntry<T>(name: CollectionName, slug: string): ContentEntry<T> | undefined {
+  const dir = path.join(process.cwd(), 'content', name);
+  const filePath = path.join(dir, `${slug}.md`);
+
+  if (!fs.existsSync(filePath)) return undefined;
+
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const { data, content } = matter(raw);
+  const schema = schemaMap[name];
+  const validated = schema.parse(data);
+
+  return {
+    slug,
+    data: validated as T,
+    body: content,
+  };
 }
 
-export interface FieldNoteData {
-  title: string;
-  date: Date;
-  tags: string[];
-  excerpt?: string;
-  draft: boolean;
-  status?: string;
-  featured: boolean;
+export async function renderMarkdown(body: string): Promise<string> {
+  const result = await remark()
+    .use(remarkGfm)
+    .use(remarkHtml, { sanitize: false })
+    .process(body);
+  return result.toString();
 }
 
-export interface ProjectData {
-  title: string;
-  role: string;
-  description: string;
-  year: number;
-  date: Date;
-  organization?: string;
-  urls: ProjectUrl[];
-  tags: string[];
-  featured: boolean;
-  draft: boolean;
-  order: number;
-  callout?: string;
+// ─────────────────────────────────────────────────
+// Reading Time
+// ─────────────────────────────────────────────────
+
+/**
+ * Estimate reading time from raw markdown body text.
+ * Uses 200 words per minute (average adult reading speed).
+ * Returns at least 1 minute.
+ */
+export function estimateReadingTime(body: string): number {
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
-export interface ShelfData {
-  title: string;
-  creator: string;
-  type: string;
-  annotation: string;
-  url?: string;
-  date: Date;
-  tags: string[];
+// ─────────────────────────────────────────────────
+// Footnote-to-Sidenote Extraction
+// ─────────────────────────────────────────────────
+
+export interface Sidenote {
+  /** Footnote reference id (e.g. "1", "2") */
+  id: string;
+  /** HTML content of the footnote (may contain <strong>, <em>, etc.) */
+  html: string;
 }
 
-export interface ToolkitData {
-  title: string;
-  category: string;
-  order: number;
+/**
+ * Extract footnotes produced by remark-gfm and convert them into sidenote data.
+ *
+ * 1. Parses the <section data-footnotes> block at the bottom of the HTML
+ * 2. Extracts each <li> as a sidenote with its content (minus the backref link)
+ * 3. Replaces inline <sup><a data-footnote-ref> with a sidenote anchor span
+ * 4. Removes the footnotes section from the HTML
+ *
+ * Returns the cleaned HTML and an array of sidenotes.
+ * If no footnotes exist, returns the original HTML and an empty array.
+ */
+export function extractFootnoteSidenotes(html: string): {
+  html: string;
+  sidenotes: Sidenote[];
+} {
+  const sectionMatch = html.match(/<section data-footnotes[\s\S]*?<\/section>/);
+  if (!sectionMatch) return { html, sidenotes: [] };
+
+  const sidenotes: Sidenote[] = [];
+  const liRegex = /<li id="user-content-fn-(\w+)">\s*<p>([\s\S]*?)<\/p>\s*<\/li>/g;
+  let liMatch;
+  while ((liMatch = liRegex.exec(sectionMatch[0])) !== null) {
+    const id = liMatch[1];
+    const content = liMatch[2]
+      .replace(/<a[^>]*data-footnote-backref[^>]*>[^<]*<\/a>/g, '')
+      .trim();
+    sidenotes.push({ id, html: content });
+  }
+
+  let cleanedHtml = html.replace(
+    /<sup><a href="#user-content-fn-(\w+)"[^>]*data-footnote-ref[^>]*>\d+<\/a><\/sup>/g,
+    (_match, id) => {
+      const index = sidenotes.findIndex((s) => s.id === id);
+      if (index === -1) return _match;
+      return `<span class="sidenote-ref" data-sidenote-id="${escapeAttr(id)}" data-sidenote-index="${index}"><sup class="sidenote-marker">${index + 1}</sup></span>`;
+    }
+  );
+
+  cleanedHtml = cleanedHtml.replace(/<section data-footnotes[\s\S]*?<\/section>/, '');
+
+  return { html: cleanedHtml, sidenotes };
+}
+
+// ─────────────────────────────────────────────────
+// Margin Annotation Injection (legacy frontmatter system)
+// ─────────────────────────────────────────────────
+
+interface Annotation {
+  paragraph: number;
+  text: string;
+}
+
+/**
+ * Escape a string for safe use inside an HTML attribute value.
+ */
+function escapeAttr(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Inject margin annotation anchors into rendered HTML after the specified
+ * paragraph positions. Annotations alternate between right and left sides.
+ *
+ * Counts closing </p> tags to identify paragraph boundaries. Each annotation
+ * is a zero-height <span> with data attributes that CSS ::after pseudo-elements
+ * read to render the handwritten note.
+ *
+ * No-op when the annotations array is empty.
+ */
+export function injectAnnotations(html: string, annotations: Annotation[]): string {
+  if (annotations.length === 0) return html;
+
+  // Build a map of paragraph index to annotation(s)
+  const annotationMap = new Map<number, Annotation[]>();
+  for (const ann of annotations) {
+    const existing = annotationMap.get(ann.paragraph);
+    if (existing) {
+      existing.push(ann);
+    } else {
+      annotationMap.set(ann.paragraph, [ann]);
+    }
+  }
+
+  let paragraphIndex = 0;
+  let sideToggle = 0; // alternates 0 (right) and 1 (left)
+  let letterIndex = 0; // for print footnote letters [a],[b],[c]
+  const footnotes: { letter: string; text: string }[] = [];
+
+  const markedHtml = html.replace(/<\/p>/gi, (match) => {
+    paragraphIndex++;
+    const anns = annotationMap.get(paragraphIndex);
+    if (!anns) return match;
+
+    let injected = match;
+    for (const ann of anns) {
+      const side = sideToggle % 2 === 0 ? 'right' : 'left';
+      sideToggle++;
+      const letter = String.fromCharCode(97 + letterIndex); // a, b, c ...
+      letterIndex++;
+      footnotes.push({ letter, text: ann.text });
+      injected += `<sup class="annotation-fn-marker" aria-hidden="true">[${letter}]</sup>`;
+      injected += `<span class="margin-annotation-anchor" data-annotation-text="${escapeAttr(ann.text)}" data-annotation-side="${side}"></span>`;
+      injected += `<details class="annotation-mobile-footnote"><summary><span class="annotation-mobile-marker">[${letter}]</span> Margin note</summary><div class="annotation-mobile-footnote-body">${escapeAttr(ann.text)}</div></details>`;
+    }
+    return injected;
+  });
+
+  if (footnotes.length === 0) return markedHtml;
+
+  // Build the print-only annotation footnote table
+  const rows = footnotes
+    .map(
+      (fn) =>
+        `<div class="annotation-fn-row"><span class="annotation-fn-num">[${fn.letter}]</span> <span class="annotation-fn-text">${escapeAttr(fn.text)}</span></div>`,
+    )
+    .join('\n');
+
+  const table = `\n<div class="annotation-footnotes" aria-hidden="true">\n<div class="annotation-footnotes-title">Margin Notes</div>\n${rows}\n</div>`;
+
+  return markedHtml + table;
+}
+
+// ─────────────────────────────────────────────────
+// Connection callouts (inline, build-time)
+// ─────────────────────────────────────────────────
+
+/** Map connection type to its URL prefix */
+const TYPE_URL_PREFIX: Record<string, string> = {
+  essay: '/essays',
+  'field-note': '/field-notes',
+  shelf: '/shelf',
+};
+
+/** Map connection type to its display label */
+const TYPE_LABEL: Record<string, string> = {
+  essay: 'Essay',
+  'field-note': 'Field Note',
+  shelf: 'Shelf',
+};
+
+/**
+ * Inject inline connection callout blocks after paragraphs that mention
+ * connected content. Only processes connections where `mentionFound` is true.
+ *
+ * Follows the same `</p>` counting pattern as `injectAnnotations()`.
+ * Must be called AFTER `injectAnnotations()` to avoid shifting paragraph indices.
+ */
+export function injectConnectionCallouts(
+  html: string,
+  connections: PositionedConnection[],
+): string {
+  // Only process connections with a real mention
+  const mentionConnections = connections.filter((c) => c.mentionFound);
+  if (mentionConnections.length === 0) return html;
+
+  // Build a map of paragraph index to connections (sorted by weight)
+  const WEIGHT_ORDER: Record<string, number> = { heavy: 0, medium: 1, light: 2 };
+  const byParagraph = new Map<number, PositionedConnection[]>();
+
+  for (const pc of mentionConnections) {
+    const group = byParagraph.get(pc.paragraphIndex) || [];
+    group.push(pc);
+    byParagraph.set(pc.paragraphIndex, group);
+  }
+
+  // Sort each group by weight (heavy first)
+  for (const group of byParagraph.values()) {
+    group.sort(
+      (a, b) =>
+        (WEIGHT_ORDER[a.connection.weight] ?? 2) -
+        (WEIGHT_ORDER[b.connection.weight] ?? 2),
+    );
+  }
+
+  let paragraphIndex = 0;
+
+  return html.replace(/<\/p>/gi, (match) => {
+    paragraphIndex++;
+    const group = byParagraph.get(paragraphIndex);
+    if (!group) return match;
+
+    let injected = match;
+    for (const pc of group) {
+      const c = pc.connection;
+      const href = `${TYPE_URL_PREFIX[c.type] ?? ''}/${c.slug}`;
+      const label = TYPE_LABEL[c.type] ?? c.type;
+
+      injected += `<aside class="connection-callout" data-connection-type="${c.type}" data-connection-color="${c.color}"><a href="${escapeAttr(href)}" class="connection-callout-link"><span class="connection-callout-type">${escapeAttr(label)}</span><span class="connection-callout-title">${escapeAttr(c.title)}</span></a></aside>`;
+    }
+    return injected;
+  });
+}
+
+// ─────────────────────────────────────────────────
+// Print Footnote Markers (screen-hidden, print-visible)
+// ─────────────────────────────────────────────────
+
+/**
+ * Inject footnote markers after external links and append a footnote table.
+ *
+ * Scans for `<a href="https://...">` tags that point to external URLs.
+ * Each gets a numbered `<sup class="fn-marker">` after the closing `</a>`.
+ * A `<div class="fn-table">` with the numbered URL list is appended at the end.
+ *
+ * Both `.fn-marker` and `.fn-table` are `display: none` on screen (global.css).
+ * The print stylesheet (print.css) reveals them so printed essays show
+ * traditional footnote references instead of underlined blue links.
+ *
+ * Internal links (starting with `/`) and anchor-only links (`#`) are skipped.
+ * Connection callout links are also skipped (inside `<aside class="connection-callout">`).
+ *
+ * No-op when no external links are found.
+ */
+export function injectFootnoteMarkers(html: string): string {
+  const footnotes: { index: number; url: string }[] = [];
+  let counter = 0;
+
+  // Match <a> tags, but skip internal/anchor links and connection callout links
+  const markedHtml = html.replace(
+    /<a\s+href="([^"]*)"[^>]*>.*?<\/a>/gi,
+    (match, href: string) => {
+      if (
+        href.startsWith('/') ||
+        href.startsWith('#') ||
+        match.includes('connection-callout-link')
+      ) {
+        return match;
+      }
+
+      counter++;
+      footnotes.push({ index: counter, url: href });
+      return `${match}<sup class="fn-marker" aria-hidden="true">[${counter}]</sup>`;
+    },
+  );
+
+  if (footnotes.length === 0) return html;
+
+  // Build the footnote table
+  const rows = footnotes
+    .map(
+      (fn) =>
+        `<div class="fn-row"><span class="fn-num">[${fn.index}]</span> <span class="fn-url">${escapeAttr(fn.url)}</span></div>`,
+    )
+    .join('\n');
+
+  const table = `\n<div class="fn-table" aria-hidden="true">\n<div class="fn-table-title">Links</div>\n${rows}\n</div>`;
+
+  return markedHtml + table;
 }
 
 export interface NowData {
@@ -84,248 +496,33 @@ export interface NowData {
   thinking?: string;
 }
 
-export interface ContentEntry<T> {
-  slug: string;
-  data: T;
-  body: string;
+export function getNowData(): NowData | null {
+  const filePath = path.join(process.cwd(), 'content', 'now.md');
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const { data } = matter(raw);
+  return data as NowData;
 }
 
-const CONTENT_ROOT = path.join(process.cwd(), 'content');
-
-function asString(value: unknown, fallback = ''): string {
-  return typeof value === 'string' ? value : fallback;
-}
-
-function asBoolean(value: unknown, fallback = false): boolean {
-  return typeof value === 'boolean' ? value : fallback;
-}
-
-function asNumber(value: unknown, fallback = 0): number {
-  const n = typeof value === 'number' ? value : Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-function asDate(value: unknown): Date {
-  const date = new Date(String(value ?? ''));
-  return Number.isNaN(date.valueOf()) ? new Date(0) : date;
-}
-
-function asStringArray(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter((item): item is string => typeof item === 'string');
-}
-
-function asSourceRefs(value: unknown): SourceRef[] {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap((item) => {
-    if (!item || typeof item !== 'object') return [];
-    const rec = item as Record<string, unknown>;
-    const title = asString(rec.title);
-    const url = asString(rec.url);
-    if (!title || !url) return [];
-    return [{ title, url }];
-  });
-}
-
-function asProjectUrls(value: unknown): ProjectUrl[] {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap((item) => {
-    if (!item || typeof item !== 'object') return [];
-    const rec = item as Record<string, unknown>;
-    const label = asString(rec.label);
-    const url = asString(rec.url);
-    if (!label || !url) return [];
-    return [{ label, url }];
-  });
-}
-
-function readMarkdown(filePath: string): { data: Record<string, unknown>; content: string } {
-  const raw = fs.readFileSync(filePath, 'utf8');
-  const parsed = matter(raw);
-  return {
-    data: parsed.data as Record<string, unknown>,
-    content: parsed.content,
-  };
-}
-
-function listMarkdown(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter((file) => file.endsWith('.md'));
-}
-
-function parseEssay(data: Record<string, unknown>): EssayData {
-  const youtubeId = asString(data.youtubeId);
-  return {
-    title: asString(data.title, 'Untitled'),
-    date: asDate(data.date),
-    summary: asString(data.summary),
-    youtubeId: youtubeId || undefined,
-    tags: asStringArray(data.tags),
-    sources: asSourceRefs(data.sources),
-    related: asStringArray(data.related),
-    draft: asBoolean(data.draft),
-    stage: asString(data.stage) || undefined,
-    thesis: asString(data.thesis) || undefined,
-  };
-}
-
-function parseFieldNote(data: Record<string, unknown>): FieldNoteData {
-  return {
-    title: asString(data.title, 'Untitled'),
-    date: asDate(data.date),
-    tags: asStringArray(data.tags),
-    excerpt: asString(data.excerpt) || undefined,
-    draft: asBoolean(data.draft),
-    status: asString(data.status) || undefined,
-    featured: asBoolean(data.featured),
-  };
-}
-
-function parseProject(data: Record<string, unknown>): ProjectData {
-  return {
-    title: asString(data.title, 'Untitled'),
-    role: asString(data.role),
-    description: asString(data.description),
-    year: asNumber(data.year, asDate(data.date).getFullYear()),
-    date: asDate(data.date),
-    organization: asString(data.organization) || undefined,
-    urls: asProjectUrls(data.urls),
-    tags: asStringArray(data.tags),
-    featured: asBoolean(data.featured),
-    draft: asBoolean(data.draft),
-    order: asNumber(data.order),
-    callout: asString(data.callout) || undefined,
-  };
-}
-
-function parseShelf(data: Record<string, unknown>): ShelfData {
-  return {
-    title: asString(data.title, 'Untitled'),
-    creator: asString(data.creator),
-    type: asString(data.type, 'other'),
-    annotation: asString(data.annotation),
-    url: asString(data.url) || undefined,
-    date: asDate(data.date),
-    tags: asStringArray(data.tags),
-  };
-}
-
-function parseToolkit(data: Record<string, unknown>): ToolkitData {
-  return {
-    title: asString(data.title, 'Untitled'),
-    category: asString(data.category),
-    order: asNumber(data.order),
-  };
-}
-
-export function getCollection<T>(name: CollectionName): ContentEntry<T>[] {
-  const dir = path.join(CONTENT_ROOT, name);
-  const files = listMarkdown(dir);
-
-  return files.map((file) => {
-    const slug = file.replace(/\.md$/, '');
-    const { data, content } = readMarkdown(path.join(dir, file));
-    let parsed: unknown;
-    if (name === 'essays') parsed = parseEssay(data);
-    else if (name === 'field-notes') parsed = parseFieldNote(data);
-    else if (name === 'projects') parsed = parseProject(data);
-    else if (name === 'shelf') parsed = parseShelf(data);
-    else parsed = parseToolkit(data);
-    return { slug, data: parsed as T, body: content };
-  });
-}
-
-export function getEntry<T>(name: CollectionName, slug: string): ContentEntry<T> | undefined {
-  const filePath = path.join(CONTENT_ROOT, name, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return undefined;
-  const { data, content } = readMarkdown(filePath);
-  let parsed: unknown;
-  if (name === 'essays') parsed = parseEssay(data);
-  else if (name === 'field-notes') parsed = parseFieldNote(data);
-  else if (name === 'projects') parsed = parseProject(data);
-  else if (name === 'shelf') parsed = parseShelf(data);
-  else parsed = parseToolkit(data);
-  return { slug, data: parsed as T, body: content };
-}
-
-export function publishedEssays(): ContentEntry<EssayData>[] {
-  return getCollection<EssayData>('essays')
+export function publishedEssays(): ContentEntry<Essay>[] {
+  return getCollection<Essay>('essays')
     .filter((entry) => !entry.data.draft)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
-export function publishedNotes(): ContentEntry<FieldNoteData>[] {
-  return getCollection<FieldNoteData>('field-notes')
+export function publishedNotes(): ContentEntry<FieldNote>[] {
+  return getCollection<FieldNote>('field-notes')
     .filter((entry) => !entry.data.draft)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
-export function publishedProjects(): ContentEntry<ProjectData>[] {
-  return getCollection<ProjectData>('projects')
+export function publishedProjects(): ContentEntry<Project>[] {
+  return getCollection<Project>('projects')
     .filter((entry) => !entry.data.draft)
     .sort((a, b) => {
       if (a.data.order !== b.data.order) return a.data.order - b.data.order;
       return b.data.date.valueOf() - a.data.date.valueOf();
     });
-}
-
-export function getShelf(): ContentEntry<ShelfData>[] {
-  return getCollection<ShelfData>('shelf').sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-  );
-}
-
-export function getToolkit(): ContentEntry<ToolkitData>[] {
-  return getCollection<ToolkitData>('toolkit').sort((a, b) => a.data.order - b.data.order);
-}
-
-export function getNowData(): NowData | null {
-  const filePath = path.join(CONTENT_ROOT, 'now.md');
-  if (!fs.existsSync(filePath)) return null;
-  const { data } = readMarkdown(filePath);
-  const updated = asString(data.updated);
-  const researching = asString(data.researching);
-  const reading = asString(data.reading);
-  const building = asString(data.building);
-  const listening = asString(data.listening);
-  if (!updated || !researching || !reading || !building || !listening) return null;
-  return {
-    updated,
-    researching,
-    researching_context: asString(data.researching_context) || undefined,
-    reading,
-    reading_context: asString(data.reading_context) || undefined,
-    building,
-    building_context: asString(data.building_context) || undefined,
-    listening,
-    listening_context: asString(data.listening_context) || undefined,
-    thinking: asString(data.thinking) || undefined,
-  };
-}
-
-export async function renderMarkdown(body: string): Promise<string> {
-  const result = await remark().use(remarkGfm).use(remarkHtml, { sanitize: false }).process(body);
-  return result.toString();
-}
-
-export function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-export function estimateReadingTime(body: string): number {
-  const words = body.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / 200));
-}
-
-export function noteExcerpt(note: ContentEntry<FieldNoteData>): string {
-  if (note.data.excerpt) return note.data.excerpt;
-  const text = note.body.replace(/[#*_>`]/g, '').trim();
-  if (text.length <= 220) return text;
-  return `${text.slice(0, 217).trim()}...`;
 }
 
 export function hasBody(body: string): boolean {

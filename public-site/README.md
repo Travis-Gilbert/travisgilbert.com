@@ -50,7 +50,7 @@ To refresh content later, copy `src/content/` over `public-site/content/` again,
 
 ## Routes
 
-- `/` : Home (bio, now blurb, recent writing, featured projects)
+- `/` : CollageHero, PipelineCounter, featured essay, field notes, projects
 - `/essays` and `/essays/[slug]` : `content/essays/`
 - `/field-notes` and `/field-notes/[slug]` : `content/field-notes/`
 - `/projects` and `/projects/[slug]` : `content/projects/`
@@ -58,7 +58,10 @@ To refresh content later, copy `src/content/` over `public-site/content/` again,
 - `/connect` : Profile links
 - `/shelf` : `content/shelf/`
 - `/toolkit` : `content/toolkit/`
+- `/tags` and `/tags/[tag]` : topic index used by TagList
+
+The homepage gold "Install" box from the old fat app is omitted because `/install` is not a public-site route.
 
 ## Stack
 
-Next.js (App Router) + TypeScript + gray-matter + remark + a small Tailwind/CSS layer. Typography is Vollkorn, Cabin, and IBM Plex Mono via `next/font`, using the existing parchment palette.
+Next.js (App Router) + TypeScript + gray-matter + remark + Tailwind v4 + rough.js. Typography is Vollkorn, IBM Plex Sans, Courier Prime, JetBrains Mono, Caveat, Caudex, Lora, and Amarna via `next/font`, using the parchment palette (terracotta / teal / gold). Layout chrome is DotGrid, TopNav, Footer, and the Cmd+K terminal.
