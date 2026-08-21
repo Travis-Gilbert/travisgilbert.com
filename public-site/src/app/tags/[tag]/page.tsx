@@ -213,6 +213,7 @@ export default async function TagDetailPage({ params }: Props) {
                 year={project.data.year}
                 urls={project.data.urls}
                 tags={project.data.tags}
+                slug={project.slug}
               />
             ))}
           </div>

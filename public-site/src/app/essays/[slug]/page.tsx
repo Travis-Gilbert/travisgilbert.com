@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import nodePath from 'node:path';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCollection, getEntry, renderMarkdown, injectAnnotations, injectConnectionCallouts, injectFootnoteMarkers, extractFootnoteSidenotes, estimateReadingTime } from '@/lib/content';
+import { getCollection, getEntry, publishedEssays, renderMarkdown, injectAnnotations, injectConnectionCallouts, injectFootnoteMarkers, extractFootnoteSidenotes, estimateReadingTime } from '@/lib/content';
 import type { Essay, FieldNote, ShelfEntry, ContentEntry } from '@/lib/content';
 import AnnotatedArticle from '@/components/AnnotatedArticle';
 import TagList from '@/components/TagList';
@@ -26,14 +26,13 @@ interface Props {
 }
 
 export function generateStaticParams() {
-  const essays = getCollection<Essay>('essays');
-  return essays.map((i) => ({ slug: i.slug }));
+  return publishedEssays().map((essay) => ({ slug: essay.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const entry = getEntry<Essay>('essays', slug);
-  if (!entry) return {};
+  if (!entry || entry.data.draft) return {};
   return {
     title: `${entry.data.title} | Essays on ...`,
     description: entry.data.summary,
@@ -43,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function EssayDetailPage({ params }: Props) {
   const { slug } = await params;
   const entry = getEntry<Essay>('essays', slug);
-  if (!entry) notFound();
+  if (!entry || entry.data.draft) notFound();
 
   const rawHtml = await renderMarkdown(entry.body);
   const { html: sidenotedHtml, sidenotes } = extractFootnoteSidenotes(rawHtml);
@@ -381,6 +380,10 @@ export default async function EssayDetailPage({ params }: Props) {
           )}
         </div>
       </nav>
+
+      <div className="print-colophon hidden">
+        travisgilbert.me/essays/{slug} | Travis Gilbert
+      </div>
     </article>
     </>
   );

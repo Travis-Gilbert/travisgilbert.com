@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && pagefind --site out",
     "start": "next start"
   },
   "dependencies": {
@@ -14,6 +14,7 @@
     "gray-matter": "^4.0.3",
     "iconoir-react": "^7.11.0",
     "next": "^16.1.6",
+    "pagefind": "^1.5.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "remark": "^15.0.1",

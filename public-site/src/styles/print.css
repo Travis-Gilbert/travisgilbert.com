@@ -345,7 +345,7 @@
   /* Print colophon: CSS fallback for static text.
      Dynamic URL/date colophon rendered by .print-colophon element in essay template. */
   article::after {
-    content: 'travisgilbert.com  \2022  Travis Gilbert';
+    content: 'travisgilbert.me  \2022  Travis Gilbert';
     display: block;
     margin-top: 3rem;
     padding-top: 1rem;

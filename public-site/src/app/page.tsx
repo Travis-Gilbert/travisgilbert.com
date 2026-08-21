@@ -41,7 +41,9 @@ export default function HomePage() {
     .sort((a, b) => a.data.order - b.data.order)
     .slice(0, 3);
 
-  const featured = essays[0];
+  const featured =
+    essays.find((essay) => essay.data.stage && essay.data.stage !== 'published')
+    ?? essays[0];
 
   const heroImage = featured?.data.heroImage;
   const heroAlt = featured ? `Visual artifact for ${featured.data.title}` : 'Hero artifact';
