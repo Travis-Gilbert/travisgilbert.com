@@ -171,13 +171,26 @@ function ramp(anchor: Anchor, lightness: number[]): Lch[] {
   });
 }
 
+/** Past this relative chroma (C/L) a step stops reading as a neutral. */
+const NEUTRAL_RELATIVE_CHROMA_MAX = 0.02;
+
 /**
- * Neutral ramp: constant chroma (the paper warmth), gamut-fitted per step.
- * Unlike accent ramps, warmth must survive at the light end where paper lives.
+ * Neutral ramp: chroma tapered by L^2, gamut-fitted per step. Warmth reads as
+ * paper at the light end and resolves to true neutral at the dark end.
+ *
+ * Holding chroma constant instead keeps *absolute* chroma flat while relative
+ * chroma C/L climbs ~5x down the ramp, so dark surfaces come out tinted mud
+ * rather than neutrals. Constant chroma also exceeds sRGB at the palest step,
+ * where fitChroma silently halves it - putting a visible chroma cliff exactly
+ * at the light end the warmth was meant to serve.
  */
 function neutralRamp(seed: Seed): Lch[] {
   return seed.color.lightness_steps.map((L) =>
-    fitChroma({ L, C: seed.color.neutral_chroma, H: seed.color.neutral_hue }),
+    fitChroma({
+      L,
+      C: seed.color.neutral_chroma * L * L,
+      H: seed.color.neutral_hue,
+    }),
   );
 }
 
@@ -1220,6 +1233,15 @@ function check(seed: Seed, output: string): string[] {
     );
   }
 
+  // A neutral must stay neutral. Absolute chroma alone cannot express this:
+  // 0.033 is paper at L=0.985 and olive at L=0.19. Bound the ratio instead.
+  neutralRamp(seed).forEach((n, i) => {
+    assert(
+      n.C / n.L <= NEUTRAL_RELATIVE_CHROMA_MAX,
+      `neutral step ${i} relative chroma ${(n.C / n.L).toFixed(3)} over ${NEUTRAL_RELATIVE_CHROMA_MAX} - not a neutral`,
+    );
+  });
+
   assert(output.includes("prefers-reduced-motion"), "missing reduced-motion zeroing block");
   assert(!/NaN|undefined|Infinity/.test(output), "output contains NaN/undefined/Infinity");
   assert(output.includes("--focus-ring:"), "missing focus ring");
@@ -1260,7 +1282,7 @@ function main() {
     process.exit(1);
   }
   if (has("check")) {
-    console.log(`design-seed check PASSED for ${seed.product} (type, space, contrast, surface-step, motion, focus).`);
+    console.log(`design-seed check PASSED for ${seed.product} (type, space, contrast, surface-step, neutral-chroma, motion, focus).`);
     return;
   }
   if (!outPath) {

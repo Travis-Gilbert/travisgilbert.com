@@ -18,7 +18,7 @@
       { "name": "danger", "hue": 22, "chroma": 0.13 }
     ],
     "neutral_hue": 75,
-    "neutral_chroma": 0.03,
+    "neutral_chroma": 0.0122,
     "lightness_steps": [0.985, 0.955, 0.925, 0.88, 0.81, 0.73, 0.64, 0.55, 0.46, 0.37, 0.3, 0.255, 0.225, 0.19]
   },
   "shape": { "radius_base_px": 8, "hairline_px": 1 },
