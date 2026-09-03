@@ -32,6 +32,8 @@ import { extractRepoSymbols } from './fixture/extract.mjs';
 import {
   embedSymbols,
   buildKnn,
+  buildDeclaresEdges,
+  mergeEdgeTypes,
   detectCommunities,
   labelClusters,
   layoutField,
@@ -40,12 +42,16 @@ import {
   KNN_SEARCH_K,
   KNN_KEPT,
   FIXTURE_EMBEDDING_DIM,
+  DECLARES_FANOUT,
+  COMMUNITY_RESOLUTION,
 } from './fixture/pipeline.mjs';
 import {
   encodeFieldSnapshot,
   decodeFieldSnapshot,
   LAYOUT_CONTRACT,
   MAX_PAYLOAD_BYTES,
+  EDGE_TYPE_NEAR,
+  EDGE_TYPE_DECLARES_SYMBOL,
 } from '../src/lib/portfolio/fieldSnapshot.ts';
 import { parsePortfolioConfig } from '../src/lib/portfolio/allowlist.ts';
 import { parseFieldSideTable } from '../src/lib/portfolio/sideTable.ts';
@@ -173,40 +179,61 @@ function main() {
   const vectors = embedSymbols(symbols, FIXTURE_EMBEDDING_DIM);
 
   process.stderr.write(`kNN search k=${KNN_SEARCH_K}, keeping ${KNN_KEPT}\n`);
-  const knn = buildKnn(vectors);
+  const near = buildKnn(vectors);
 
-  process.stderr.write('detecting communities\n');
+  process.stderr.write(`projecting DECLARES_SYMBOL, fanout ${DECLARES_FANOUT}\n`);
+  const declares = buildDeclaresEdges(symbols);
+
+  const edges = mergeEdgeTypes(
+    [
+      { type: EDGE_TYPE_NEAR, edges: near },
+      { type: EDGE_TYPE_DECLARES_SYMBOL, edges: declares },
+    ],
+    symbols.length,
+  );
+  process.stderr.write(
+    `  NEAR ${near.csrNeighbors.length}, ` +
+      `DECLARES_SYMBOL ${declares.csrNeighbors.length}\n`,
+  );
+
+  process.stderr.write(`detecting communities, resolution ${COMMUNITY_RESOLUTION}\n`);
   const { clusterId, clusterCount } = detectCommunities(
-    knn.csrOffsets,
-    knn.csrNeighbors,
-    knn.csrWeights,
+    edges.csrOffsets,
+    edges.csrNeighbors,
+    edges.csrWeights,
   );
 
   const clusters = labelClusters(clusterId, clusterCount, symbols);
 
   process.stderr.write('laying out warm start\n');
-  const positions = layoutField(knn.csrOffsets, knn.csrNeighbors, knn.csrWeights, {
+  const positions = layoutField(edges.csrOffsets, edges.csrNeighbors, edges.csrWeights, {
     seed: LAYOUT_SEED,
   });
 
   const repoIndex = Uint16Array.from(symbols, (symbol) => symbol.repoIndex);
   const ordinal = Uint32Array.from(symbols, (symbol) => symbol.ordinal);
-  const arcs = buildCrossRepoArcs(knn.csrOffsets, knn.csrNeighbors, repoIndex);
+  const arcs = buildCrossRepoArcs(
+    edges.csrOffsets,
+    edges.csrNeighbors,
+    edges.csrEdgeType,
+    repoIndex,
+  );
   const storage = accountStorage(vectors, FIXTURE_EMBEDDING_DIM);
 
   const binary = {
     symbolCount: symbols.length,
-    edgeCount: knn.csrNeighbors.length,
+    edgeCount: edges.csrNeighbors.length,
     repoCount: repoRows.length,
     clusterCount,
     positions,
     repoIndex,
     clusterId,
-    degree: knn.degree,
+    degree: edges.degree,
     ordinal,
-    csrOffsets: knn.csrOffsets,
-    csrNeighbors: knn.csrNeighbors,
-    csrWeights: knn.csrWeights,
+    csrOffsets: edges.csrOffsets,
+    csrNeighbors: edges.csrNeighbors,
+    csrWeights: edges.csrWeights,
+    csrEdgeType: edges.csrEdgeType,
   };
 
   const payload = encodeFieldSnapshot(binary);
@@ -216,7 +243,7 @@ function main() {
   decodeFieldSnapshot(payload);
 
   const sideTable = parseFieldSideTable({
-    formatVersion: 1,
+    formatVersion: 2,
     tenant: config.tenant,
     revision: 'fixture',
     source: {
@@ -224,6 +251,8 @@ function main() {
       embedder: 'hash',
       embeddingDim: FIXTURE_EMBEDDING_DIM,
       knnK: KNN_KEPT,
+      declaresFanout: DECLARES_FANOUT,
+      communityResolution: COMMUNITY_RESOLUTION,
       seed: LAYOUT_SEED,
       layoutContractSha256: sha256(Buffer.from(LAYOUT_CONTRACT, 'utf-8')),
     },
@@ -258,7 +287,11 @@ function main() {
     layoutContractSha256: sha256(Buffer.from(LAYOUT_CONTRACT, 'utf-8')),
     seed: LAYOUT_SEED,
     symbolCount: symbols.length,
-    edgeCount: knn.csrNeighbors.length,
+    edgeCount: edges.csrNeighbors.length,
+    edgeCountByType: {
+      NEAR: near.csrNeighbors.length,
+      DECLARES_SYMBOL: declares.csrNeighbors.length,
+    },
     repoCount: repoRows.length,
     clusterCount,
     payloadBytes: payload.byteLength,

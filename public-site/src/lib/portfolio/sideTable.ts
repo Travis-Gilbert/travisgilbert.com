@@ -86,7 +86,7 @@ export const crossRepoArcSchema = z
 
 export const fieldSideTableSchema = z
   .object({
-    formatVersion: z.literal(1),
+    formatVersion: z.literal(2),
     tenant: z.string().min(1),
     revision: z.string().min(1),
     /** Provenance for the fixture: which generator produced it, from what. */
@@ -96,6 +96,10 @@ export const fieldSideTableSchema = z
         embedder: z.string().min(1),
         embeddingDim: z.number().int().positive(),
         knnK: z.number().int().positive(),
+        /** How many declaration order neighbours each symbol links to per side. */
+        declaresFanout: z.number().int().nonnegative(),
+        /** Gamma in the community gain. 1 is what `graph_csr.rs` fixes it at. */
+        communityResolution: z.number().positive(),
         seed: z.number().int(),
         layoutContractSha256: z.string().length(64),
       })

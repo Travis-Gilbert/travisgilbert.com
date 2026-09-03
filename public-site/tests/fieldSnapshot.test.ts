@@ -15,6 +15,8 @@ import {
   FieldSnapshotFormatError,
   HEADER_BYTES,
   LAYOUT_CONTRACT,
+  EDGE_TYPE_DECLARES_SYMBOL,
+  EDGE_TYPE_NEAR,
   decodeFieldSnapshot,
   encodeFieldSnapshot,
   sectionLayout,
@@ -36,6 +38,12 @@ function sample(): FieldSnapshotBinary {
     csrOffsets: new Uint32Array([0, 1, 3, 4]),
     csrNeighbors: new Uint32Array([1, 0, 2, 1]),
     csrWeights: new Float32Array([0.5, 0.5, 0.25, 0.25]),
+    csrEdgeType: new Uint8Array([
+      EDGE_TYPE_NEAR,
+      EDGE_TYPE_NEAR,
+      EDGE_TYPE_DECLARES_SYMBOL,
+      EDGE_TYPE_DECLARES_SYMBOL,
+    ]),
   };
 }
 
@@ -56,6 +64,7 @@ describe('fieldSnapshot codec', () => {
     expect(Array.from(decoded.csrOffsets)).toEqual(Array.from(original.csrOffsets));
     expect(Array.from(decoded.csrNeighbors)).toEqual(Array.from(original.csrNeighbors));
     expect(Array.from(decoded.csrWeights)).toEqual(Array.from(original.csrWeights));
+    expect(Array.from(decoded.csrEdgeType)).toEqual(Array.from(original.csrEdgeType));
   });
 
   it('encodes deterministically', () => {
@@ -120,6 +129,7 @@ describe('fieldSnapshot codec', () => {
         'positions:f32[2*symbolCount];repoIndex:u16[symbolCount];clusterId:u16[symbolCount];' +
         'degree:u16[symbolCount];ordinal:u32[symbolCount];csrOffsets:u32[symbolCount+1];' +
         'csrNeighbors:u32[edgeCount];csrWeights:f32[edgeCount];' +
+        'csrEdgeType:u8[edgeCount];' +
         'sections aligned to 4 bytes, all values little endian',
     );
   });

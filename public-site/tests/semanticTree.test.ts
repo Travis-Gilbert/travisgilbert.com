@@ -11,6 +11,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { getPortfolioConfig } from '@/lib/portfolio/allowlist';
+import { EDGE_TYPE_NAMES } from '@/lib/portfolio/fieldSnapshot';
 import { loadFieldSnapshot } from '@/lib/portfolio/snapshot';
 import {
   CAMERA_IDENT,
@@ -20,6 +21,7 @@ import {
   STORAGE_IDENT,
   buildSemanticTree,
   clusterIdent,
+  edgeTypeIdent,
   flattenTree,
   formatBytes,
   repoIdent,
@@ -115,6 +117,30 @@ describe('semantic tree', () => {
     expect(tree.data?.edges).toBe(snapshot.binary.edgeCount);
     expect(tree.data?.repos).toBe(snapshot.binary.repoCount);
     expect(tree.data?.clusters).toBe(snapshot.binary.clusterCount);
+  });
+
+  it('names every edge type the payload carries, with counts that add up', () => {
+    const edges = tree.children.find((node) => node.kind === 'edges');
+    expect(edges).toBeDefined();
+    expect(edges!.children.map((edge) => edge.label)).toEqual([...EDGE_TYPE_NAMES]);
+
+    const summed = edges!.children.reduce((total, edge) => total + Number(edge.data?.count ?? 0), 0);
+    expect(summed).toBe(snapshot.binary.edgeCount);
+  });
+
+  it('carries both edge types, so the legend is not describing one thing twice', () => {
+    const edges = tree.children.find((node) => node.kind === 'edges');
+    for (const edge of edges!.children) {
+      expect(Number(edge.data?.count ?? 0)).toBeGreaterThan(0);
+    }
+  });
+
+  it('gives an edge type the ident D5 will scrub it by', () => {
+    const edges = tree.children.find((node) => node.kind === 'edges');
+    for (const edge of edges!.children) {
+      expect(edge.ident).toBe(edgeTypeIdent(edge.label as (typeof EDGE_TYPE_NAMES)[number]));
+      expect(edge.ident.startsWith(`${ROOT_IDENT}/`)).toBe(true);
+    }
   });
 
   it('is deterministic across builds', () => {

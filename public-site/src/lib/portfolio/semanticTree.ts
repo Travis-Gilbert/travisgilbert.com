@@ -16,6 +16,12 @@
 
 import type { FieldSnapshot, FieldSymbol } from './snapshot';
 import { joinSymbols, representativeSymbols } from './snapshot';
+import {
+  EDGE_TYPE_NAMES,
+  countEdgeTypes,
+  type EdgeTypeName,
+  type FieldSnapshotBinary,
+} from './fieldSnapshot';
 import { symbolSourceUrl, repoRevisionUrl, type PortfolioConfig } from './allowlist';
 import type { StorageAccounting } from './sideTable';
 
@@ -30,6 +36,8 @@ export type SemanticKind =
   | 'repo'
   | 'cluster'
   | 'symbol'
+  | 'edges'
+  | 'edge-type'
   | 'camera'
   | 'storage'
   | 'capability';
@@ -58,6 +66,18 @@ export function clusterIdent(clusterId: number): string {
 
 export function symbolIdent(symbolId: string): string {
   return `${ROOT_IDENT}/symbol/${symbolId}`;
+}
+
+/**
+ * One ident per edge type, and one for the group that holds them.
+ *
+ * D5 scrubs the field by toggling these, and C12 makes the grid row that names
+ * an edge type the same node, so the ident cannot carry a part kind.
+ */
+export const EDGES_IDENT = `${ROOT_IDENT}/edges`;
+
+export function edgeTypeIdent(name: EdgeTypeName): string {
+  return `${ROOT_IDENT}/edge-type/${name}`;
 }
 
 export const CAMERA_IDENT = `${ROOT_IDENT}/camera`;
@@ -135,7 +155,7 @@ export function buildSemanticTree(options: BuildTreeOptions): SemanticNode {
     kind: 'root',
     label: 'Portfolio field',
     detail:
-      `${binary.symbolCount} symbols and ${binary.edgeCount} nearest neighbour edges ` +
+      `${binary.symbolCount} symbols and ${binary.edgeCount} edges ` +
       `across ${binary.repoCount} repositories, grouped into ${binary.clusterCount} clusters.`,
     data: {
       symbols: binary.symbolCount,
@@ -146,6 +166,7 @@ export function buildSemanticTree(options: BuildTreeOptions): SemanticNode {
     children: [
       ...repoNodes,
       ...clusterNodes,
+      edgesNode(binary),
       cameraNode(),
       storageNode(sideTable.storage),
       capabilityNode(),
@@ -168,6 +189,39 @@ function symbolNode(symbol: FieldSymbol, config: PortfolioConfig): SemanticNode 
       cluster: symbol.clusterId,
     },
     children: [],
+  };
+}
+
+/**
+ * What each edge type means, in one line a visitor can act on.
+ *
+ * Two edge types is the whole point of naming them: a viewer who can see that
+ * half the pull in a neighbourhood comes from two symbols sharing a file, rather
+ * than from what they do, can discount it. One unnamed blend of both cannot be
+ * discounted at all.
+ */
+const EDGE_TYPE_DETAIL: Record<EdgeTypeName, string> = {
+  NEAR: 'Cosine nearest neighbours in the embedding, fifteen per symbol.',
+  DECLARES_SYMBOL: 'Declarations written within four of each other in one file.',
+};
+
+function edgesNode(binary: FieldSnapshotBinary): SemanticNode {
+  const counts = countEdgeTypes(binary.csrEdgeType);
+
+  return {
+    ident: EDGES_IDENT,
+    kind: 'edges',
+    label: 'Edges',
+    detail: `${binary.edgeCount} edges of ${EDGE_TYPE_NAMES.length} kinds.`,
+    data: { total: binary.edgeCount, kinds: EDGE_TYPE_NAMES.length },
+    children: EDGE_TYPE_NAMES.map((name, type) => ({
+      ident: edgeTypeIdent(name),
+      kind: 'edge-type' as const,
+      label: name,
+      detail: EDGE_TYPE_DETAIL[name],
+      data: { count: counts[type], share: Number((counts[type] / binary.edgeCount).toFixed(4)) },
+      children: [],
+    })),
   };
 }
 

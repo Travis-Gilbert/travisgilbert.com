@@ -15,7 +15,7 @@
 
 /** "TFS1" read as a little endian u32. */
 export const FIELD_SNAPSHOT_MAGIC = 0x31534654;
-export const FIELD_SNAPSHOT_VERSION = 1;
+export const FIELD_SNAPSHOT_VERSION = 2;
 
 /** Header is six u32 fields padded to an eight byte boundary. */
 export const HEADER_BYTES = 32;
@@ -37,11 +37,34 @@ export const LAYOUT_CONTRACT = [
   'csrOffsets:u32[symbolCount+1]',
   'csrNeighbors:u32[edgeCount]',
   'csrWeights:f32[edgeCount]',
+  'csrEdgeType:u8[edgeCount]',
   'sections aligned to 4 bytes, all values little endian',
 ].join(';');
 
 /** Largest value `degree` can carry. Higher in degrees saturate here. */
 export const MAX_DEGREE = 0xffff;
+
+/**
+ * Edge types the field carries, as the u8 written into `csrEdgeType`.
+ *
+ * `NEAR` is C5's kNN edge, the semantic one. `DECLARES_SYMBOL` is the symbol
+ * level projection of the `code_kg` edge a `CodeFile` has to each symbol it
+ * declares, and it is the structural one: it says two symbols were written in
+ * the same file, which is a fact about the repository rather than about the
+ * vectors. Both names are the edge type strings the server already uses, so the
+ * scrubber's legend and D3's Rust writer do not need a translation table.
+ *
+ * The column is u8 rather than a bitmask because an edge has exactly one type.
+ * A pair that is both NEAR and declared together appears as two edges, which is
+ * what `undirected_weighted_adjacency` in `graph_csr.rs` sums.
+ */
+export const EDGE_TYPE_NEAR = 0;
+export const EDGE_TYPE_DECLARES_SYMBOL = 1;
+
+/** Index by the u8 above. The order is the wire order and cannot be reshuffled. */
+export const EDGE_TYPE_NAMES = ['NEAR', 'DECLARES_SYMBOL'] as const;
+
+export type EdgeTypeName = (typeof EDGE_TYPE_NAMES)[number];
 
 export interface FieldSnapshotBinary {
   symbolCount: number;
@@ -57,6 +80,8 @@ export interface FieldSnapshotBinary {
   csrOffsets: Uint32Array;
   csrNeighbors: Uint32Array;
   csrWeights: Float32Array;
+  /** One `EDGE_TYPE_*` per edge, parallel to `csrNeighbors`. */
+  csrEdgeType: Uint8Array;
 }
 
 interface Section {
@@ -73,6 +98,7 @@ export interface SectionLayout {
   csrOffsets: Section;
   csrNeighbors: Section;
   csrWeights: Section;
+  csrEdgeType: Section;
   totalBytes: number;
 }
 
@@ -101,6 +127,9 @@ export function sectionLayout(symbolCount: number, edgeCount: number): SectionLa
   const csrOffsets = place(symbolCount + 1, 4);
   const csrNeighbors = place(edgeCount, 4);
   const csrWeights = place(edgeCount, 4);
+  // Last, and one byte wide, so every wider section above it stays naturally
+  // aligned without padding between them.
+  const csrEdgeType = place(edgeCount, 1);
 
   return {
     positions,
@@ -111,8 +140,23 @@ export function sectionLayout(symbolCount: number, edgeCount: number): SectionLa
     csrOffsets,
     csrNeighbors,
     csrWeights,
+    csrEdgeType,
     totalBytes: align4(cursor),
   };
+}
+
+/**
+ * How many edges of each type the field carries, indexed by the u8.
+ *
+ * Derived from the column rather than recorded in the header, so a payload
+ * cannot claim a count its edges do not back up.
+ */
+export function countEdgeTypes(csrEdgeType: Uint8Array): number[] {
+  const counts = new Array<number>(EDGE_TYPE_NAMES.length).fill(0);
+  for (const type of csrEdgeType) {
+    if (type < counts.length) counts[type] += 1;
+  }
+  return counts;
 }
 
 export class FieldSnapshotFormatError extends Error {}
@@ -168,6 +212,8 @@ export function encodeFieldSnapshot(snapshot: FieldSnapshotBinary): Uint8Array {
     .set(snapshot.csrNeighbors);
   new Float32Array(buffer, layout.csrWeights.byteOffset, layout.csrWeights.elements)
     .set(snapshot.csrWeights);
+  new Uint8Array(buffer, layout.csrEdgeType.byteOffset, layout.csrEdgeType.elements)
+    .set(snapshot.csrEdgeType);
 
   return new Uint8Array(buffer);
 }
@@ -235,6 +281,7 @@ export function decodeFieldSnapshot(bytes: Uint8Array): FieldSnapshotBinary {
     csrOffsets: new Uint32Array(buffer, at(layout.csrOffsets), layout.csrOffsets.elements),
     csrNeighbors: new Uint32Array(buffer, at(layout.csrNeighbors), layout.csrNeighbors.elements),
     csrWeights: new Float32Array(buffer, at(layout.csrWeights), layout.csrWeights.elements),
+    csrEdgeType: new Uint8Array(buffer, at(layout.csrEdgeType), layout.csrEdgeType.elements),
   };
 }
 
@@ -256,6 +303,7 @@ function assertShape(snapshot: FieldSnapshotBinary): void {
   expect('csrOffsets', snapshot.csrOffsets.length, symbolCount + 1);
   expect('csrNeighbors', snapshot.csrNeighbors.length, edgeCount);
   expect('csrWeights', snapshot.csrWeights.length, edgeCount);
+  expect('csrEdgeType', snapshot.csrEdgeType.length, edgeCount);
 
   if (symbolCount > 0 && snapshot.csrOffsets[symbolCount] !== edgeCount) {
     throw new FieldSnapshotFormatError(

@@ -135,9 +135,48 @@ function StoragePanel({ storage }: { storage: SemanticNode }) {
   );
 }
 
+/**
+ * The edge legend, which is the static half of D5's scrubber.
+ *
+ * Every row carries the ident the scrubber will toggle, so the crawlable page
+ * and the painted field name the same edges. Until the leaf mounts these are
+ * read only: there is nothing yet to switch off.
+ */
+function EdgeLegend({ edges }: { edges: SemanticNode }) {
+  return (
+    <ul className="list-none p-0 m-0 grid gap-2 sm:grid-cols-2" {...nodeDataAttributes(edges)}>
+      {edges.children.map((edge) => {
+        const share = Number(edge.data?.share ?? 0);
+        return (
+          <li
+            key={edge.ident}
+            className="border border-rule rounded p-3 grid gap-1"
+            {...nodeDataAttributes(edge)}
+          >
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="font-mono text-[12px] text-ink">{edge.label}</span>
+              <span className="font-mono text-[11px] text-ink-light">
+                {/* One decimal, because two shares rounded to whole numbers
+                    added up to 101 percent and a legend that cannot count is
+                    not a legend. */}
+                {Number(edge.data?.count ?? 0).toLocaleString('en-US')} ({(share * 100).toFixed(1)}%)
+              </span>
+            </div>
+            <p className="text-[13px] text-ink-secondary m-0 leading-snug">{edge.detail}</p>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 export default function SemanticProjection({ tree }: { tree: SemanticNode }) {
   const repos = tree.children.filter((node) => node.kind === 'repo');
   const clusters = tree.children.filter((node) => node.kind === 'cluster');
+  const edges = tree.children.find((node) => node.kind === 'edges');
+  // The tree bounds cluster nodes at C11's sixty four. A page that showed a
+  // slice while its own header counted the whole would be lying by omission.
+  const clusterTotal = Number(tree.data?.clusters ?? clusters.length);
   const storage = tree.children.find((node) => node.kind === 'storage');
   const capability = tree.children.find((node) => node.kind === 'capability');
   const camera = tree.children.find((node) => node.kind === 'camera');
@@ -169,8 +208,25 @@ export default function SemanticProjection({ tree }: { tree: SemanticNode }) {
         >
           Clusters
         </h2>
+        {clusterTotal > clusters.length && (
+          <p className="font-mono text-[11px] text-ink-light m-0 mb-3">
+            The {clusters.length} largest of {clusterTotal.toLocaleString('en-US')}.
+          </p>
+        )}
         <ClusterList clusters={clusters} />
       </section>
+
+      {edges && (
+        <section aria-labelledby="pf-edges">
+          <h2
+            id="pf-edges"
+            className="font-mono text-[11px] uppercase tracking-[0.1em] text-gold m-0 mb-3"
+          >
+            Edges
+          </h2>
+          <EdgeLegend edges={edges} />
+        </section>
+      )}
 
       {storage && (
         <section aria-labelledby="pf-storage">

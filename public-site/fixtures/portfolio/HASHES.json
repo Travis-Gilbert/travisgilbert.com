@@ -1,19 +1,23 @@
 {
   "generatedBy": "scripts/build-field-fixture.mjs",
   "note": "Regenerate with the same roots and seed to reproduce these hashes. A changed hash means the data or the format moved, and one of those needs saying in the commit message.",
-  "layoutContract": "header:u32[magic,version,symbolCount,edgeCount,repoCount,clusterCount]@0..32;positions:f32[2*symbolCount];repoIndex:u16[symbolCount];clusterId:u16[symbolCount];degree:u16[symbolCount];ordinal:u32[symbolCount];csrOffsets:u32[symbolCount+1];csrNeighbors:u32[edgeCount];csrWeights:f32[edgeCount];sections aligned to 4 bytes, all values little endian",
-  "layoutContractSha256": "911cd7ae9c902c8d4c599c862ea4cab95dec29952b5049ecc2dbadc01823c849",
+  "layoutContract": "header:u32[magic,version,symbolCount,edgeCount,repoCount,clusterCount]@0..32;positions:f32[2*symbolCount];repoIndex:u16[symbolCount];clusterId:u16[symbolCount];degree:u16[symbolCount];ordinal:u32[symbolCount];csrOffsets:u32[symbolCount+1];csrNeighbors:u32[edgeCount];csrWeights:f32[edgeCount];csrEdgeType:u8[edgeCount];sections aligned to 4 bytes, all values little endian",
+  "layoutContractSha256": "51d85adca66279ff47a24d1f1da8f5907338326d9267414dfbd63e30b847817b",
   "seed": 1592652257,
   "symbolCount": 3358,
-  "edgeCount": 50370,
+  "edgeCount": 63360,
+  "edgeCountByType": {
+    "NEAR": 50370,
+    "DECLARES_SYMBOL": 12990
+  },
   "repoCount": 7,
-  "clusterCount": 48,
-  "payloadBytes": 476872,
+  "clusterCount": 285,
+  "payloadBytes": 644152,
   "payloadCapBytes": 25165824,
-  "sideTableBytes": 1811926,
+  "sideTableBytes": 1851919,
   "files": {
-    "field-snapshot.bin": "092426c01c32cb7dfee17d2e672fbe293bea932d1b15b7f3c2831176f4ee33a3",
-    "field-snapshot.json": "74988015c4fc5211e5ccde23fe05fd154b7b7c4a161e5ab19d1b2d42c151fb31"
+    "field-snapshot.bin": "42dbd6ec23c328af3ead121cea4d3216dfed5f43f114812ba7cf5bd94820e719",
+    "field-snapshot.json": "12a25cb983cd88165e93b161db9841b3640462da20ec8adaca7be0c3ee811b25"
   },
   "repos": [
     {
