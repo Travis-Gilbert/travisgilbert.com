@@ -1,0 +1,37 @@
+# Provenance for the vendored GPUI leaf mount contract.
+#
+# D10 pins this file to the Theorem commit it was copied from so that a change
+# upstream is a visible failure here rather than a silent divergence. Run
+# `npm run check:leaf-provenance` to verify; point it at a Theorem checkout with
+# `--theorem <path>` or `THEOREM_ROOT` to also compare against upstream HEAD.
+#
+# Two facts about this file decide how D4 mounts the field, and both were read
+# out of the source rather than assumed:
+#
+#   1. `applyDocuments` dispatches on four leaf kinds (record-form, thread,
+#      document, story) and there is no `field`. D4 therefore needs an upstream
+#      change to Theorem, and this vendored copy stops being a pure copy at that
+#      point. The pin below is what makes that moment obvious.
+#   2. Adoption runs `host.replaceChildren(canvas)` at line 236, which removes
+#      D9's static projection from the host. Whatever mounts the field has to
+#      re-append the projection under the canvas; it does not survive on its own.
+
+[source]
+repository = "https://github.com/Travis-Gilbert/theorem"
+path = "apps/theoremweb/assets/gpui-leaf.js"
+commit = "63802c5ff89a57c27745735e3df0d6811dd6438d"
+committed = "2026-09-03T09:23:18-04:00"
+
+[vendored]
+path = "vendor/gpui/gpui-leaf.js"
+sha256 = "3d9e269f1229516124453c70400f7136f6f7c967b4d42d387cf803e4a9c4b0fd"
+lines = 444
+
+[notes]
+# Kept out of `public/` on purpose. Serving it before D4 builds a field bundle
+# would ship a script with no caller, and the standing nevers do not allow a
+# module that calls nothing. It moves to `public/gpui/` in the same change that
+# adds the `field` leaf kind and the wasm bundle it loads.
+served = false
+leaf_kinds = ["record-form", "thread", "document", "story"]
+field_leaf_kind_present = false

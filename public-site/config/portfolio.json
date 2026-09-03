@@ -1,0 +1,84 @@
+{
+  "tenant": "portfolio-public",
+  "endpoint": "",
+  "d0": "D0-b",
+  "repos": [
+    {
+      "id": "repo:Travis-Gilbert/Theorem",
+      "name": "Theorem",
+      "url": "https://github.com/Travis-Gilbert/Theorem",
+      "blurb": "Substrate for the written graph: GraphStore, hooks, harness, and the GPUI surfaces.",
+      "private": true,
+      "bodyWithheld": true,
+      "revisions": [
+        { "ref": "main", "sha": "63802c5ff89a57c27745735e3df0d6811dd6438d" }
+      ]
+    },
+    {
+      "id": "repo:Travis-Gilbert/RustyRed-Graph-Database",
+      "name": "RustyRed",
+      "url": "https://github.com/Travis-Gilbert/RustyRed-Graph-Database",
+      "blurb": "Graph database core: content addressed tensor blocks, vector designation, three way merge.",
+      "private": false,
+      "bodyWithheld": false,
+      "revisions": [
+        { "ref": "main", "sha": "80281f8dc35973ff69c837660b193d0dc38d3cd5" }
+      ]
+    },
+    {
+      "id": "repo:Travis-Gilbert/Theorems-Harness",
+      "name": "Theorems Harness",
+      "url": "https://github.com/Travis-Gilbert/Theorems-Harness",
+      "blurb": "Cross agent coordination protocol: shared scratchpad, presence, handoff, skills.",
+      "private": false,
+      "bodyWithheld": false,
+      "revisions": [
+        { "ref": "main", "sha": "e178eaa831e94f2facd25fdc615dd7af3df9560f" }
+      ]
+    },
+    {
+      "id": "repo:Travis-Gilbert/Turvo",
+      "name": "Turvo",
+      "url": "https://github.com/Travis-Gilbert/Turvo",
+      "blurb": "Standalone experiment kept in the field so cross repo arcs have a small clean endpoint.",
+      "private": false,
+      "bodyWithheld": false,
+      "revisions": [
+        { "ref": "main", "sha": "dbfc503281b784b4313fe0af86f95ae8632d4148" }
+      ]
+    },
+    {
+      "id": "repo:Travis-Gilbert/RustyWeb",
+      "name": "RustyWeb",
+      "url": "https://github.com/Travis-Gilbert/RustyWeb",
+      "blurb": "Search and retrieval surface over the substrate.",
+      "private": false,
+      "bodyWithheld": false,
+      "revisions": [
+        { "ref": "main", "sha": "0c41aecc474c6fab76bf7b6ab859fc0500a9a6ac" }
+      ]
+    },
+    {
+      "id": "repo:Travis-Gilbert/our-civic-atlas",
+      "name": "Civic Atlas",
+      "url": "https://github.com/Travis-Gilbert/our-civic-atlas",
+      "blurb": "Civic data atlas: parcels, policy, and the built environment as queryable structure.",
+      "private": false,
+      "bodyWithheld": false,
+      "revisions": [
+        { "ref": "main", "sha": "cbdd3356b989f976b552f731bbaf7ff8d444afef" }
+      ]
+    },
+    {
+      "id": "repo:Travis-Gilbert/CommonPlace",
+      "name": "CommonPlace",
+      "url": "https://github.com/Travis-Gilbert/CommonPlace",
+      "blurb": "Object oriented, spatial, and temporal note taking over the connection engine.",
+      "private": false,
+      "bodyWithheld": false,
+      "revisions": [
+        { "ref": "main", "sha": "aa574b228d8d089276bad3499e8fd98e55f14f33" }
+      ]
+    }
+  ]
+}

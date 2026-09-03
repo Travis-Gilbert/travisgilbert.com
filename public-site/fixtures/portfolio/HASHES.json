@@ -1,0 +1,62 @@
+{
+  "generatedBy": "scripts/build-field-fixture.mjs",
+  "note": "Regenerate with the same roots and seed to reproduce these hashes. A changed hash means the data or the format moved, and one of those needs saying in the commit message.",
+  "layoutContract": "header:u32[magic,version,symbolCount,edgeCount,repoCount,clusterCount]@0..32;positions:f32[2*symbolCount];repoIndex:u16[symbolCount];clusterId:u16[symbolCount];degree:u16[symbolCount];ordinal:u32[symbolCount];csrOffsets:u32[symbolCount+1];csrNeighbors:u32[edgeCount];csrWeights:f32[edgeCount];sections aligned to 4 bytes, all values little endian",
+  "layoutContractSha256": "911cd7ae9c902c8d4c599c862ea4cab95dec29952b5049ecc2dbadc01823c849",
+  "seed": 1592652257,
+  "symbolCount": 3358,
+  "edgeCount": 50370,
+  "repoCount": 7,
+  "clusterCount": 48,
+  "payloadBytes": 476872,
+  "payloadCapBytes": 25165824,
+  "sideTableBytes": 1811926,
+  "files": {
+    "field-snapshot.bin": "092426c01c32cb7dfee17d2e672fbe293bea932d1b15b7f3c2831176f4ee33a3",
+    "field-snapshot.json": "74988015c4fc5211e5ccde23fe05fd154b7b7c4a161e5ab19d1b2d42c151fb31"
+  },
+  "repos": [
+    {
+      "name": "Theorem",
+      "revision": "63802c5ff89a57c27745735e3df0d6811dd6438d",
+      "symbolCount": 600,
+      "bodyWithheld": true
+    },
+    {
+      "name": "RustyRed",
+      "revision": "80281f8dc35973ff69c837660b193d0dc38d3cd5",
+      "symbolCount": 600,
+      "bodyWithheld": false
+    },
+    {
+      "name": "Theorems Harness",
+      "revision": "e178eaa831e94f2facd25fdc615dd7af3df9560f",
+      "symbolCount": 298,
+      "bodyWithheld": false
+    },
+    {
+      "name": "Turvo",
+      "revision": "dbfc503281b784b4313fe0af86f95ae8632d4148",
+      "symbolCount": 600,
+      "bodyWithheld": false
+    },
+    {
+      "name": "RustyWeb",
+      "revision": "0c41aecc474c6fab76bf7b6ab859fc0500a9a6ac",
+      "symbolCount": 60,
+      "bodyWithheld": false
+    },
+    {
+      "name": "Civic Atlas",
+      "revision": "cbdd3356b989f976b552f731bbaf7ff8d444afef",
+      "symbolCount": 600,
+      "bodyWithheld": false
+    },
+    {
+      "name": "CommonPlace",
+      "revision": "aa574b228d8d089276bad3499e8fd98e55f14f33",
+      "symbolCount": 600,
+      "bodyWithheld": false
+    }
+  ]
+}

@@ -13,6 +13,10 @@ COPY next.config.ts tsconfig.json postcss.config.mjs next-env.d.ts ./
 COPY src ./src
 COPY content ./content
 COPY public ./public
+# The portfolio route reads both at build time: the allowlist decides which
+# repos get a section, the fixture supplies the field the section describes.
+COPY config ./config
+COPY fixtures ./fixtures
 
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
