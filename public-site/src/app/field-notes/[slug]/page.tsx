@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCollection, getEntry, renderMarkdown, estimateReadingTime } from '@/lib/content';
+import { getCollection, getEntry, publishedNotes, renderMarkdown, estimateReadingTime } from '@/lib/content';
 import type { FieldNote, Essay, ShelfEntry } from '@/lib/content';
 import { computeFieldNoteConnections, generateNavigationSuggestions } from '@/lib/connectionEngine';
 import type { AllContent } from '@/lib/connectionEngine';
@@ -19,14 +19,13 @@ interface Props {
 }
 
 export function generateStaticParams() {
-  const notes = getCollection<FieldNote>('field-notes');
-  return notes.map((n) => ({ slug: n.slug }));
+  return publishedNotes().map((note) => ({ slug: note.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const entry = getEntry<FieldNote>('field-notes', slug);
-  if (!entry) return {};
+  if (!entry || entry.data.draft) return {};
   return {
     title: `${entry.data.title} | Field Notes`,
     description: entry.data.excerpt,
@@ -36,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function FieldNoteDetailPage({ params }: Props) {
   const { slug } = await params;
   const entry = getEntry<FieldNote>('field-notes', slug);
-  if (!entry) notFound();
+  if (!entry || entry.data.draft) notFound();
 
   const html = await renderMarkdown(entry.body);
   const readingTime = estimateReadingTime(entry.body);

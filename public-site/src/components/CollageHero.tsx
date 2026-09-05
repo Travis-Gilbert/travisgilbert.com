@@ -101,7 +101,7 @@ export default function CollageHero({
                       color: 'var(--color-terracotta)',
                     }}
                   >
-                    Currently Writing
+                    {featured.stage === 'published' ? 'Latest Essay' : 'Currently Writing'}
                   </span>
 
                   <Link
